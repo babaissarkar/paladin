@@ -186,7 +186,7 @@ public Infofield() {
 		try {
 			this.setCard(deck.elementAt(deck.size() - 1));
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Deck Error : No Deck.", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
