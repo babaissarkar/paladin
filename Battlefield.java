@@ -82,8 +82,8 @@ implements ActionListener {
 		deck2 = new Stack<Card>();
 		
 		//Initializing Decks
-        deck1 = scan.scan("/decks/deck1");
-        deck2 = scan.scan("/decks/deck2");
+        deck1 = scan.scan("/deck1.txt");
+        deck2 = scan.scan("/deck2.txt");
 		
         //Initializing Infofield
         inf = new Infofield();
