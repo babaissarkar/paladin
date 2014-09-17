@@ -101,6 +101,12 @@ public class CLabel extends JLabel {
 	}
 
 	public Card getCard() {
+		Card card2 = cards.lastElement();
+		super.setIcon(scale(cards.lastElement().getImCard()));
+		return card2;
+	}
+	
+	public Card grCard() {
 		Card card2 = cards.pop();
 		super.setIcon(scale(cards.lastElement().getImCard()));
 		return card2;
@@ -128,7 +134,6 @@ public class CLabel extends JLabel {
 	public void tap() {
 		setTapped(true);
 		im = ((ImageIcon) getIcon()).getImage();
-		
 		Graphics gd = im.getGraphics();
 		gd.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
 		gd.setColor(Color.BLACK);
@@ -140,7 +145,6 @@ public class CLabel extends JLabel {
 	public void untap() {
 		setTapped(false);
 		im = ((ImageIcon) getIcon()).getImage();
-		
 		Graphics gd2 = im.getGraphics();
 		gd2.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
 		gd2.setColor(Color.BLACK);
@@ -152,8 +156,7 @@ public class CLabel extends JLabel {
 	public static ImageIcon scale(Icon i) {
 		BufferedImage bi = new BufferedImage(64, 87, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = bi.createGraphics();
-		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87,
-				0, 0, i.getIconWidth(), i.getIconHeight(), null);
+		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87, 0, 0, i.getIconWidth(), i.getIconHeight(), null);
 		g.dispose();
 		return new ImageIcon(bi);
 	}
