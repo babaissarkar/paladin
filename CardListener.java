@@ -87,7 +87,7 @@ public class CardListener implements MouseListener, ActionListener, MouseWheelLi
 			CLabel label;
 			label = (CLabel) mev.getComponent();
 			this.setLbuf(label);
-			Card dcard = (Card) label.getCard();
+			Card dcard = (Card) label.grCard();
 			this.setCard(dcard);
 			this.setMoved(true);
 		}
