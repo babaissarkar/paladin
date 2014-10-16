@@ -1,4 +1,5 @@
 package clz;
+
 /*
  * CScan.java
  * 
@@ -23,6 +24,9 @@ package clz;
  */
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +34,7 @@ import java.util.Scanner;
 import java.util.Stack;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class CScan extends JFrame {
 	
@@ -67,6 +72,40 @@ public class CScan extends JFrame {
 				deck.addElement(new Card(i.next(), i.next()));
 				id++;
 			}
+		} finally {
+			s.close();
+		}
+		return deck;
+	}
+	
+public Stack<Card> scan(File f) {
+		
+		Scanner s = null;
+		List<String> clist = new ArrayList<String>();
+		Stack<Card> deck = new Stack<Card>();
+		Iterator<String> i;
+		@SuppressWarnings("unused")
+		int id = 0;
+		try {
+			s = new Scanner(new BufferedInputStream(new FileInputStream(f)));
+			s.useDelimiter(";\n");
+			while (s.hasNext()) {
+				clist.add(s.next());
+				//System.out.println(s.next()); //for debuging
+			}
+			i = clist.iterator();
+			while (i.hasNext()) {
+				//System.out.println(i.next()); //for debuging
+				
+				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
+				i.next(), i.next(), i.next(), i.next(), i.next())); 
+				Used when a deckfile states all atrributes of a card*/
+				deck.addElement(new Card(i.next(), i.next()));
+				id++;
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
+					"Sorry!", JOptionPane.ERROR_MESSAGE);
 		} finally {
 			s.close();
 		}

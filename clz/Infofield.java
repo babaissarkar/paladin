@@ -1,4 +1,5 @@
 package clz;
+
 /*
  *      Infofield.java
  *
@@ -22,10 +23,8 @@ package clz;
  *
  */
 
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,6 +32,7 @@ import java.util.Stack;
 
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -40,6 +40,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -50,65 +51,80 @@ public class Infofield extends JFrame implements ActionListener {
 
 private static final long serialVersionUID = 6555470512771760138L;
 
-private JFrame win = new JFrame("Card Image");
+public JFrame win = new JFrame("Card Image");
 private JLabel[] jlb = new JLabel[10];
 private JTextField[] jtf = new JTextField[10];
-private JDesktopPane cntpane = new JDesktopPane();
-private JDesktopPane cntpane2 = new JDesktopPane();
+private JDesktopPane cntpane, cntpane2, cntpane3;
 private CLabel label;
 private JTextArea jta1;
-private JButton b, b2, b3 /*, bRemove*/ ;
-private JScrollPane jscroll;
+private JButton b, b2;
+private JScrollPane jscroll, wscrl;
 private JMenuBar jmb;
 private JMenu jmFile;
 private JMenuItem jmiExit, jmiOpen;
+private JFileChooser jfc;
 private Card card;
-private JMenuItem jmiShowImage;
 private int deckid = 0;
 private Stack<Card> deck;
+private DeckViewer dv;
+private JTabbedPane tpane;
 
 /**
  * @author babaissarkar
  *
  */
 public Infofield() {
-	deck = new Stack<Card>();
-	this.setContentPane(cntpane);
-	cntpane.setLayout(new BorderLayout());
-	win.setContentPane(cntpane2);
-	cntpane2.setLayout(new GridLayout(1, 0));
-	setLayout(new GridLayout(5, 4));
-	createPlayfield();
-	this.setSize(600, 400);
-	this.setTitle("Card Info");
-	win.setSize(new Dimension(200, 200));
-	win.setSize(400, 400);
-	win.setLocation(20, 40);
+	//Initializing
+	jfc = new JFileChooser();
+	tpane = new JTabbedPane();
+	cntpane = new JDesktopPane();
+	cntpane.setLayout(new GridLayout(5, 4));
+	cntpane2 = new JDesktopPane();
+	cntpane2.setLayout(new GridLayout(0, 1));
+	cntpane3 = new JDesktopPane();
+	cntpane3.setLayout(new GridLayout(0, 1));
+	this.setContentPane(cntpane3);
+	createInfofield();
+
+	//Setting the menus
 	jmiExit = new JMenuItem("Exit");
 	jmiExit.addActionListener(this);
 	jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 	jmiOpen = new JMenuItem("Open");
 	jmiOpen.addActionListener(this);
 	jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-	jmiShowImage = new JMenuItem("Show Card Image");
-	jmiShowImage.addActionListener(this);
-	jmiShowImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 	jmFile = new JMenu("File");
 	jmFile.add(jmiOpen);
 	jmFile.add(jmiExit);
-	jmFile.add(jmiShowImage);
 	jmb = new JMenuBar();
 	jmb.add(jmFile);
+	
+	//Setting the properties of this JFrame
 	this.setJMenuBar(jmb);
+	this.setSize(600, 400);
+	this.setLocation(80, 20);
+	this.setTitle("Card Info");
+	this.setIconImage(Toolkit.getDefaultToolkit().getImage(Infofield.class.getResource("/images/INF.png")));
+	this.setAlwaysOnTop(true);
 }
 
-	public void createPlayfield() {
+	public Infofield(Stack<Card> deck) {
+		this();
+		this.deck = deck;
+//		dv = new DeckViewer(this.deck);
+//		dv.btnShow.addActionListener(this);
+//		this.getContentPane().remove(tpane);
+//		tpane.addTab("Deck Viewer", dv);
+//		this.getContentPane().add(tpane);
+		prepareDeck();
+	}
+
+	public void createInfofield() {
+		//Creating the different components
 		b = new JButton("Previous Card");
 		b.addActionListener(this);
 		b2 = new JButton("Next Card");
 		b2.addActionListener(this);
-		b3 = new JButton("Add Card");
-		b3.addActionListener(this);
 		jlb[1] = new JLabel("Name");
 		jtf[1]= new JTextField(20);
 		jlb[2] = new JLabel("Civilization");
@@ -130,6 +146,11 @@ public Infofield() {
 		jtf[8] = new JTextField(20);
 		label = new CLabel(new Card("No Card", "/images/NCRD.jpg"));
 		label.addMouseListener(Battlefield.cl);
+		wscrl = new JScrollPane(label,
+				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		//Adding the components to corresponding JDesktopPanes
 	for (int i = 1; i <= 5; i++) {
 		cntpane.add(jlb[i]);
 		cntpane.add(jtf[i]);
@@ -142,8 +163,10 @@ public Infofield() {
 		cntpane.add(jtf[8]);
 		cntpane.add(b);
 		cntpane.add(b2);
-		cntpane.add(b3);
-		cntpane2.add(label);
+		cntpane2.add(wscrl);
+		tpane.addTab("Infofield", cntpane);
+		tpane.addTab("Card Viewer", cntpane2);
+		cntpane3.add(tpane);
 	}
 	
 	public void setCard(Card card) {
@@ -158,6 +181,7 @@ public Infofield() {
 			jtf[8].setText(card.manano);
 			jta1.setText(card.effects);
 			label.setCard(card);
+			label.showFullImage();
 		}
 	}
 	
@@ -167,7 +191,7 @@ public Infofield() {
 	
 	public void addCard() {
 		deck.add(new Card(
-				jtf[1].getText(),
+			jtf[1].getText(),
 			jtf[5].getText(),
 			jtf[3].getText(),
 			jtf[2].getText(),
@@ -181,13 +205,25 @@ public Infofield() {
 	public final Stack<Card> getDeck() {
 		return this.deck;
 	}
-
+	
 	public final void setDeck(Stack<Card> deck) {
 		this.deck = deck;
-		try {
-			this.setCard(deck.elementAt(deck.size() - 1));
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Deck Not Found.", "Error!", JOptionPane.ERROR_MESSAGE);
+		prepareDeck();
+	}
+
+	public final void prepareDeck() {
+		if (this.deck != null) {
+			dv = new DeckViewer(this.deck);
+			dv.btnShow.addActionListener(this);
+			this.getContentPane().remove(tpane);
+			tpane.addTab("Deck Viewer", dv);
+			this.getContentPane().add(tpane);
+			try {
+				this.setCard(deck.elementAt(deck.size() - 1));
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(this, "Deck Error.", "Sorry!",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 	
@@ -198,9 +234,11 @@ public Infofield() {
 
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == jmiExit) {
-			System.exit(0);
-		} else if (ae.getSource() == jmiShowImage) {
-			win.setVisible(true);
+			this.setVisible(false);
+		} else if(ae.getSource() == jmiOpen) {
+			jfc.showOpenDialog(this);
+			deck = new CScan().scan(jfc.getSelectedFile());
+			prepareDeck();
 		} else if (ae.getSource() == b) {
 			deckid--;
 			try {
@@ -213,8 +251,9 @@ public Infofield() {
 				this.setCard(deck.elementAt(deckid));
 			} catch (ArrayIndexOutOfBoundsException e) {
 			}
+		} else if (ae.getSource() == dv.btnShow) {
+				this.setCard(dv.getCard());
 		}
-
 	}
 }
 

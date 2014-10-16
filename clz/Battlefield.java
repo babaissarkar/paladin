@@ -1,4 +1,5 @@
 package clz;
+
 /*
  * Battlefield2.java
  * 
@@ -26,6 +27,7 @@ package clz;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,6 +41,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -61,37 +64,32 @@ implements ActionListener {
 	private CWindow MG, OG, MRA, ORA;
 	private JMenuBar jmb = new JMenuBar();
 	private JMenu jmAct, jmGame;
-	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR;
-	public static JPopupMenu s1, s2, s3;
-	private JMenuItem jpiShuffle, jpiSearch, jpiSearch2, jpiFlip, jpiTap, jpiUntap, jpiDraw, jpiView;
+	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR, jmiViewDeck, jmiShowTPL;
+	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw, jpiView, jpiViewCard, jpiViewName;
 	private GroupLayout gl, gl2;
 	private Container bc = getContentPane();
-	private static boolean opturn;
 	private ImageIcon imDeck, imGrave;
 	private CScan scan = new CScan();
+	public static JPopupMenu s1, s2, s3;
+	public static boolean opturn;
 	public static ImageIcon imNoCard;
 	private static Stack<Card> deck1, deck2;
 	private static Hand h1, h2;
 	public static CardListener cl = new CardListener();
-	private JMenuItem jmiViewDeck;
 	private Infofield inf, mi, oi;
 	public Card bkCard;
+	private boolean zoomed;
 
 	public Battlefield() {
+		//Setting Icon and Location
+		this.setIconImage(
+				Toolkit.getDefaultToolkit().getImage(
+						Infofield.class.getResource("/images/Icon.png")));
+		this.setLocation(80, 20);
+		
 		//Initializing Deck Viewers and Decks
 		deck1 = new Stack<Card>();
 		deck2 = new Stack<Card>();
-		
-		//Initializing Decks
-        deck1 = scan.scan("/decks/deck1.card");
-        deck2 = scan.scan("/decks/deck2.card");
-		
-        //Initializing Infofield
-        inf = new Infofield();
-        mi = new Infofield();
-        mi.setDeck(deck1);
-        oi = new Infofield();
-        oi.setDeck(deck2);
         
 		//Initializing CWindows
 		MG = new CWindow("My Graveyard", 20, cl);
@@ -102,8 +100,6 @@ implements ActionListener {
 		//Creating JPopupMenus
 		jpiSearch = new JMenuItem("Search");
 		jpiSearch.addActionListener(this);
-		jpiSearch2 = new JMenuItem("Search");
-		jpiSearch2.addActionListener(this);
 		jpiShuffle = new JMenuItem("Shuffle");
 		jpiShuffle.addActionListener(this);
 		jpiTap = new JMenuItem("Tap");
@@ -116,19 +112,20 @@ implements ActionListener {
 		jpiView.addActionListener(this);
 		jpiFlip = new JMenuItem("Flip");
 		jpiFlip.addActionListener(this);
+		jpiViewCard = new JMenuItem("View Full Image");
+		jpiViewCard.addActionListener(this);
+		jpiViewName = new JMenuItem("View Name");
+		jpiViewName.addActionListener(this);
 		s1 = new JPopupMenu();
-		s1.add(jpiSearch2);
+		s1.add(jpiSearch);
 		s1.add(jpiShuffle);
 		s1.add(jpiDraw);
 		s2 = new JPopupMenu();
-		s2.add(jpiSearch);
 		s2.add(jpiView);
 		s3 = new JPopupMenu();
 		s3.add(jpiFlip);
-
-		//Preparing
-		shuffle(deck1);
-		shuffle(deck2);
+		s3.add(jpiViewCard);
+		s3.add(jpiViewName);
 		
 		//Creating Images & Card templates
 		try {
@@ -168,10 +165,16 @@ implements ActionListener {
 		jmiShowOH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
 		jmiShowR = new JMenuItem("Show Reserved Area");
 		jmiShowR.addActionListener(this);
+		jmiViewDeck = new JMenuItem("View Deck");
+		jmiViewDeck.addActionListener(this);
+		jmiShowTPL = new JMenuItem("Turn Player");
+		jmiShowTPL.addActionListener(this);
 		jmGame.add(jmiExit);
 		jmGame.add(jmiEndTurn);
+		jmGame.add(jmiShowTPL);
 		jmAct.add(jmiShowMH);
 		jmAct.add(jmiShowOH);
+		jmAct.add(jmiViewDeck);
 		jmAct.add(jmiShowR);
 		jmb.add(jmAct);
 		jmb.add(jmGame);
@@ -182,7 +185,7 @@ implements ActionListener {
 		jplOB = new JPanel();
 		jlbMD = new CLabel(imDeck);
 		jlbOD = new CLabel(imDeck);
-		for (int i = 0; i <= 10; i++) {
+		for (int i = 0; i < 10; i++) {
 		jlbMS[i+1] = new CLabel(imNoCard);
 		jlbOS[i+1] = new CLabel(imNoCard);
 		}
@@ -195,7 +198,7 @@ implements ActionListener {
 		jlbOD.addMouseListener(cl);
 		jlbMG.addMouseListener(cl);
 		jlbOG.addMouseListener(cl);
-		for (int i = 0; i <= 10; i++) {
+		for (int i = 0; i < 10; i++) {
 		jlbMS[i+1].addMouseListener(cl);
 		jlbOS[i+1].addMouseListener(cl);
 		jlbMS[i+1].addMouseWheelListener(cl);
@@ -224,134 +227,134 @@ implements ActionListener {
 		}
 		
 		//Setting up Group Layout
-				//GroupLayout 1
-				gl = new GroupLayout(jplMB);
-				jplMB.setLayout(gl);
-				gl.setAutoCreateGaps(true);
-				gl.setAutoCreateContainerGaps(true);
-				GroupLayout.SequentialGroup mhGroup = gl.createSequentialGroup();
-				GroupLayout.SequentialGroup mvGroup = gl.createSequentialGroup();
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[1]).addComponent(jlbMG).addComponent(jlbMM[1]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[12]).addComponent(jlbMS[1]).addComponent(jlbMM[12]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[11]).addComponent(jlbMS[2]).addComponent(jlbMM[11]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[10]).addComponent(jlbMS[3]).addComponent(jlbMM[10]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[9]).addComponent(jlbMS[4]).addComponent(jlbMM[9]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[8]).addComponent(jlbMS[5]).addComponent(jlbMM[8]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[7]).addComponent(jlbMS[6]).addComponent(jlbMM[7]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[6]).addComponent(jlbMS[7]).addComponent(jlbMM[6]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[5]).addComponent(jlbMS[8]).addComponent(jlbMM[5]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[4]).addComponent(jlbMS[9]).addComponent(jlbMM[4]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[3]).addComponent(jlbMS[10]).addComponent(jlbMM[3]));
-				mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[2]).addComponent(jlbMD).addComponent(jlbMM[2]));
-				gl.setHorizontalGroup(mhGroup);
-				mvGroup.addGroup(gl.createParallelGroup()
-						.addComponent(jlbMB[12])
-						.addComponent(jlbMB[11])
-						.addComponent(jlbMB[10])
-						.addComponent(jlbMB[9])
-						.addComponent(jlbMB[8])
-						.addComponent(jlbMB[7])
-						.addComponent(jlbMB[6])
-						.addComponent(jlbMB[5])
-						.addComponent(jlbMB[4])
-						.addComponent(jlbMB[3])
-						.addComponent(jlbMB[2])
-						.addComponent(jlbMB[1])
-						);
-				mvGroup.addGroup(gl.createParallelGroup()
-						.addComponent(jlbMG)
-						.addComponent(jlbMS[1])
-						.addComponent(jlbMS[2])
-						.addComponent(jlbMS[3])
-						.addComponent(jlbMS[4])
-						.addComponent(jlbMS[5])
-						.addComponent(jlbMS[6])
-						.addComponent(jlbMS[7])
-						.addComponent(jlbMS[8])
-						.addComponent(jlbMS[9])
-						.addComponent(jlbMS[10])
-						.addComponent(jlbMD)
-						);
-				mvGroup.addGroup(gl.createParallelGroup()
-						.addComponent(jlbMM[12])
-						.addComponent(jlbMM[11])
-						.addComponent(jlbMM[10])
-						.addComponent(jlbMM[9])
-						.addComponent(jlbMM[8])
-						.addComponent(jlbMM[7])
-						.addComponent(jlbMM[6])
-						.addComponent(jlbMM[5])
-						.addComponent(jlbMM[4])
-						.addComponent(jlbMM[3])
-						.addComponent(jlbMM[2])
-						.addComponent(jlbMM[1])
-						);
+		//GroupLayout 1
+		gl = new GroupLayout(jplMB);
+		jplMB.setLayout(gl);
+		gl.setAutoCreateGaps(true);
+		gl.setAutoCreateContainerGaps(true);
+		GroupLayout.SequentialGroup mhGroup = gl.createSequentialGroup();
+		GroupLayout.SequentialGroup mvGroup = gl.createSequentialGroup();
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[12]).addComponent(jlbMS[1]).addComponent(jlbMM[12]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[11]).addComponent(jlbMS[2]).addComponent(jlbMM[11]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[10]).addComponent(jlbMS[3]).addComponent(jlbMM[10]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[9]).addComponent(jlbMS[4]).addComponent(jlbMM[9]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[8]).addComponent(jlbMS[5]).addComponent(jlbMM[8]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[7]).addComponent(jlbMS[6]).addComponent(jlbMM[7]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[6]).addComponent(jlbMS[7]).addComponent(jlbMM[6]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[5]).addComponent(jlbMS[8]).addComponent(jlbMM[5]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[4]).addComponent(jlbMS[9]).addComponent(jlbMM[4]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[3]).addComponent(jlbMS[10]).addComponent(jlbMM[3]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[2]).addComponent(jlbMD).addComponent(jlbMM[2]));
+		mhGroup.addGroup(gl.createParallelGroup().addComponent(jlbMB[1]).addComponent(jlbMG).addComponent(jlbMM[1]));
+		gl.setHorizontalGroup(mhGroup);
+		mvGroup.addGroup(gl.createParallelGroup()
+				.addComponent(jlbMB[12])
+				.addComponent(jlbMB[11])
+				.addComponent(jlbMB[10])
+				.addComponent(jlbMB[9])
+				.addComponent(jlbMB[8])
+				.addComponent(jlbMB[7])
+				.addComponent(jlbMB[6])
+				.addComponent(jlbMB[5])
+				.addComponent(jlbMB[4])
+				.addComponent(jlbMB[3])
+				.addComponent(jlbMB[2])
+				.addComponent(jlbMB[1])
+				);
+		mvGroup.addGroup(gl.createParallelGroup()
+				.addComponent(jlbMS[1])
+				.addComponent(jlbMS[2])
+				.addComponent(jlbMS[3])
+				.addComponent(jlbMS[4])
+				.addComponent(jlbMS[5])
+				.addComponent(jlbMS[6])
+				.addComponent(jlbMS[7])
+				.addComponent(jlbMS[8])
+				.addComponent(jlbMS[9])
+				.addComponent(jlbMS[10])
+				.addComponent(jlbMD)
+				.addComponent(jlbMG)
+				);
+		mvGroup.addGroup(gl.createParallelGroup()
+				.addComponent(jlbMM[12])
+				.addComponent(jlbMM[11])
+				.addComponent(jlbMM[10])
+				.addComponent(jlbMM[9])
+				.addComponent(jlbMM[8])
+				.addComponent(jlbMM[7])
+				.addComponent(jlbMM[6])
+				.addComponent(jlbMM[5])
+				.addComponent(jlbMM[4])
+				.addComponent(jlbMM[3])
+				.addComponent(jlbMM[2])
+				.addComponent(jlbMM[1])
+				);
 
-				gl.setVerticalGroup(mvGroup);
-				
-				
-				//GroupLayout 2
-				gl2 = new GroupLayout(jplOB);
-				jplOB.setLayout(gl2);
-				gl2.setAutoCreateGaps(true);
-				gl2.setAutoCreateContainerGaps(true);
-				GroupLayout.SequentialGroup ohGroup = gl2.createSequentialGroup();
-				GroupLayout.SequentialGroup ovGroup = gl2.createSequentialGroup();
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[2]).addComponent(jlbOD).addComponent(jlbOM[2]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[3]).addComponent(jlbOS[1]).addComponent(jlbOM[3]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[4]).addComponent(jlbOS[2]).addComponent(jlbOM[4]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[5]).addComponent(jlbOS[3]).addComponent(jlbOM[5]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[6]).addComponent(jlbOS[4]).addComponent(jlbOM[6]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[7]).addComponent(jlbOS[5]).addComponent(jlbOM[7]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[8]).addComponent(jlbOS[6]).addComponent(jlbOM[8]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[9]).addComponent(jlbOS[7]).addComponent(jlbOM[9]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[10]).addComponent(jlbOS[8]).addComponent(jlbOM[10]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[11]).addComponent(jlbOS[9]).addComponent(jlbOM[11]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[12]).addComponent(jlbOS[10]).addComponent(jlbOM[12]));
-				ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[1]).addComponent(jlbOG).addComponent(jlbOM[1]));
-				gl2.setHorizontalGroup(ohGroup);
-				ovGroup.addGroup(gl2.createParallelGroup()
-						.addComponent(jlbOM[1])
-						.addComponent(jlbOM[2])
-						.addComponent(jlbOM[3])
-						.addComponent(jlbOM[4])
-						.addComponent(jlbOM[5])
-						.addComponent(jlbOM[6])
-						.addComponent(jlbOM[7])
-						.addComponent(jlbOM[8])
-						.addComponent(jlbOM[9])
-						.addComponent(jlbOM[10])
-						.addComponent(jlbOM[11])
-						.addComponent(jlbOM[12])
-						);
-				ovGroup.addGroup(gl2.createParallelGroup()
-						.addComponent(jlbOD)
-						.addComponent(jlbOS[1])
-						.addComponent(jlbOS[2])
-						.addComponent(jlbOS[3])
-						.addComponent(jlbOS[4])
-						.addComponent(jlbOS[5])
-						.addComponent(jlbOS[6])
-						.addComponent(jlbOS[7])
-						.addComponent(jlbOS[8])
-						.addComponent(jlbOS[9])
-						.addComponent(jlbOS[10])
-						.addComponent(jlbOG));
-				ovGroup.addGroup(gl2.createParallelGroup()
-						.addComponent(jlbOB[1])
-						.addComponent(jlbOB[2])
-						.addComponent(jlbOB[3])
-						.addComponent(jlbOB[4])
-						.addComponent(jlbOB[5])
-						.addComponent(jlbOB[6])
-						.addComponent(jlbOB[7])
-						.addComponent(jlbOB[8])
-						.addComponent(jlbOB[9])
-						.addComponent(jlbOB[10])
-						.addComponent(jlbOB[11])
-						.addComponent(jlbOB[12])
-						);
-				gl2.setVerticalGroup(ovGroup);
+		gl.setVerticalGroup(mvGroup);
+		
+		
+		//GroupLayout 2
+		gl2 = new GroupLayout(jplOB);
+		jplOB.setLayout(gl2);
+		gl2.setAutoCreateGaps(true);
+		gl2.setAutoCreateContainerGaps(true);
+		GroupLayout.SequentialGroup ohGroup = gl2.createSequentialGroup();
+		GroupLayout.SequentialGroup ovGroup = gl2.createSequentialGroup();
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[1]).addComponent(jlbOG).addComponent(jlbOM[1]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[2]).addComponent(jlbOD).addComponent(jlbOM[2]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[3]).addComponent(jlbOS[1]).addComponent(jlbOM[3]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[4]).addComponent(jlbOS[2]).addComponent(jlbOM[4]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[5]).addComponent(jlbOS[3]).addComponent(jlbOM[5]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[6]).addComponent(jlbOS[4]).addComponent(jlbOM[6]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[7]).addComponent(jlbOS[5]).addComponent(jlbOM[7]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[8]).addComponent(jlbOS[6]).addComponent(jlbOM[8]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[9]).addComponent(jlbOS[7]).addComponent(jlbOM[9]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[10]).addComponent(jlbOS[8]).addComponent(jlbOM[10]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[11]).addComponent(jlbOS[9]).addComponent(jlbOM[11]));
+		ohGroup.addGroup(gl2.createParallelGroup().addComponent(jlbOB[12]).addComponent(jlbOS[10]).addComponent(jlbOM[12]));
+		gl2.setHorizontalGroup(ohGroup);
+		ovGroup.addGroup(gl2.createParallelGroup()
+				.addComponent(jlbOM[1])
+				.addComponent(jlbOM[2])
+				.addComponent(jlbOM[3])
+				.addComponent(jlbOM[4])
+				.addComponent(jlbOM[5])
+				.addComponent(jlbOM[6])
+				.addComponent(jlbOM[7])
+				.addComponent(jlbOM[8])
+				.addComponent(jlbOM[9])
+				.addComponent(jlbOM[10])
+				.addComponent(jlbOM[11])
+				.addComponent(jlbOM[12])
+				);
+		ovGroup.addGroup(gl2.createParallelGroup()
+				.addComponent(jlbOG)
+				.addComponent(jlbOD)
+				.addComponent(jlbOS[1])
+				.addComponent(jlbOS[2])
+				.addComponent(jlbOS[3])
+				.addComponent(jlbOS[4])
+				.addComponent(jlbOS[5])
+				.addComponent(jlbOS[6])
+				.addComponent(jlbOS[7])
+				.addComponent(jlbOS[8])
+				.addComponent(jlbOS[9])
+				.addComponent(jlbOS[10]));
+		ovGroup.addGroup(gl2.createParallelGroup()
+				.addComponent(jlbOB[1])
+				.addComponent(jlbOB[2])
+				.addComponent(jlbOB[3])
+				.addComponent(jlbOB[4])
+				.addComponent(jlbOB[5])
+				.addComponent(jlbOB[6])
+				.addComponent(jlbOB[7])
+				.addComponent(jlbOB[8])
+				.addComponent(jlbOB[9])
+				.addComponent(jlbOB[10])
+				.addComponent(jlbOB[11])
+				.addComponent(jlbOB[12])
+				);
+		gl2.setVerticalGroup(ovGroup);
 		
 		//Adding the JPanels
 		bc.setLayout(new BorderLayout());
@@ -360,6 +363,21 @@ implements ActionListener {
 		
 		//Finalizing
 		this.setVisible(true);
+		
+		 //Initializing Decks
+		deck1 = scan.scan("/deck1.txt");
+        deck2 = scan.scan("/deck2.txt");
+		
+        //Initializing Infofield
+        inf = new Infofield();
+        mi = new Infofield(deck1);
+        oi = new Infofield(deck2);
+		
+		//Preparing
+		shuffle(deck1);
+		shuffle(deck2);
+		
+		//Begining the game
 		proceed();
 	}
 	/**
@@ -386,43 +404,31 @@ implements ActionListener {
 		}
 	}
 
-
-	public void addToShield(Card card, int index, boolean opturn) {
-		if (opturn) {
-			jlbMS[index].setCard(card);
-			jlbMS[index].flip();
-		} else {
-			jlbOS[index].setCard(card);
-			jlbOS[index].flip();
-		}
-	}
-
 	private void proceed() {
 		if (!(deck1.isEmpty() && deck2.isEmpty())) {
 		for (int k = 0; k < 5; k++) {
-			addToShield(deck1.pop(), k+1, true);
-			addToShield(deck2.pop(), k+1, false);
 			draw(true);
 			draw(false);
-		}
+			}
 		}
 		h1.showHand();
 		opturn = false;
-	}
-
-	public void draw(Stack<Card> deck, Hand h) {
-		h.addCard(deck.pop());
 	}
 
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == jmiExit) {
 			System.exit(0);
 		} else if(ae.getSource() == jmiEndTurn) {
+			String player;
 			if (opturn) {
 				opturn = false;
+				player = "1st Player - Me";
 			} else {
 				opturn = true;
+				player = "2nd Player - Opponent";
 			}
+			JOptionPane.showMessageDialog(this, "The current player is : " + player, "Turn Ended", JOptionPane.INFORMATION_MESSAGE);
+			
 		} else if(ae.getSource() == jpiShuffle) {
 			if (opturn) {
 				shuffle(deck2);
@@ -439,15 +445,25 @@ implements ActionListener {
 			if (!h2.isVisible()) {
 			h2.setVisible(true);
 			}
-			
-		} else if(ae.getSource() == jpiSearch2) {
-			if (s1.getInvoker() == jlbOG) {
+		} else if(ae.getSource() == jpiSearch) {
+			if (s1.getInvoker() == jlbOD) {
 				inf.setDeck(deck2);
-			} else if(s1.getInvoker() == jlbMG) {
-				inf.setDeck(deck2);
+			} else if(s1.getInvoker() == jlbMD) {
+				inf.setDeck(deck1);
 			}
 			inf.setVisible(true);
-			
+//		} else if (ae.getSource() == jpiView) {
+//			if (s2.getInvoker() == jlbOG) {
+//				if (!OG.isVisible()) {
+//					OG.setVisible(true);
+//				}
+//			} else {
+//				if (s2.getInvoker() == jlbMG) {
+//					if (!MG.isVisible()) {
+//						MG.setVisible(true);
+//					}
+//				}
+//			}
 		} else if(ae.getSource() == jmiShowR) {
 			if (opturn) {
 				ORA.showWin();
@@ -464,28 +480,47 @@ implements ActionListener {
 			
 		} else if(ae.getSource() == jmiViewDeck) {
 			if (opturn) {
-				if (oi.isVisible()) {
+				if (oi.isVisible() == false) {
 					oi.setVisible(true);
 				}
 			} else {
-				if (mi.isVisible()) {
+				if (mi.isVisible() == false) {
 					mi.setVisible(true);
 				}
 			}
 		} else if(ae.getSource() == jpiFlip) {
 			CLabel label = (CLabel) s3.getInvoker();
 			label.flip();
+		} else if(ae.getSource() == jpiViewCard) {
+			CLabel lbl = (CLabel) s3.getInvoker();
+			if (zoomed) {
+				lbl.showNormalImage();
+				zoomed = false;
+			} else {
+				lbl.showFullImage();
+				zoomed = true;
+			}
+		} else if(ae.getSource() == jpiViewName) {
+			CLabel label = (CLabel) s3.getInvoker();
+			String cardname = label.getCard().name;
+			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname, "Card Name", JOptionPane.INFORMATION_MESSAGE);
+		} else if(ae.getSource() == jmiShowTPL) {
+			String plname;
+			if (opturn) {
+				plname = "2nd Player - Opponent";
+			} else {
+				plname = "1st Player - Me";
+			}
+			JOptionPane.showMessageDialog(this, "The current player is : " + plname, "Current Player", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
 	public static void draw(boolean opt) {
 		if (opt) {
-			h2.addCard(deck2.pop());
+			h2.add(deck2.pop());
 		} else {
-			h1.addCard(deck1.pop());
+			h1.add(deck1.pop());
 		}
 	}
-	
-	
 }
 

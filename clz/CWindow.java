@@ -1,4 +1,5 @@
 package clz;
+
 /*
  * CWindow.java
  * 
@@ -28,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
+import java.awt.Color;
 
 public class CWindow extends JFrame {
 	/**
@@ -41,6 +43,8 @@ public class CWindow extends JFrame {
 	private int id;
 	
 	public CWindow(String title, int noc, CardListener c) {
+		setAlwaysOnTop(true);
+		setBackground(Color.WHITE);
 		id = 0;
 		this.setTitle(title);
 		this.setSize(new Dimension(600, 600));
