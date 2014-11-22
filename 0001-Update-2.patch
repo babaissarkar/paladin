@@ -1,0 +1,866 @@
+From 054e759dbe8de259468ba117df1cb7dff9344354 Mon Sep 17 00:00:00 2001
+From: babaissarkar <suvrax@gmail.com>
+Date: Thu, 25 Sep 2014 20:41:23 +0530
+Subject: [PATCH 1/1] Update 2
+
+---
+ CScan.java        |   75 ------------------
+ CWindow.java      |   64 ----------------
+ Card.java         |  172 -----------------------------------------
+ CardListener.java |  149 ------------------------------------
+ Hand.java         |  128 -------------------------------
+ Infofield.java    |  219 -----------------------------------------------------
+ 6 files changed, 807 deletions(-)
+ delete mode 100644 CScan.java
+ delete mode 100644 CWindow.java
+ delete mode 100644 Card.java
+ delete mode 100644 CardListener.java
+ delete mode 100644 Hand.java
+ delete mode 100644 Infofield.java
+
+diff --git a/CScan.java b/CScan.java
+deleted file mode 100644
+index 3444e93..0000000
+--- a/CScan.java
++++ /dev/null
+@@ -1,75 +0,0 @@
+-/*
+- * CScan.java
+- * 
+- * Copyright 2014 Subhraman Sarkar <subhraman@subhraman-Inspiron-660s>
+- * 
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- * 
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- * 
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- * MA 02110-1301, USA.
+- * 
+- * 
+- */
+-
+-import java.io.BufferedInputStream;
+-import java.util.ArrayList;
+-import java.util.Iterator;
+-import java.util.List;
+-import java.util.Scanner;
+-import java.util.Stack;
+-
+-import javax.swing.JFrame;
+-
+-public class CScan extends JFrame {
+-	
+-	
+-	private static final long serialVersionUID = -1826147733065781359L;
+-	public int j;
+-	
+-	public CScan() {
+-		setTitle("Open");
+-	}
+-	
+-
+-	public Stack<Card> scan(String path) {
+-		
+-		Scanner s = null;
+-		List<String> clist = new ArrayList<String>();
+-		Stack<Card> deck = new Stack<Card>();
+-		Iterator<String> i;
+-		@SuppressWarnings("unused")
+-		int id = 0;
+-		try {
+-			s = new Scanner(new BufferedInputStream(getClass().getResourceAsStream(path)));
+-			s.useDelimiter(";\n");
+-			while (s.hasNext()) {
+-				clist.add(s.next());
+-				//System.out.println(s.next()); //for debuging
+-			}
+-			i = clist.iterator();
+-			while (i.hasNext()) {
+-				//System.out.println(i.next()); //for debuging
+-				
+-				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
+-				i.next(), i.next(), i.next(), i.next(), i.next())); 
+-				Used when a deckfile states all atrributes of a card*/
+-				deck.addElement(new Card(i.next(), i.next()));
+-				id++;
+-			}
+-		} finally {
+-			s.close();
+-		}
+-		return deck;
+-	}
+-
+-}
+diff --git a/CWindow.java b/CWindow.java
+deleted file mode 100644
+index 174f576..0000000
+--- a/CWindow.java
++++ /dev/null
+@@ -1,64 +0,0 @@
+-/*
+- * CWindow.java
+- * 
+- * Copyright 2014 Subhraman Sarkar <subhraman@subhraman-Inspiron-660s>
+- * 
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- * 
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- * 
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- * MA 02110-1301, USA.
+- * 
+- * 
+- */
+-
+-
+-import java.awt.Container;
+-import java.awt.Dimension;
+-import java.awt.GridLayout;
+-
+-import javax.swing.JFrame;
+-
+-public class CWindow extends JFrame {
+-	/**
+-	 * 
+-	 */
+-	private static final long serialVersionUID = 1L;
+-	private Container cnp = this.getContentPane();
+-	private GridLayout g = new GridLayout(5, 6);
+-	private CLabel[] labels = new CLabel[50];
+-	private Card noCard = new Card("No Card", "/images/NCRD.jpg");
+-	private int id;
+-	
+-	public CWindow(String title, int noc, CardListener c) {
+-		id = 0;
+-		this.setTitle(title);
+-		this.setSize(new Dimension(600, 600));
+-		g.setHgap(4);
+-		g.setVgap(4);
+-		cnp.setLayout(g);
+-		for (int j = 0; j < noc; j++) {
+-			labels[j+1] = new CLabel(noCard);
+-			labels[j+1].addMouseListener(c);
+-			cnp.add(labels[j+1]);
+-		}
+-	}
+-	
+-	public void addCard(Card card) {
+-		labels[id+1].setCard(card);
+-		id++;
+-	}
+-	
+-	public void showWin() {
+-		this.setVisible(true);
+-	}
+-}
+diff --git a/Card.java b/Card.java
+deleted file mode 100644
+index 968b646..0000000
+--- a/Card.java
++++ /dev/null
+@@ -1,172 +0,0 @@
+-/*
+- *      Card.java
+- *
+- *      Copyright 2014 babai sarkar <bsarkar@ssarkar-Inspiron>
+- *
+- *      This program is free software; you can redistribute it and/or modify
+- *      it under the terms of the GNU General Public License as published by
+- *      the Free Software Foundation; either version 2 of the License, or
+- *      (at your option) any later version.
+- *
+- *      This program is distributed in the hope that it will be useful,
+- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *      GNU General Public License for more details.
+- *
+- *      You should have received a copy of the GNU General Public License
+- *      along with this program; if not, write to the Free Software
+- *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- *      MA 02110-1301, USA.
+- *
+- *
+- */
+-
+-
+-import java.io.IOException;
+-//import java.util.Vector;
+-
+-import javax.imageio.ImageIO;
+-import javax.swing.ImageIcon;
+-
+-public class Card {
+-	//basic structure of a digital card
+-	public String name, race, type, civilization, effects;
+-	public String cost, power, manano, id;
+-	public ImageIcon imCard;
+-	public ImageIcon bkCard;
+-	
+-	/*
+-	 * The state variable denotes the current
+-	 * state of the Battlefield. 0 means normal.
+-	 * Players can continue playing. 1 means conditon
+-	 * is abnormal for the oppponent. 2 means the
+-	 * condition is abnormal for the current
+-	 * player. 3 means abnormal for both players.
+-	 */
+-	public static int state;
+-	//protected boolean attacks, attacked, blocks, blocked, tapped;
+-	//public static Vector<Card> vInterruptor = new Vector<Card>();
+-	
+-	public Card() {
+-		try {
+-			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
+-		} catch (IOException e) {
+-			this.bkCard = null;
+-		}
+-	}
+-	
+-	public Card(String name0, String path0) {
+-		try {
+-			this.bkCard = CLabel.scale(new ImageIcon(
+-					ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg"))));
+-		} catch (IOException e) {
+-			this.bkCard = null;
+-		}
+-		this.name = name0;
+-		try {
+-			this.imCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream(path0)));
+-		} catch (IOException e) {
+-			this.imCard = null;
+-		}
+-	}
+-	
+-	public Card(String name0, ImageIcon im) {
+-		try {
+-			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
+-		} catch (IOException e) {
+-			this.bkCard = null;
+-		}
+-		this.name = name0;
+-		this.imCard = im;
+-	}
+-
+-	
+-	public Card(String name1, String race1, String type1, String civilization1,
+-			String cost1, String power1, String manano1, String id1, String effects, String path1) {
+-		try {
+-			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
+-		} catch (IOException e) {
+-			this.bkCard = null;
+-		}
+-		this.name = name1;
+-		this.race = race1;
+-		this.type = type1;
+-		this.civilization = civilization1;
+-		this.cost = cost1;
+-		this.power = power1;
+-		this.manano = manano1;
+-		this.id = id1;
+-		try {
+-			this.imCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream(path1)));
+-		} catch (IOException e) {
+-			this.imCard = null;
+-		}
+-	}
+-	
+-	public Card(String name1, String race1, String type1, String civilization1,
+-			String cost1, String power1, String manano1, String id1, String effects) {
+-		try {
+-			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
+-		} catch (IOException e) {
+-			this.bkCard = null;
+-		}
+-		this.name = name1;
+-		this.race = race1;
+-		this.type = type1;
+-		this.civilization = civilization1;
+-		this.cost = cost1;
+-		this.power = power1;
+-		this.manano = manano1;
+-		this.id = id1;
+-		this.effects = effects;
+-		this.imCard = null;
+-	}
+-
+-	/*public static Card getInt(int idx) {
+-		return vInterruptor.elementAt(idx);
+-	}
+-	
+-	public void stateChange(int st) {
+-		state = st;
+-		vInterruptor.addElement(this);
+-	}*/
+-
+-	public ImageIcon getImCard() {
+-		return this.imCard;
+-	}
+-
+-	public void setImCard(ImageIcon imCard) {
+-		this.imCard = imCard;
+-	}
+-	
+-
+-	/*
+-	 * For automatic resolving of abilities.
+-	 * 
+-	//Is called when the creature is put into the battle zone.
+-	public void init() {
+-	}
+-	
+-	//Is called when a card attacks.
+-	public abstract void attack();
+-
+-	//Occurs when a card blocks.
+-	public abstract void block();
+-
+-	//Occurs when a card taps (i. e. due to a tap ability).
+-	public abstract void tap();
+-
+-	public boolean isTapped() {
+-		return tapped;
+-	}
+-
+-	public boolean isAttacking() {
+-		return attacks;
+-	}
+-
+-	public boolean isBlocking() {
+-		return blocks;
+-	}*/
+-
+-}
+-
+diff --git a/CardListener.java b/CardListener.java
+deleted file mode 100644
+index 21827c6..0000000
+--- a/CardListener.java
++++ /dev/null
+@@ -1,149 +0,0 @@
+-/*
+- * CardListener.java
+- * 
+- * Copyright 2014 Subhraman Sarkar <subhraman@subhraman-Inspiron-660s>
+- * 
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- * 
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- * 
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- * MA 02110-1301, USA.
+- * 
+- * 
+- */
+-
+-import java.awt.event.ActionEvent;
+-import java.awt.event.ActionListener;
+-import java.awt.event.MouseEvent;
+-import java.awt.event.MouseListener;
+-import java.awt.event.MouseWheelEvent;
+-import java.awt.event.MouseWheelListener;
+-import java.io.File;
+-import java.io.IOException;
+-
+-import javax.imageio.ImageIO;
+-import javax.swing.ImageIcon;
+-import javax.swing.JLabel;
+-
+-
+-public class CardListener implements MouseListener, ActionListener, MouseWheelListener {
+-
+-	private boolean moved;
+-	private ImageIcon imBuf;
+-	public Card bCard, noCard;
+-	public CLabel lbuf;
+-
+-	public CardListener() {
+-		try {
+-				new ImageIcon(ImageIO.read(new File("/images/NCRD.jpg")));
+-			} catch (IOException ioe) {
+-				//imNoCard = null;
+-			}
+-		noCard = new Card("No Card", "/images/NCRD.jpg");
+-	}
+-
+-	private boolean isMoved() {
+-		return this.moved;
+-	}
+-	
+-	private void setMoved(boolean moved) {
+-		this.moved = moved;
+-	}
+-	public ImageIcon getImBuf() {
+-		return this.imBuf;
+-	}
+-	
+-	public void setImBuf(ImageIcon imBuf) {
+-		this.imBuf = imBuf;
+-	}
+-	
+-	public Card getCard() {
+-		return bCard;
+-	}
+-
+-	public void setCard(Card bCard) {
+-		this.bCard = bCard;
+-	}
+-	
+-	public final CLabel getLbuf() {
+-		return this.lbuf;
+-	}
+-
+-	public final void setLbuf(CLabel lbuf) {
+-		this.lbuf = lbuf;
+-	}
+-
+-	public void move(MouseEvent mev) {	
+-		if (this.isMoved() == false) {
+-			CLabel label;
+-			label = (CLabel) mev.getComponent();
+-			this.setLbuf(label);
+-			Card dcard = (Card) label.getCard();
+-			this.setCard(dcard);
+-			this.setMoved(true);
+-		}
+-	}
+-	
+-	public void mouseReleased(MouseEvent me2) {
+-	}
+-	
+-	public void mouseExited(MouseEvent me3) {
+-	}
+-	
+-	public void mouseClicked(MouseEvent me4) {
+-	}
+-	
+-	public void mousePressed(MouseEvent me) {
+-		if (me.getSource() == Battlefield.jlbMD||me.getSource() == Battlefield.jlbOD) {
+-			if (me.isPopupTrigger()) {
+-					Battlefield.s1.show(me.getComponent(),
+-					 me.getX(), me.getY());
+-				 }
+-		} else if(me.getSource() instanceof JLabel) {
+-			if (me.isPopupTrigger() && (me.getSource() == Battlefield.jlbMG||me.getSource() == Battlefield.jlbOG)) {
+-					Battlefield.s2.show(me.getComponent(),
+-					 me.getX(), me.getY());
+-			} else if (me.isPopupTrigger() == true &&
+-					!(me.getSource() == Battlefield.jlbMG||me.getSource() == Battlefield.jlbOG)) {
+-				Battlefield.s3.show(me.getComponent(),
+-						 me.getX(), me.getY());
+-			} else if (this.isMoved() == true) {
+-				CLabel label2;
+-				label2 = (CLabel) me.getComponent();
+-				label2.setCard(this.getCard());
+-				this.setMoved(false);
+-			} else {
+-				move(me);
+-			}
+-		}
+-	}
+-
+-	public void mouseWheelMoved(MouseWheelEvent mwe) {
+-			CLabel lbl;
+-			lbl = (CLabel) mwe.getComponent();
+-		if (!lbl.isTapped()) {
+-			lbl.tap();
+-		} else {
+-			lbl.untap();
+-		} 
+-	}
+-
+-	public void actionPerformed(ActionEvent ae) {
+-	}
+-
+-	@Override
+-	public void mouseEntered(MouseEvent arg0) {
+-		// TODO Auto-generated method stub
+-		
+-	}
+-}
+-
+diff --git a/Hand.java b/Hand.java
+deleted file mode 100644
+index 7bc81de..0000000
+--- a/Hand.java
++++ /dev/null
+@@ -1,128 +0,0 @@
+-/*
+- * Hand.java
+- * 
+- * Copyright 2014 Subhraman Sarkar <subhraman@subhraman-Inspiron-660s>
+- * 
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- * 
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- * 
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- * MA 02110-1301, USA.
+- * 
+- * 
+- */
+-
+-
+-import java.awt.Container;
+-import java.awt.Dimension;
+-import java.awt.GridBagConstraints;
+-import java.io.IOException;
+-import java.util.Vector;
+-
+-import javax.imageio.ImageIO;
+-import javax.swing.GroupLayout;
+-import javax.swing.ImageIcon;
+-import javax.swing.JFrame;
+-import javax.swing.JPanel;
+-
+-
+-	@SuppressWarnings("serial")
+-	public class Hand extends JFrame {
+-		public int NoOfCards, cardNo;
+-		public CLabel[] jlbCard = new CLabel[99];
+-		public JPanel jplM;
+-		//public JLabel jlbCard;
+-		public Vector<String> Cards = new Vector<String>();
+-		public Container cntHand = getContentPane();
+-		public GridBagConstraints gb = new GridBagConstraints();
+-		private GroupLayout gx;
+-		public ImageIcon imNoCard, cardImage;
+-		private int j;
+-		
+-		public Hand(String title, CardListener c) {
+-			j = 0;
+-			cardNo = -1;
+-			NoOfCards = -1;
+-			//Creating Group Layouts
+-			//Creating ImageIcon
+-			try {
+-				imNoCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/NCRD.jpg")));
+-				cardImage = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Deck.jpg")));
+-			} catch (IOException e) {
+-				imNoCard = null;
+-				e.printStackTrace();
+-			}
+-			//Creating JLabel
+-			for (int i = 0; i < 10; i++) {
+-			jlbCard[i+1] = new CLabel(imNoCard);
+-			jlbCard[i+1].addMouseListener(c);
+-			}
+-			
+-			//GroupLayout
+-			jplM = new JPanel();
+-			gx = new GroupLayout(jplM);
+-			jplM.setLayout(gx);
+-			gx.setAutoCreateGaps(true);
+-			gx.setAutoCreateContainerGaps(true);
+-			GroupLayout.SequentialGroup phGroup = gx.createSequentialGroup();
+-			GroupLayout.SequentialGroup pvGroup = gx.createSequentialGroup();
+-			
+-			pvGroup.addGroup(gx.createParallelGroup()
+-					.addComponent(jlbCard[1])
+-					.addComponent(jlbCard[2])
+-					.addComponent(jlbCard[3])
+-					.addComponent(jlbCard[4])
+-					.addComponent(jlbCard[5])
+-					);
+-			pvGroup.addGroup(gx.createParallelGroup()
+-					.addComponent(jlbCard[6])
+-					.addComponent(jlbCard[7])
+-					.addComponent(jlbCard[8])
+-					.addComponent(jlbCard[9])
+-					.addComponent(jlbCard[10])
+-					);
+-			gx.setVerticalGroup(pvGroup);
+-			
+-			
+-			phGroup.addGroup(gx.createParallelGroup().addComponent(jlbCard[1]).addComponent(jlbCard[6]));
+-			phGroup.addGroup(gx.createParallelGroup().addComponent(jlbCard[2]).addComponent(jlbCard[7]));
+-			phGroup.addGroup(gx.createParallelGroup().addComponent(jlbCard[3]).addComponent(jlbCard[8]));
+-			phGroup.addGroup(gx.createParallelGroup().addComponent(jlbCard[4]).addComponent(jlbCard[9]));
+-			phGroup.addGroup(gx.createParallelGroup().addComponent(jlbCard[5]).addComponent(jlbCard[10]));
+-			gx.setHorizontalGroup(phGroup);
+-			
+-			//Finalizing
+-			this.setTitle(title);
+-			this.setSize(new Dimension(320, 180));
+-			this.add(jplM);
+-			//showHand();
+-		}
+-		
+-		public void showHand() {
+-			this.setVisible(true);
+-		}
+-		
+-		public void addCard(Card cardname) {
+-			jlbCard[j+1].setCard(cardname);
+-			if (j < 5) {
+-				j++;
+-			}
+-		}
+-
+-	
+-	//public static void main(String[] args) {
+-		//// TODO Auto-generated method stub
+-		//new Hand("My Hand", cl2);
+-	//}
+-	
+-
+-}
+diff --git a/Infofield.java b/Infofield.java
+deleted file mode 100644
+index 3e38cab..0000000
+--- a/Infofield.java
++++ /dev/null
+@@ -1,219 +0,0 @@
+-/*
+- *      Infofield.java
+- *
+- *      Copyright 2014 babai sarkar <bsarkar@ssarkar-Inspiron>
+- *
+- *      This program is free software; you can redistribute it and/or modify
+- *      it under the terms of the GNU General Public License as published by
+- *      the Free Software Foundation; either version 2 of the License, or
+- *      (at your option) any later version.
+- *
+- *      This program is distributed in the hope that it will be useful,
+- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *      GNU General Public License for more details.
+- *
+- *      You should have received a copy of the GNU General Public License
+- *      along with this program; if not, write to the Free Software
+- *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- *      MA 02110-1301, USA.
+- *
+- *
+- */
+-
+-
+-import java.awt.BorderLayout;
+-import java.awt.Dimension;
+-import java.awt.GridLayout;
+-import java.awt.event.ActionEvent;
+-import java.awt.event.ActionListener;
+-import java.awt.event.KeyEvent;
+-import java.util.Stack;
+-
+-import javax.swing.JButton;
+-import javax.swing.JDesktopPane;
+-import javax.swing.JFrame;
+-import javax.swing.JLabel;
+-import javax.swing.JMenu;
+-import javax.swing.JMenuBar;
+-import javax.swing.JMenuItem;
+-import javax.swing.JOptionPane;
+-import javax.swing.JScrollPane;
+-import javax.swing.JTextArea;
+-import javax.swing.JTextField;
+-import javax.swing.KeyStroke;
+-import javax.swing.ScrollPaneConstants;
+-
+-
+-public class Infofield extends JFrame implements ActionListener {
+-
+-private static final long serialVersionUID = 6555470512771760138L;
+-
+-private JFrame win = new JFrame("Card Image");
+-private JLabel[] jlb = new JLabel[10];
+-private JTextField[] jtf = new JTextField[10];
+-private JDesktopPane cntpane = new JDesktopPane();
+-private JDesktopPane cntpane2 = new JDesktopPane();
+-private CLabel label;
+-private JTextArea jta1;
+-private JButton b, b2, b3 /*, bRemove*/ ;
+-private JScrollPane jscroll;
+-private JMenuBar jmb;
+-private JMenu jmFile;
+-private JMenuItem jmiExit, jmiOpen;
+-private Card card;
+-private JMenuItem jmiShowImage;
+-private int deckid = 0;
+-private Stack<Card> deck;
+-
+-/**
+- * @author babaissarkar
+- *
+- */
+-public Infofield() {
+-	deck = new Stack<Card>();
+-	this.setContentPane(cntpane);
+-	cntpane.setLayout(new BorderLayout());
+-	win.setContentPane(cntpane2);
+-	cntpane2.setLayout(new GridLayout(1, 0));
+-	setLayout(new GridLayout(5, 4));
+-	createPlayfield();
+-	this.setSize(600, 400);
+-	this.setTitle("Card Info");
+-	win.setSize(new Dimension(200, 200));
+-	win.setSize(400, 400);
+-	win.setLocation(20, 40);
+-	jmiExit = new JMenuItem("Exit");
+-	jmiExit.addActionListener(this);
+-	jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+-	jmiOpen = new JMenuItem("Open");
+-	jmiOpen.addActionListener(this);
+-	jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+-	jmiShowImage = new JMenuItem("Show Card Image");
+-	jmiShowImage.addActionListener(this);
+-	jmiShowImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+-	jmFile = new JMenu("File");
+-	jmFile.add(jmiOpen);
+-	jmFile.add(jmiExit);
+-	jmFile.add(jmiShowImage);
+-	jmb = new JMenuBar();
+-	jmb.add(jmFile);
+-	this.setJMenuBar(jmb);
+-}
+-
+-	public void createPlayfield() {
+-		b = new JButton("Previous Card");
+-		b.addActionListener(this);
+-		b2 = new JButton("Next Card");
+-		b2.addActionListener(this);
+-		b3 = new JButton("Add Card");
+-		b3.addActionListener(this);
+-		jlb[1] = new JLabel("Name");
+-		jtf[1]= new JTextField(20);
+-		jlb[2] = new JLabel("Civilization");
+-		jtf[2] = new JTextField(20);
+-		jlb[3] = new JLabel("Type");
+-		jtf[3] = new JTextField(20);
+-		jlb[4] = new JLabel("Cost");
+-		jtf[4] = new JTextField(20);
+-		jlb[5] = new JLabel("Race");
+-		jtf[5] = new JTextField(20);
+-		jlb[6] = new JLabel("Effects");
+-		jta1 = new JTextArea(10, 20);
+-		jscroll = new JScrollPane(jta1,
+-	  ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+-	  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+-		jlb[7] = new JLabel("Power");
+-		jtf[7] = new JTextField(20);
+-		jlb[8] = new JLabel("Mana No.");
+-		jtf[8] = new JTextField(20);
+-		label = new CLabel(new Card("No Card", "/images/NCRD.jpg"));
+-		label.addMouseListener(Battlefield.cl);
+-	for (int i = 1; i <= 5; i++) {
+-		cntpane.add(jlb[i]);
+-		cntpane.add(jtf[i]);
+-	}
+-		cntpane.add(jlb[6]);
+-		cntpane.add(jscroll);
+-		cntpane.add(jlb[7]);
+-		cntpane.add(jtf[7]);
+-		cntpane.add(jlb[8]);
+-		cntpane.add(jtf[8]);
+-		cntpane.add(b);
+-		cntpane.add(b2);
+-		cntpane.add(b3);
+-		cntpane2.add(label);
+-	}
+-	
+-	public void setCard(Card card) {
+-		if (!(card == null)) {
+-			this.card = card;
+-			jtf[1].setText(card.name);
+-			jtf[2].setText(card.civilization);
+-			jtf[3].setText(card.type);
+-			jtf[4].setText(card.cost);
+-			jtf[5].setText(card.race);
+-			jtf[7].setText(card.power);
+-			jtf[8].setText(card.manano);
+-			jta1.setText(card.effects);
+-			label.setCard(card);
+-		}
+-	}
+-	
+-	public Card getCard() {
+-		return this.card;
+-	}
+-	
+-	public void addCard() {
+-		deck.add(new Card(
+-				jtf[1].getText(),
+-			jtf[5].getText(),
+-			jtf[3].getText(),
+-			jtf[2].getText(),
+-			jtf[4].getText(),
+-			jtf[7].getText(),
+-			jtf[8].getText(),
+-			"0",
+-			jta1.getText()));
+-	}
+-
+-	public final Stack<Card> getDeck() {
+-		return this.deck;
+-	}
+-
+-	public final void setDeck(Stack<Card> deck) {
+-		this.deck = deck;
+-		try {
+-			this.setCard(deck.elementAt(deck.size() - 1));
+-		} catch (Exception e) {
+-			JOptionPane.showMessageDialog(this, "Deck Error : No Deck.", "Error!", JOptionPane.ERROR_MESSAGE);
+-		}
+-	}
+-	
+-	public static void main(String[] args) {
+-		Infofield i = new Infofield();
+-		i.setVisible(true);
+-	}
+-
+-	public void actionPerformed(ActionEvent ae) {
+-		if(ae.getSource() == jmiExit) {
+-			System.exit(0);
+-		} else if (ae.getSource() == jmiShowImage) {
+-			win.setVisible(true);
+-		} else if (ae.getSource() == b) {
+-			deckid--;
+-			try {
+-			this.setCard(deck.elementAt(deckid));
+-			} catch (ArrayIndexOutOfBoundsException e) {
+-			}
+-		} else if (ae.getSource() == b2) {
+-			deckid++;
+-			try {
+-				this.setCard(deck.elementAt(deckid));
+-			} catch (ArrayIndexOutOfBoundsException e) {
+-			}
+-		}
+-
+-	}
+-}
+-
+-- 
+1.7.9.5
+

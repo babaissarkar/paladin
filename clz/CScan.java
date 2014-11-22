@@ -27,11 +27,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Stack;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -47,11 +48,11 @@ public class CScan extends JFrame {
 	}
 	
 
-	public Stack<Card> scan(String path) {
+	public Deque<Card> scan(String path) {
 		
 		Scanner s = null;
 		List<String> clist = new ArrayList<String>();
-		Stack<Card> deck = new Stack<Card>();
+		Deque<Card> deck = new ArrayDeque<Card>();
 		Iterator<String> i;
 		@SuppressWarnings("unused")
 		int id = 0;
@@ -69,7 +70,7 @@ public class CScan extends JFrame {
 				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
 				i.next(), i.next(), i.next(), i.next(), i.next())); 
 				Used when a deckfile states all atrributes of a card*/
-				deck.addElement(new Card(i.next(), i.next()));
+				deck.addLast(new Card(i.next(), i.next()));
 				id++;
 			}
 		} finally {
@@ -78,11 +79,11 @@ public class CScan extends JFrame {
 		return deck;
 	}
 	
-public Stack<Card> scan(File f) {
+public Deque<Card> scan(File f) {
 		
 		Scanner s = null;
 		List<String> clist = new ArrayList<String>();
-		Stack<Card> deck = new Stack<Card>();
+		Deque<Card> deck = new ArrayDeque<Card>();
 		Iterator<String> i;
 		@SuppressWarnings("unused")
 		int id = 0;
@@ -100,7 +101,7 @@ public Stack<Card> scan(File f) {
 				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
 				i.next(), i.next(), i.next(), i.next(), i.next())); 
 				Used when a deckfile states all atrributes of a card*/
-				deck.addElement(new Card(i.next(), i.next()));
+				deck.addLast(new Card(i.next(), i.next()));
 				id++;
 			}
 		} catch (FileNotFoundException e) {

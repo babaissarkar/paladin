@@ -23,15 +23,14 @@ package clz;
  *
  */
 
+import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Stack;
+import java.util.Deque;
 
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -54,18 +53,16 @@ private static final long serialVersionUID = 6555470512771760138L;
 public JFrame win = new JFrame("Card Image");
 private JLabel[] jlb = new JLabel[10];
 private JTextField[] jtf = new JTextField[10];
-private JDesktopPane cntpane, cntpane2, cntpane3;
+private Container cntpane, cntpane2, cntpane3;
 private CLabel label;
 private JTextArea jta1;
-private JButton b, b2;
 private JScrollPane jscroll, wscrl;
 private JMenuBar jmb;
 private JMenu jmFile;
 private JMenuItem jmiExit, jmiOpen;
 private JFileChooser jfc;
 private Card card;
-private int deckid = 0;
-private Stack<Card> deck;
+private Deque<Card> deck;
 private DeckViewer dv;
 private JTabbedPane tpane;
 
@@ -77,11 +74,11 @@ public Infofield() {
 	//Initializing
 	jfc = new JFileChooser();
 	tpane = new JTabbedPane();
-	cntpane = new JDesktopPane();
+	cntpane = new Container();
 	cntpane.setLayout(new GridLayout(5, 4));
-	cntpane2 = new JDesktopPane();
+	cntpane2 = new Container();
 	cntpane2.setLayout(new GridLayout(0, 1));
-	cntpane3 = new JDesktopPane();
+	cntpane3 = new Container();
 	cntpane3.setLayout(new GridLayout(0, 1));
 	this.setContentPane(cntpane3);
 	createInfofield();
@@ -108,25 +105,16 @@ public Infofield() {
 	this.setAlwaysOnTop(true);
 }
 
-	public Infofield(Stack<Card> deck) {
+	public Infofield(Deque<Card> deck) {
 		this();
 		this.deck = deck;
-//		dv = new DeckViewer(this.deck);
-//		dv.btnShow.addActionListener(this);
-//		this.getContentPane().remove(tpane);
-//		tpane.addTab("Deck Viewer", dv);
-//		this.getContentPane().add(tpane);
 		prepareDeck();
 	}
 
 	public void createInfofield() {
 		//Creating the different components
-		b = new JButton("Previous Card");
-		b.addActionListener(this);
-		b2 = new JButton("Next Card");
-		b2.addActionListener(this);
 		jlb[1] = new JLabel("Name");
-		jtf[1]= new JTextField(20);
+		jtf[1] = new JTextField(20);
 		jlb[2] = new JLabel("Civilization");
 		jtf[2] = new JTextField(20);
 		jlb[3] = new JLabel("Type");
@@ -161,8 +149,6 @@ public Infofield() {
 		cntpane.add(jtf[7]);
 		cntpane.add(jlb[8]);
 		cntpane.add(jtf[8]);
-		cntpane.add(b);
-		cntpane.add(b2);
 		cntpane2.add(wscrl);
 		tpane.addTab("Infofield", cntpane);
 		tpane.addTab("Card Viewer", cntpane2);
@@ -202,11 +188,11 @@ public Infofield() {
 			jta1.getText()));
 	}
 
-	public final Stack<Card> getDeck() {
+	public final Deque<Card> getDeck() {
 		return this.deck;
 	}
 	
-	public final void setDeck(Stack<Card> deck) {
+	public final void setDeck(Deque<Card> deck) {
 		this.deck = deck;
 		prepareDeck();
 	}
@@ -216,10 +202,13 @@ public Infofield() {
 			dv = new DeckViewer(this.deck);
 			dv.btnShow.addActionListener(this);
 			this.getContentPane().remove(tpane);
+			if (tpane.getTabCount() == 3) {
+				tpane.removeTabAt(2);
+			}
 			tpane.addTab("Deck Viewer", dv);
 			this.getContentPane().add(tpane);
 			try {
-				this.setCard(deck.elementAt(deck.size() - 1));
+				this.setCard(deck.getLast());
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(this, "Deck Error.", "Sorry!",
 						JOptionPane.ERROR_MESSAGE);
@@ -239,18 +228,6 @@ public Infofield() {
 			jfc.showOpenDialog(this);
 			deck = new CScan().scan(jfc.getSelectedFile());
 			prepareDeck();
-		} else if (ae.getSource() == b) {
-			deckid--;
-			try {
-			this.setCard(deck.elementAt(deckid));
-			} catch (ArrayIndexOutOfBoundsException e) {
-			}
-		} else if (ae.getSource() == b2) {
-			deckid++;
-			try {
-				this.setCard(deck.elementAt(deckid));
-			} catch (ArrayIndexOutOfBoundsException e) {
-			}
 		} else if (ae.getSource() == dv.btnShow) {
 				this.setCard(dv.getCard());
 		}

@@ -27,16 +27,21 @@ package clz;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Stack;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -44,6 +49,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 
@@ -62,10 +69,18 @@ implements ActionListener {
 	private CLabel[] jlbMB = new CLabel[20];
 	private CLabel[] jlbOB = new CLabel[20];
 	private CWindow MG, OG, MRA, ORA;
+	private JTextPane jtext;
 	private JMenuBar jmb = new JMenuBar();
-	private JMenu jmAct, jmGame;
-	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR, jmiViewDeck, jmiShowTPL;
-	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw, jpiView, jpiViewCard, jpiViewName;
+	private JMenu jmAct, jmGame, jmHelp;
+	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR,
+						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout;
+	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw,
+						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom;
+	
+	private JButton jbLicence;
+	private JFrame aboutFrame;
+	private String message;
+	
 	private GroupLayout gl, gl2;
 	private Container bc = getContentPane();
 	private ImageIcon imDeck, imGrave;
@@ -73,7 +88,7 @@ implements ActionListener {
 	public static JPopupMenu s1, s2, s3;
 	public static boolean opturn;
 	public static ImageIcon imNoCard;
-	private static Stack<Card> deck1, deck2;
+	private static Deque<Card> deck1, deck2;
 	private static Hand h1, h2;
 	public static CardListener cl = new CardListener();
 	private Infofield inf, mi, oi;
@@ -88,8 +103,8 @@ implements ActionListener {
 		this.setLocation(80, 20);
 		
 		//Initializing Deck Viewers and Decks
-		deck1 = new Stack<Card>();
-		deck2 = new Stack<Card>();
+		deck1 = new ArrayDeque<Card>();
+		deck2 = new ArrayDeque<Card>();
         
 		//Initializing CWindows
 		MG = new CWindow("My Graveyard", 20, cl);
@@ -116,16 +131,24 @@ implements ActionListener {
 		jpiViewCard.addActionListener(this);
 		jpiViewName = new JMenuItem("View Name");
 		jpiViewName.addActionListener(this);
+		jpiToDeck = new JMenuItem("To Deck");
+		jpiToDeck.setToolTipText("Move this card to deck.");
+		jpiToDeck.addActionListener(this);
+		jpiToBottom = new JMenuItem("To Bottom of Deck");
+		jpiToBottom.setToolTipText("Send the top card of this deck to its bottom.");
+		jpiToBottom.addActionListener(this);
 		s1 = new JPopupMenu();
 		s1.add(jpiSearch);
 		s1.add(jpiShuffle);
 		s1.add(jpiDraw);
+		s1.add(jpiToBottom);
 		s2 = new JPopupMenu();
 		s2.add(jpiView);
 		s3 = new JPopupMenu();
 		s3.add(jpiFlip);
 		s3.add(jpiViewCard);
 		s3.add(jpiViewName);
+		s3.add(jpiToDeck);
 		
 		//Creating Images & Card templates
 		try {
@@ -151,6 +174,7 @@ implements ActionListener {
 		this.setSize(new Dimension(900, 700));
 		jmAct = new JMenu("Actions");
 		jmGame = new JMenu("Game");
+		jmHelp = new JMenu("Help");
 		jmiExit = new JMenuItem("Exit");
 		jmiExit.addActionListener(this);
 		jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
@@ -169,6 +193,12 @@ implements ActionListener {
 		jmiViewDeck.addActionListener(this);
 		jmiShowTPL = new JMenuItem("Turn Player");
 		jmiShowTPL.addActionListener(this);
+		jmiHelp = new JMenuItem("Contents");
+		jmiHelp.addActionListener(this);
+		jmiAbout = new JMenuItem("About");
+		jmiAbout.addActionListener(this);
+		jmHelp.add(jmiHelp);
+		jmHelp.add(jmiAbout);
 		jmGame.add(jmiExit);
 		jmGame.add(jmiEndTurn);
 		jmGame.add(jmiShowTPL);
@@ -178,6 +208,7 @@ implements ActionListener {
 		jmAct.add(jmiShowR);
 		jmb.add(jmAct);
 		jmb.add(jmGame);
+		jmb.add(jmHelp);
 		this.setJMenuBar(jmb);
 
 		//Creating the JLabels and JPanels
@@ -209,7 +240,12 @@ implements ActionListener {
 		jlbMG.addMouseWheelListener(cl);
 		jlbOG.addMouseWheelListener(cl);
 
-
+		//Clearing Tooltip texts from jlbMD, jlbOD, jlbMG and jlbOG
+		jlbMD.setToolTipText("");
+		jlbOD.setToolTipText("");
+		jlbMG.setToolTipText("");
+		jlbOG.setToolTipText("");
+		
 		//creating Mana JLabels
 		for(int i = 0; i <= 12; i++) {
 			jlbMM[i+1] = new CLabel(imNoCard);
@@ -384,12 +420,21 @@ implements ActionListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new Battlefield();
-	}
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						new Battlefield();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 
-	public static void shuffle(Stack<Card> s) {
+	public static void shuffle(Deque<Card> d) {
 		Random r = new Random();
 		Random r2 = new Random();
+		Vector<Card> s = new Vector<Card>(d);
 		for (int j = 0; j < r2.nextInt(39); j++) {
 			for (int i = 0; i < s.size(); i++) {
 				int random = r.nextInt(s.size() - 1);
@@ -452,32 +497,18 @@ implements ActionListener {
 				inf.setDeck(deck1);
 			}
 			inf.setVisible(true);
-//		} else if (ae.getSource() == jpiView) {
-//			if (s2.getInvoker() == jlbOG) {
-//				if (!OG.isVisible()) {
-//					OG.setVisible(true);
-//				}
-//			} else {
-//				if (s2.getInvoker() == jlbMG) {
-//					if (!MG.isVisible()) {
-//						MG.setVisible(true);
-//					}
-//				}
-//			}
 		} else if(ae.getSource() == jmiShowR) {
 			if (opturn) {
 				ORA.showWin();
 			} else {
 				MRA.showWin();
 			}
-			
 		} else if(ae.getSource() == jpiView) {
 			if (s2.getInvoker() == jlbOD) {
 				OG.showWin();
 			} else if(s2.getInvoker() == jlbMD) {
 				MG.showWin();
 			}
-			
 		} else if(ae.getSource() == jmiViewDeck) {
 			if (opturn) {
 				if (oi.isVisible() == false) {
@@ -503,7 +534,8 @@ implements ActionListener {
 		} else if(ae.getSource() == jpiViewName) {
 			CLabel label = (CLabel) s3.getInvoker();
 			String cardname = label.getCard().name;
-			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname, "Card Name", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
+					"Card Name", JOptionPane.INFORMATION_MESSAGE);
 		} else if(ae.getSource() == jmiShowTPL) {
 			String plname;
 			if (opturn) {
@@ -511,7 +543,57 @@ implements ActionListener {
 			} else {
 				plname = "1st Player - Me";
 			}
-			JOptionPane.showMessageDialog(this, "The current player is : " + plname, "Current Player", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "The current player is : " + plname,
+					"Current Player", JOptionPane.INFORMATION_MESSAGE);
+		} else if(ae.getSource() == jpiToDeck) {
+			CLabel lbl = (CLabel) s3.getInvoker();
+			Card card = lbl.grCard();
+			if (opturn) {
+				deck2.addFirst(card);
+				inf.setCard(deck2.getFirst());
+			} else {
+				deck1.addFirst(card);
+				inf.setCard(deck1.getFirst());
+			}
+			//} important
+		} else if(ae.getSource() == jpiToBottom) {
+			Card card;
+			if (opturn) {
+				card = deck2.removeFirst();
+				deck2.addLast(card);
+				inf.setCard(deck2.getFirst());
+			} else {
+				card = deck1.removeFirst();
+				deck1.addLast(card);
+				inf.setCard(deck1.getFirst());
+			}		
+		} else if(ae.getSource() == jmiHelp) {
+			HelpFrame hf = new HelpFrame();
+			hf.setVisible(true);
+		} else if(ae.getSource() == jmiAbout) {
+			message = "PR Player\nCreator : Subhraman Sarkar, 2014";
+			aboutFrame = new JFrame("About");
+			aboutFrame.getContentPane().setLayout(new BorderLayout());
+			jtext = new JTextPane();
+			jtext.setEditable(false);
+			jtext.setText(message);
+			JScrollPane js = new JScrollPane(jtext);
+			aboutFrame.getContentPane().add(js, BorderLayout.CENTER);
+			jbLicence = new JButton("Licence");
+			jbLicence.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+						try {
+							jtext.setPage(this.getClass().getResource("/LICENCE"));
+							jbLicence.setEnabled(false);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+				}				
+			});
+			aboutFrame.getContentPane().add(jbLicence, BorderLayout.SOUTH);
+			aboutFrame.setSize(new Dimension(400, 400));
+			aboutFrame.setVisible(true);
 		}
 	}
 	

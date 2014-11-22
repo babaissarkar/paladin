@@ -27,7 +27,7 @@ package clz;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.util.Stack;
+import java.util.Deque;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JList;
@@ -50,7 +50,7 @@ import java.awt.ComponentOrientation;
 public class DeckViewer extends JDesktopPane {
 	private static final long serialVersionUID = 1L;
 	public JList jlsDeck;
-	public Stack<Card> deck;
+	public Deque<Card> deck;
 	private Container cdv;
 	private Card[] cards;
 	private String[] cardsnm;
@@ -58,7 +58,7 @@ public class DeckViewer extends JDesktopPane {
 	private Infofield inf;
 	public JButton btnShow;
 
- public DeckViewer(Stack<Card> stack) {
+ public DeckViewer(Deque<Card> stack) {
  	setLocation(new Point(700, 60));
  	setForeground(Color.BLACK);
 	this.setSize(new Dimension(330, 226));

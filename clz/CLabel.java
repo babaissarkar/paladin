@@ -44,12 +44,15 @@ public class CLabel extends JLabel {
 	private static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
 	private boolean fliped;
 	private boolean tapped;
+	private String tooltip = "Click to move and click again on another card to paste." +
+			" Move the mouse wheel to tap/untap.";
 
 	public CLabel() {
 		super(scale(ncrd.getImCard()));
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 	
 	public CLabel(Card card1) {
@@ -57,6 +60,7 @@ public class CLabel extends JLabel {
 		cards.add(card1);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 
 	public CLabel(String text) {
@@ -64,6 +68,7 @@ public class CLabel extends JLabel {
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 
 	public CLabel(Icon image) {
@@ -71,6 +76,7 @@ public class CLabel extends JLabel {
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 
 	public CLabel(String text, int horizontalAlignment) {
@@ -78,6 +84,7 @@ public class CLabel extends JLabel {
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 
 	public CLabel(Icon image, int horizontalAlignment) {
@@ -85,6 +92,7 @@ public class CLabel extends JLabel {
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 
 	public CLabel(String text, Icon icon, int horizontalAlignment) {
@@ -92,6 +100,7 @@ public class CLabel extends JLabel {
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
+		this.setToolTipText(tooltip);
 	}
 	
 	public final boolean isTapped() {
