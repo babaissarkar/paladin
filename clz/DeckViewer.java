@@ -49,7 +49,7 @@ import java.awt.ComponentOrientation;
  */
 public class DeckViewer extends JDesktopPane {
 	private static final long serialVersionUID = 1L;
-	public JList jlsDeck;
+	public JList<String> jlsDeck;
 	public Deque<Card> deck;
 	private Container cdv;
 	private Card[] cards;
@@ -71,7 +71,7 @@ public class DeckViewer extends JDesktopPane {
 	for (int i = 0; i < deck.size(); i++) {
 		cardsnm[i] = cards[i].name;
 	}
-	jlsDeck = new JList(cardsnm);
+	jlsDeck = new JList<String>(cardsnm);
 	jlsDeck.setForeground(Color.BLACK);
 	jlsDeck.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	JScrollPane jsl = new JScrollPane(jlsDeck,

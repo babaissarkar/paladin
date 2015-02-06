@@ -23,17 +23,25 @@ package clz;
  * 
  */
 
+import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -112,5 +120,35 @@ public Deque<Card> scan(File f) {
 		}
 		return deck;
 	}
+
+public Deque<Card> scanZipFile(String str) {
+	Deque<Card> resDeck = new ArrayDeque<Card>();
+	File sFile = new File(str);
+	if (sFile != null) {
+		try {
+			ZipFile zf = new ZipFile(sFile);
+			Enumeration<? extends ZipEntry> e = zf.entries();
+			while (e.hasMoreElements()) {
+				ZipEntry ze = (ZipEntry) e.nextElement();
+				String name = ze.getName();
+				Image crdImage = ImageIO.read(zf.getInputStream(ze));
+				ImageIcon crdIcon = new ImageIcon(crdImage);
+				Card card = new Card(name, crdIcon);
+				resDeck.add(card);
+			}
+			zf.close();
+		} catch (ZipException e) {
+			showError(e);
+		} catch (IOException e) {
+			showError(e);
+		}
+	}
+	return resDeck;
+	}
+
+
+private void showError(Exception e) {
+	JOptionPane.showMessageDialog(this, "Error! " + e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);	
+}
 
 }

@@ -61,6 +61,7 @@ implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel jplMB, jplOB;
+	private PrefIFrame pif;
 	public static CLabel jlbMG, jlbOG, jlbMD, jlbOD;
 	private CLabel[] jlbMS = new CLabel[20];
 	private CLabel[] jlbOS = new CLabel[20];
@@ -73,7 +74,7 @@ implements ActionListener {
 	private JMenuBar jmb = new JMenuBar();
 	private JMenu jmAct, jmGame, jmHelp;
 	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR,
-						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout;
+						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout, jmiPref;
 	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw,
 						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom;
 	
@@ -84,11 +85,10 @@ implements ActionListener {
 	private GroupLayout gl, gl2;
 	private Container bc = getContentPane();
 	private ImageIcon imDeck, imGrave;
-	private CScan scan = new CScan();
 	public static JPopupMenu s1, s2, s3;
 	public static boolean opturn;
 	public static ImageIcon imNoCard;
-	private static Deque<Card> deck1, deck2;
+	public static Deque<Card> deck1, deck2;
 	private static Hand h1, h2;
 	public static CardListener cl = new CardListener();
 	private Infofield inf, mi, oi;
@@ -101,6 +101,9 @@ implements ActionListener {
 				Toolkit.getDefaultToolkit().getImage(
 						Infofield.class.getResource("/images/Icon.png")));
 		this.setLocation(80, 20);
+		
+		//Initializing Preferences JInternalFrame
+		pif = new PrefIFrame(this);
 		
 		//Initializing Deck Viewers and Decks
 		deck1 = new ArrayDeque<Card>();
@@ -193,6 +196,8 @@ implements ActionListener {
 		jmiViewDeck.addActionListener(this);
 		jmiShowTPL = new JMenuItem("Turn Player");
 		jmiShowTPL.addActionListener(this);
+		jmiPref = new JMenuItem("Preferences...");
+		jmiPref.addActionListener(this);
 		jmiHelp = new JMenuItem("Contents");
 		jmiHelp.addActionListener(this);
 		jmiAbout = new JMenuItem("About");
@@ -202,6 +207,7 @@ implements ActionListener {
 		jmGame.add(jmiExit);
 		jmGame.add(jmiEndTurn);
 		jmGame.add(jmiShowTPL);
+		jmGame.add(jmiPref);
 		jmAct.add(jmiShowMH);
 		jmAct.add(jmiShowOH);
 		jmAct.add(jmiViewDeck);
@@ -400,21 +406,11 @@ implements ActionListener {
 		//Finalizing
 		this.setVisible(true);
 		
-		 //Initializing Decks
-		deck1 = scan.scan("/deck1.txt");
-        deck2 = scan.scan("/deck2.txt");
-		
-        //Initializing Infofield
-        inf = new Infofield();
-        mi = new Infofield(deck1);
-        oi = new Infofield(deck2);
-		
-		//Preparing
-		shuffle(deck1);
-		shuffle(deck2);
-		
-		//Begining the game
-		proceed();
+		//Initializing Decks
+		/* Changed : */
+		  pif.btnCancel.setEnabled(false);
+		  pif.setVisible(true);
+		 
 	}
 	/**
 	 * @param args
@@ -431,7 +427,7 @@ implements ActionListener {
 			});
 		}
 
-	public static void shuffle(Deque<Card> d) {
+	public static Deque<Card> shuffle(Deque<Card> d) {
 		Random r = new Random();
 		Random r2 = new Random();
 		Vector<Card> s = new Vector<Card>(d);
@@ -447,18 +443,52 @@ implements ActionListener {
 				s.insertElementAt(rCard2, i);
 			}
 		}
+		Deque<Card> d2 = new ArrayDeque<Card>(s);
+		return d2;
 	}
 
-	private void proceed() {
-		if (!(deck1.isEmpty() && deck2.isEmpty())) {
-		for (int k = 0; k < 5; k++) {
-			draw(true);
-			draw(false);
+	public void proceed(int i, int j) {
+		//Initializing Infofield
+        inf = new Infofield();
+        mi = new Infofield(deck1);
+        oi = new Infofield(deck2);
+		
+		for (int i1 = 0; i1 < new Random().nextInt(60); i1++) {
+			//Preparing
+			deck1 = shuffle(deck1);
+			deck2 = shuffle(deck2);
+		}
+		if (pif.isShields()) {
+			//Adding Shields, if any
+			for (int k = 0; k < i; k++) {
+				addToShield(deck1.pop(), k + 1, true);
+				addToShield(deck2.pop(), k + 1, false);
+			}
+		}
+		
+		if (pif.isDraw()) {
+			//Drawing
+			if (!(deck1.isEmpty() && deck2.isEmpty())) {
+				for (int k = 0; k < 5; k++) {
+					draw(true);
+					draw(false);
+				}
 			}
 		}
 		h1.showHand();
 		opturn = false;
 	}
+	
+	public void addToShield(Card card, int index, boolean opturn) {
+		if (opturn) {
+			jlbOS[index].setCard(card);
+			jlbOS[index].flip();
+		} else {
+			jlbMS[index].setCard(card);
+			jlbMS[index].flip();
+		}
+	}
+
 
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == jmiExit) {
@@ -570,6 +600,8 @@ implements ActionListener {
 		} else if(ae.getSource() == jmiHelp) {
 			HelpFrame hf = new HelpFrame();
 			hf.setVisible(true);
+		} else if(ae.getSource() == jmiPref) {		
+			pif.setVisible(true);
 		} else if(ae.getSource() == jmiAbout) {
 			message = "PR Player\nCreator : Subhraman Sarkar, 2014";
 			aboutFrame = new JFrame("About");
@@ -604,5 +636,6 @@ implements ActionListener {
 			h1.add(deck1.pop());
 		}
 	}
+	
 }
 
