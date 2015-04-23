@@ -25,6 +25,7 @@ package clz;
 
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -32,6 +33,11 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -54,6 +60,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 
+
 public class Battlefield extends JFrame
 implements ActionListener {
 	/**
@@ -69,18 +76,20 @@ implements ActionListener {
 	private CLabel[] jlbOM = new CLabel[20];
 	private CLabel[] jlbMB = new CLabel[20];
 	private CLabel[] jlbOB = new CLabel[20];
-	private CWindow MG, OG, MRA, ORA;
+	private CWindow MG, OG, MRA[], ORA[];
 	private JTextPane jtext;
 	private JMenuBar jmb = new JMenuBar();
 	private JMenu jmAct, jmGame, jmHelp;
-	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR,
-						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout, jmiPref;
+	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR[],
+						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout, jmiPref,
+						jmiSave, jmiOpen;
 	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw,
-						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom;
+						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom, jpiRemove;
 	
 	private JButton jbLicence;
 	private JFrame aboutFrame;
 	private String message;
+	public static String userhome;
 	
 	private GroupLayout gl, gl2;
 	private Container bc = getContentPane();
@@ -88,22 +97,19 @@ implements ActionListener {
 	public static JPopupMenu s1, s2, s3;
 	public static boolean opturn;
 	public static ImageIcon imNoCard;
-	public static Deque<Card> deck1, deck2;
+	public Deque<Card> deck1, deck2; //Changed
 	private static Hand h1, h2;
 	public static CardListener cl = new CardListener();
 	private Infofield inf, mi, oi;
 	public Card bkCard;
-	private boolean zoomed;
 
 	public Battlefield() {
 		//Setting Icon and Location
 		this.setIconImage(
 				Toolkit.getDefaultToolkit().getImage(
 						Infofield.class.getResource("/images/Icon.png")));
-		this.setLocation(80, 20);
+		this.setLocation(80, 20);		
 		
-		//Initializing Preferences JInternalFrame
-		pif = new PrefIFrame(this);
 		
 		//Initializing Deck Viewers and Decks
 		deck1 = new ArrayDeque<Card>();
@@ -112,9 +118,12 @@ implements ActionListener {
 		//Initializing CWindows
 		MG = new CWindow("My Graveyard", 20, cl);
 		OG = new CWindow("Opponent's Graveyard", 20, cl);
-		MRA = new CWindow("My Area", 20, cl);
-		ORA = new CWindow("Opponent's Area", 20, cl);
-		
+		MRA = new CWindow[4];
+		ORA = new CWindow[4];
+		for (int i = 1; i < 5; i++) {
+			MRA[i - 1] = new CWindow("My Area " + i, 20, cl);
+			ORA[i - 1] = new CWindow("Opponent's Area " + i, 20, cl);
+		}
 		//Creating JPopupMenus
 		jpiSearch = new JMenuItem("Search");
 		jpiSearch.addActionListener(this);
@@ -140,6 +149,8 @@ implements ActionListener {
 		jpiToBottom = new JMenuItem("To Bottom of Deck");
 		jpiToBottom.setToolTipText("Send the top card of this deck to its bottom.");
 		jpiToBottom.addActionListener(this);
+		jpiRemove = new JMenuItem("Remove Placeholder");
+		jpiRemove.addActionListener(this);
 		s1 = new JPopupMenu();
 		s1.add(jpiSearch);
 		s1.add(jpiShuffle);
@@ -152,6 +163,7 @@ implements ActionListener {
 		s3.add(jpiViewCard);
 		s3.add(jpiViewName);
 		s3.add(jpiToDeck);
+		s3.add(jpiRemove);
 		
 		//Creating Images & Card templates
 		try {
@@ -190,8 +202,15 @@ implements ActionListener {
 		jmiShowOH = new JMenuItem("Show Opponent's Hand");
 		jmiShowOH.addActionListener(this);
 		jmiShowOH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
-		jmiShowR = new JMenuItem("Show Reserved Area");
-		jmiShowR.addActionListener(this);
+		jmiShowR = new JMenuItem[4];
+		jmiShowR[0] = new JMenuItem("Show Reserved Area 1");
+		jmiShowR[0].addActionListener(this);
+		jmiShowR[1] = new JMenuItem("Show Reserved Area 2");
+		jmiShowR[1].addActionListener(this);
+		jmiShowR[2] = new JMenuItem("Show Reserved Area 3");
+		jmiShowR[2].addActionListener(this);
+		jmiShowR[3] = new JMenuItem("Show Reserved Area 4");
+		jmiShowR[3].addActionListener(this);
 		jmiViewDeck = new JMenuItem("View Deck");
 		jmiViewDeck.addActionListener(this);
 		jmiShowTPL = new JMenuItem("Turn Player");
@@ -202,18 +221,24 @@ implements ActionListener {
 		jmiHelp.addActionListener(this);
 		jmiAbout = new JMenuItem("About");
 		jmiAbout.addActionListener(this);
+		jmiSave = new JMenuItem("Save Game");
+		jmiSave.addActionListener(this);
+		jmiOpen = new JMenuItem("Open Game");
+		jmiOpen.addActionListener(this);
 		jmHelp.add(jmiHelp);
 		jmHelp.add(jmiAbout);
-		jmGame.add(jmiExit);
 		jmGame.add(jmiEndTurn);
 		jmGame.add(jmiShowTPL);
 		jmGame.add(jmiPref);
+		jmGame.add(jmiExit);
 		jmAct.add(jmiShowMH);
 		jmAct.add(jmiShowOH);
 		jmAct.add(jmiViewDeck);
-		jmAct.add(jmiShowR);
-		jmb.add(jmAct);
+		for (int i = 0; i < jmiShowR.length; i++) {
+			jmAct.add(jmiShowR[i]);
+		}
 		jmb.add(jmGame);
+		jmb.add(jmAct);
 		jmb.add(jmHelp);
 		this.setJMenuBar(jmb);
 
@@ -406,8 +431,21 @@ implements ActionListener {
 		//Finalizing
 		this.setVisible(true);
 		
+		//Setting configuration path
+		userhome = System.getProperty("user.home");
+		File confdir = new File(userhome + "/.PRPlayer/"),
+				deckdir = new File(confdir.getAbsolutePath() + "/decks/");
+		if (!confdir.exists()) {
+			confdir.mkdir();
+		}
+		if (!deckdir.exists()) {
+			deckdir.mkdir();
+		}
+		
+		//Initializing Preferences JInternalFrame
+		  pif = new PrefIFrame(this);
+		
 		//Initializing Decks
-		/* Changed : */
 		  pif.btnCancel.setEnabled(false);
 		  pif.setVisible(true);
 		 
@@ -489,7 +527,6 @@ implements ActionListener {
 		}
 	}
 
-
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == jmiExit) {
 			System.exit(0);
@@ -502,7 +539,8 @@ implements ActionListener {
 				opturn = true;
 				player = "2nd Player - Opponent";
 			}
-			JOptionPane.showMessageDialog(this, "The current player is : " + player, "Turn Ended", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "The current player is : " + player,
+					"Turn Ended", JOptionPane.INFORMATION_MESSAGE);
 			
 		} else if(ae.getSource() == jpiShuffle) {
 			if (opturn) {
@@ -527,16 +565,34 @@ implements ActionListener {
 				inf.setDeck(deck1);
 			}
 			inf.setVisible(true);
-		} else if(ae.getSource() == jmiShowR) {
+		} else if(ae.getSource() == jmiShowR[0]) {
 			if (opturn) {
-				ORA.showWin();
+				ORA[0].showWin();
 			} else {
-				MRA.showWin();
+				MRA[0].showWin();
+			}
+		} else if(ae.getSource() == jmiShowR[1]) {
+			if (opturn) {
+				ORA[1].showWin();
+			} else {
+				MRA[1].showWin();
+			}
+		} else if(ae.getSource() == jmiShowR[2]) {
+			if (opturn) {
+				ORA[2].showWin();
+			} else {
+				MRA[2].showWin();
+			}
+		} else if(ae.getSource() == jmiShowR[3]) {
+			if (opturn) {
+				ORA[3].showWin();
+			} else {
+				MRA[3].showWin();
 			}
 		} else if(ae.getSource() == jpiView) {
-			if (s2.getInvoker() == jlbOD) {
+			if (s2.getInvoker() == jlbOG) {
 				OG.showWin();
-			} else if(s2.getInvoker() == jlbMD) {
+			} else if(s2.getInvoker() == jlbMG) {
 				MG.showWin();
 			}
 		} else if(ae.getSource() == jmiViewDeck) {
@@ -553,17 +609,32 @@ implements ActionListener {
 			CLabel label = (CLabel) s3.getInvoker();
 			label.flip();
 		} else if(ae.getSource() == jpiViewCard) {
-			CLabel lbl = (CLabel) s3.getInvoker();
-			if (zoomed) {
-				lbl.showNormalImage();
-				zoomed = false;
+			Component lbl = s3.getInvoker();
+			if (opturn) {
+				h2.setVisible(false);
+				h2.getContentPane().remove(lbl);
+				h2.setVisible(true);
 			} else {
-				lbl.showFullImage();
-				zoomed = true;
+				h1.setVisible(false);
+				h1.getContentPane().remove(lbl);
+				h1.setVisible(true);
 			}
+			CLabel lblCard = new CLabel(((CLabel) lbl).getCard());
+			lblCard.addMouseListener(new ViewerListener(lblCard.getCard()));
+			JFrame viewer = new JFrame("Card Viewer");
+			viewer.setSize(400, 600);
+			viewer.getContentPane().add(lblCard);
+			viewer.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {
+					
+				}
+			});
+			lblCard.showFullImage();
+			viewer.setVisible(true);
 		} else if(ae.getSource() == jpiViewName) {
 			CLabel label = (CLabel) s3.getInvoker();
 			String cardname = label.getCard().name;
+			cardname = cardname.substring(0, cardname.lastIndexOf("."));
 			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
 					"Card Name", JOptionPane.INFORMATION_MESSAGE);
 		} else if(ae.getSource() == jmiShowTPL) {
@@ -596,7 +667,18 @@ implements ActionListener {
 				card = deck1.removeFirst();
 				deck1.addLast(card);
 				inf.setCard(deck1.getFirst());
-			}		
+			}
+		} else if(ae.getSource() == jpiRemove) {
+			Component lbl = s3.getInvoker();
+			if (opturn) {
+				h2.setVisible(false);
+				h2.getContentPane().remove(lbl);
+				h2.setVisible(true);
+			} else {
+				h1.setVisible(false);
+				h1.getContentPane().remove(lbl);
+				h1.setVisible(true);
+			}
 		} else if(ae.getSource() == jmiHelp) {
 			HelpFrame hf = new HelpFrame();
 			hf.setVisible(true);
@@ -629,11 +711,44 @@ implements ActionListener {
 		}
 	}
 	
-	public static void draw(boolean opt) {
+	public void draw(boolean opt) {
 		if (opt) {
 			h2.add(deck2.pop());
 		} else {
 			h1.add(deck1.pop());
+		}
+	}
+	
+	public class ViewerListener extends MouseAdapter implements ActionListener {
+		JPopupMenu s4 = new JPopupMenu();
+		JMenuItem jpiToHand = new JMenuItem("Move to Hand");
+		Card c;
+		
+		public ViewerListener(Card card) {
+			jpiToHand.addActionListener(this);
+			s4.add(jpiToHand);
+			c = card;
+		}
+		
+		public void mouseClicked(MouseEvent me) {
+			s4.show(me.getComponent(), me.getX(), me.getY());
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent aevt) {
+			if (aevt.getSource() == jpiToHand) {
+				if (c != null) {
+					if (opturn) {
+						h2.setVisible(false);
+						h2.add(c);
+						h2.setVisible(true);
+					} else {
+						h1.setVisible(false);
+						h1.add(c);
+						h1.setVisible(true);
+					}
+				}
+			}
 		}
 	}
 	

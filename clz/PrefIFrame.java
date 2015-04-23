@@ -1,9 +1,11 @@
 package clz;
 
 import java.awt.Color;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+
 import java.awt.Font;
 
 import javax.swing.JFileChooser;
@@ -11,8 +13,11 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
+
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 //import javax.swing.JSpinner;
@@ -26,9 +31,8 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	// GUI Components
 	public JButton btnCancel, btnOk, btnBrowse, btnBrowse2;
 	private JCheckBox chckbxShields, chckbxDraw;
-	private JTextField textField, textField_1, textField_2;
+	private JTextField txtprplayerdecksdeckzip, txtprplayerdecksdeckzip_1, textField_2;
 	private JFileChooser jfc;
-	//private JSpinner spinner;
 	private JTextField textField_4;
 	
 	public Battlefield btf;
@@ -47,8 +51,9 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		JLabel lblDeck = new JLabel("Deck 1 :");
 		lblDeck.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
-		textField = new JTextField();
-		textField.setColumns(10);
+		txtprplayerdecksdeckzip = new JTextField();
+		txtprplayerdecksdeckzip.setText(Battlefield.userhome + "/.PRPlayer/decks/deck1.zip");
+		txtprplayerdecksdeckzip.setColumns(10);
 		
 		btnBrowse = new JButton("Browse...");
 		btnBrowse.addActionListener(this);
@@ -56,8 +61,9 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		JLabel lblDeck_1 = new JLabel("Deck 2 :");
 		lblDeck_1.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
+		txtprplayerdecksdeckzip_1 = new JTextField();
+		txtprplayerdecksdeckzip_1.setText(Battlefield.userhome + "/.PRPlayer/decks/deck2.zip");
+		txtprplayerdecksdeckzip_1.setColumns(10);
 		
 		btnBrowse2 = new JButton("Browse...");
 		btnBrowse2.addActionListener(this);
@@ -89,13 +95,13 @@ public class PrefIFrame extends JFrame implements ActionListener {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(lblDeck, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtprplayerdecksdeckzip, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
 							.addGap(29)
 							.addComponent(btnBrowse))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(lblDeck_1, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
 							.addGap(12)
-							.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtprplayerdecksdeckzip_1, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
 							.addGap(29)
 							.addComponent(btnBrowse2, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(113, Short.MAX_VALUE))
@@ -118,14 +124,14 @@ public class PrefIFrame extends JFrame implements ActionListener {
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblDeck, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtprplayerdecksdeckzip, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnBrowse))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblDeck_1, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(5)
-							.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addComponent(txtprplayerdecksdeckzip_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(2)
 							.addComponent(btnBrowse2)))
@@ -178,12 +184,12 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		} else if (arg0.getSource() == btnBrowse) {
 			jfc.showOpenDialog(this);
 			if (jfc.getSelectedFile() != null) {
-				textField.setText(jfc.getSelectedFile().getAbsolutePath());
+				txtprplayerdecksdeckzip.setText(jfc.getSelectedFile().getAbsolutePath());
 			}
 		} else if (arg0.getSource() == btnBrowse2) {
 			jfc.showOpenDialog(this);
 			if (jfc.getSelectedFile() != null) {
-				textField_1.setText(jfc.getSelectedFile().getAbsolutePath());
+				txtprplayerdecksdeckzip_1.setText(jfc.getSelectedFile().getAbsolutePath());
 			}
 		} else if(arg0.getSource() == chckbxShields) {
 			if (false == shields) {
@@ -214,15 +220,28 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	}
 
 	private void setDeck() {
-		String deck1 = textField.getText();
-		String deck2 = textField_1.getText();
+		String deck1 = txtprplayerdecksdeckzip.getText();
+		String deck2 = txtprplayerdecksdeckzip_1.getText();
 		CScan cs = new CScan();
 		
 		if (deck1.endsWith(".zip")) {
-			Battlefield.deck1 = cs.scanZipFile(deck1);
+			btf.deck1 = cs.scanZipFile(deck1);
+		} else if (deck1.endsWith(".txt")) {
+			btf.deck1 = cs.scan(new File(deck1));
+//		} else if (deck1.endsWith(".xml")) {
+//			btf.deck1 = cs.scanXMLFile(getClass().getResourceAsStream(deck1));
+//		} else if (deck1.endsWith(".deck")) {
+//			btf.deck1 = cs.scanDeckfile(getClass().getResource(deck1).toString());
 		}
+		
 		if (deck2.endsWith(".zip")) {
-			Battlefield.deck2 = cs.scanZipFile(deck2);
+			btf.deck2 = cs.scanZipFile(deck2);
+		} else if (deck1.endsWith(".txt")) {
+			btf.deck2 = cs.scan(new File(deck2));
+//		} else if (deck2.endsWith(".xml")) {
+//			btf.deck2 = cs.scanXMLFile(getClass().getResourceAsStream(deck2));
+//		} else if (deck2.endsWith(".deck")) {
+//			btf.deck2 = cs.scanDeckfile(getClass().getResource(deck2).toString());
 		}
 	}
 }

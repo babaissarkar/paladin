@@ -45,6 +45,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+
 public class CScan extends JFrame {
 	
 	
@@ -69,15 +72,9 @@ public class CScan extends JFrame {
 			s.useDelimiter(";\n");
 			while (s.hasNext()) {
 				clist.add(s.next());
-				//System.out.println(s.next()); //for debuging
 			}
 			i = clist.iterator();
 			while (i.hasNext()) {
-				//System.out.println(i.next()); //for debuging
-				
-				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
-				i.next(), i.next(), i.next(), i.next(), i.next())); 
-				Used when a deckfile states all atrributes of a card*/
 				deck.addLast(new Card(i.next(), i.next()));
 				id++;
 			}
@@ -97,23 +94,25 @@ public Deque<Card> scan(File f) {
 		int id = 0;
 		try {
 			s = new Scanner(new BufferedInputStream(new FileInputStream(f)));
-			s.useDelimiter(";\n");
+			s.useDelimiter(";");
 			while (s.hasNext()) {
 				clist.add(s.next());
-				//System.out.println(s.next()); //for debuging
 			}
 			i = clist.iterator();
 			while (i.hasNext()) {
-				//System.out.println(i.next()); //for debuging
-				
-				/*deck.addElement(new Card(i.next(), i.next(), i.next(), i.next(),
-				i.next(), i.next(), i.next(), i.next(), i.next())); 
-				Used when a deckfile states all atrributes of a card*/
-				deck.addLast(new Card(i.next(), i.next()));
+				Card c = new Card(i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next());
+				String encimage = i.next();
+				byte[] bytes = Base64.decode(encimage);
+				ImageIcon im = new ImageIcon(bytes);
+				c.imCard = im;
+				deck.addLast(c);
 				id++;
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
+					"Sorry!", JOptionPane.ERROR_MESSAGE);
+		} catch (Base64DecodingException e) {
+			JOptionPane.showMessageDialog(new JFrame("Error."), "Decoding Error.",
 					"Sorry!", JOptionPane.ERROR_MESSAGE);
 		} finally {
 			s.close();
@@ -145,6 +144,12 @@ public Deque<Card> scanZipFile(String str) {
 	}
 	return resDeck;
 	}
+
+//public Deque<Card> scanXMLFile(InputStream in) {
+//	XMLCardReader xcr = new XMLCardReader(in);
+//	Deque<Card> deck = new ArrayDeque<Card>(xcr.getCards());
+//	return deck;
+//}
 
 
 private void showError(Exception e) {

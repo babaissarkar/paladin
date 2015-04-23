@@ -27,7 +27,6 @@ package clz;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.Stack;
 
 import javax.swing.Icon;
@@ -44,11 +43,11 @@ public class CLabel extends JLabel {
 	private static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
 	private boolean fliped;
 	private boolean tapped;
-	private String tooltip = "Click to move and click again on another card to paste." +
+	private String tooltip = "Click to move and click again on another card to paste.\n" +
 			" Move the mouse wheel to tap/untap.";
 
 	public CLabel() {
-		super(scale(ncrd.getImCard()));
+		super(ImageManipulator.scale(ncrd.getImCard(), 64, 47));
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
@@ -56,7 +55,7 @@ public class CLabel extends JLabel {
 	}
 	
 	public CLabel(Card card1) {
-		super(scale(card1.getImCard()));
+		super(ImageManipulator.scale(card1.getImCard(), 64, 87));
 		cards.add(card1);
 		fliped = false;
 		tapped = false;
@@ -72,7 +71,7 @@ public class CLabel extends JLabel {
 	}
 
 	public CLabel(Icon image) {
-		super(scale(image));
+		super(ImageManipulator.scale(image, 64, 87));
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
@@ -88,15 +87,15 @@ public class CLabel extends JLabel {
 	}
 
 	public CLabel(Icon image, int horizontalAlignment) {
-		super(scale(image), horizontalAlignment);
+		super(ImageManipulator.scale(image, 64, 87), horizontalAlignment);
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
 		this.setToolTipText(tooltip);
 	}
 
-	public CLabel(String text, Icon icon, int horizontalAlignment) {
-		super(text, scale(icon), horizontalAlignment);
+	public CLabel(String text, Icon image, int horizontalAlignment) {
+		super(text, ImageManipulator.scale(image, 64, 87), horizontalAlignment);
 		cards.add(ncrd);
 		fliped = false;
 		tapped = false;
@@ -113,14 +112,14 @@ public class CLabel extends JLabel {
 
 	public Card getCard() {
 		Card card2 = cards.lastElement();
-		super.setIcon(scale(cards.lastElement().getImCard()));
+		super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
 		return card2;
 	}
 	
 	public Card grCard() {
 		Card card2 = cards.pop();
 		if (cards.size() >= 1) {
-			super.setIcon(scale(cards.lastElement().getImCard()));
+			super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
 		} else {
 			this.setCard(ncrd);
 		}
@@ -128,7 +127,7 @@ public class CLabel extends JLabel {
 	}
 	public void setCard(Card card0) {
 		cards.add(card0);
-		super.setIcon(scale(cards.lastElement().getImCard()));
+		super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
 	}
 	
 	public void showFullImage() {
@@ -136,7 +135,7 @@ public class CLabel extends JLabel {
 	}
 	
 	public void showNormalImage() {
-		this.setIcon(scale(this.getCard().getImCard()));
+		this.setIcon(ImageManipulator.scale(this.getCard().getImCard(), 64, 87));
 	}
 	
 	public void flip() {
@@ -144,10 +143,10 @@ public class CLabel extends JLabel {
 		Card card = this.getCard();
 		if (card.bkCard != null) {
 			if (fliped) {
-				this.setIcon(scale(card.getImCard()));
+				this.setIcon(ImageManipulator.scale(card.getImCard(), 64, 87));
 				fliped = false;
 			} else {
-				this.setIcon(scale(card.bkCard));
+				this.setIcon(ImageManipulator.scale(card.bkCard, 64, 87));
 				fliped = true;
 			}
 		}
@@ -175,12 +174,12 @@ public class CLabel extends JLabel {
 		repaint();
 	}
 	
-	public static ImageIcon scale(Icon i) {
+	/*public static ImageIcon scale(Icon i) {
 		BufferedImage bi = new BufferedImage(64, 87, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = bi.createGraphics();
 		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87, 0, 0, i.getIconWidth(), i.getIconHeight(), null);
 		g.dispose();
 		return new ImageIcon(bi);
-	}
+	}*/
 
 }

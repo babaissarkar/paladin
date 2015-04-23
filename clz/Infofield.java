@@ -29,6 +29,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
 import java.util.Deque;
 
 import javax.swing.JFileChooser;
@@ -50,7 +53,7 @@ public class Infofield extends JFrame implements ActionListener {
 
 private static final long serialVersionUID = 6555470512771760138L;
 
-public JFrame win = new JFrame("Card Image");
+public JFrame win = new JFrame("Card2 Image");
 private JLabel[] jlb = new JLabel[10];
 private JTextField[] jtf = new JTextField[10];
 private Container cntpane, cntpane2, cntpane3;
@@ -100,7 +103,7 @@ public Infofield() {
 	this.setJMenuBar(jmb);
 	this.setSize(600, 400);
 	this.setLocation(80, 20);
-	this.setTitle("Card Info");
+	this.setTitle("Card2 Info");
 	this.setIconImage(Toolkit.getDefaultToolkit().getImage(Infofield.class.getResource("/images/INF.png")));
 	this.setAlwaysOnTop(true);
 }
@@ -132,7 +135,7 @@ public Infofield() {
 		jtf[7] = new JTextField(20);
 		jlb[8] = new JLabel("Mana No.");
 		jtf[8] = new JTextField(20);
-		label = new CLabel(new Card("No Card", "/images/NCRD.jpg"));
+		label = new CLabel(new Card("No Card2", "/images/NCRD.jpg"));
 		label.addMouseListener(Battlefield.cl);
 		wscrl = new JScrollPane(label,
 				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -151,7 +154,7 @@ public Infofield() {
 		cntpane.add(jtf[8]);
 		cntpane2.add(wscrl);
 		tpane.addTab("Infofield", cntpane);
-		tpane.addTab("Card Viewer", cntpane2);
+		tpane.addTab("Card2 Viewer", cntpane2);
 		cntpane3.add(tpane);
 	}
 	
@@ -159,13 +162,13 @@ public Infofield() {
 		if (!(card == null)) {
 			this.card = card;
 			jtf[1].setText(card.name);
-			jtf[2].setText(card.civilization);
+			jtf[2].setText(card.civilization); //Changed
 			jtf[3].setText(card.type);
-			jtf[4].setText(card.cost);
-			jtf[5].setText(card.race);
-			jtf[7].setText(card.power);
-			jtf[8].setText(card.manano);
-			jta1.setText(card.effects);
+			jtf[4].setText(card.cost.toString());
+			jtf[5].setText(card.subtype);
+			jtf[7].setText(card.power.toString());
+			jtf[8].setText(card.manano.toString());
+			jta1.setText(card.effects.toString());
 			label.setCard(card);
 			label.showFullImage();
 		}
@@ -175,7 +178,7 @@ public Infofield() {
 		return this.card;
 	}
 	
-	public void addCard() {
+	/*public void addCard() {
 		deck.add(new Card(
 			jtf[1].getText(),
 			jtf[5].getText(),
@@ -186,7 +189,7 @@ public Infofield() {
 			jtf[8].getText(),
 			"0",
 			jta1.getText()));
-	}
+	}*/
 
 	public final Deque<Card> getDeck() {
 		return this.deck;
@@ -226,7 +229,12 @@ public Infofield() {
 			this.setVisible(false);
 		} else if(ae.getSource() == jmiOpen) {
 			jfc.showOpenDialog(this);
-			deck = new CScan().scan(jfc.getSelectedFile());
+			File f = jfc.getSelectedFile();
+			if (f.getName().endsWith(".txt")) {
+				deck = new CScan().scan(jfc.getSelectedFile());
+			} else if (f.getName().endsWith(".zip")) {
+				deck = new CScan().scanZipFile(jfc.getSelectedFile().getAbsolutePath());
+			}
 			prepareDeck();
 		} else if (ae.getSource() == dv.btnShow) {
 				this.setCard(dv.getCard());

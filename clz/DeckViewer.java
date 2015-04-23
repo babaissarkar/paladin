@@ -29,16 +29,21 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.Deque;
 
-import javax.swing.JDesktopPane;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
+
 import javax.swing.ListSelectionModel;
+
 import java.awt.Point;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -47,7 +52,7 @@ import java.awt.ComponentOrientation;
  * @author babaissarkar
  *
  */
-public class DeckViewer extends JDesktopPane {
+public class DeckViewer extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public JList<String> jlsDeck;
 	public Deque<Card> deck;
@@ -71,7 +76,13 @@ public class DeckViewer extends JDesktopPane {
 	for (int i = 0; i < deck.size(); i++) {
 		cardsnm[i] = cards[i].name;
 	}
-	jlsDeck = new JList<String>(cardsnm);
+	jlsDeck = new JList<String>();
+	DefaultListModel<String> lm;
+	lm = new DefaultListModel<String>();
+	for (int i = 0; i < cardsnm.length; i++) {
+		lm.addElement(cardsnm[i]);
+	}
+	jlsDeck.setModel(lm);
 	jlsDeck.setForeground(Color.BLACK);
 	jlsDeck.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	JScrollPane jsl = new JScrollPane(jlsDeck,

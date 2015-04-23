@@ -24,16 +24,27 @@ package clz;
  */
 
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 //import java.util.Vector;
 
+import java.io.Serializable;
+
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class Card {
+public class Card implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7028456289629115594L;
+	
 	//basic structure of a digital card
-	public String name, race, type, civilization, effects;
-	public String cost, power, manano, id;
+	public String name = " ", subtype = " ", type = " ", civilization = " ", id = " ";
+	public StringBuffer effects = new StringBuffer(" ");
+	public Integer cost = 0 , power = 0, manano = 1;
 	public ImageIcon imCard;
 	public ImageIcon bkCard;
 	
@@ -59,7 +70,7 @@ public class Card {
 	
 	public Card(String name0, String path0) {
 		try {
-			this.bkCard = CLabel.scale(new ImageIcon(
+			this.bkCard = scale(new ImageIcon(
 					ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg"))));
 		} catch (IOException e) {
 			this.bkCard = null;
@@ -91,12 +102,12 @@ public class Card {
 			this.bkCard = null;
 		}
 		this.name = name1;
-		this.race = race1;
+		this.subtype = race1;
 		this.type = type1;
 		this.civilization = civilization1;
-		this.cost = cost1;
-		this.power = power1;
-		this.manano = manano1;
+		this.cost = Integer.parseInt(cost1);
+		this.power = Integer.parseInt(power1);
+		this.manano = Integer.parseInt(manano1);
 		this.id = id1;
 		try {
 			this.imCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream(path1)));
@@ -113,15 +124,23 @@ public class Card {
 			this.bkCard = null;
 		}
 		this.name = name1;
-		this.race = race1;
+		this.subtype = race1;
 		this.type = type1;
 		this.civilization = civilization1;
-		this.cost = cost1;
-		this.power = power1;
-		this.manano = manano1;
+		this.cost = Integer.parseInt(cost1);
+		this.power = Integer.parseInt(power1);
+		this.manano = Integer.parseInt(manano1);
 		this.id = id1;
-		this.effects = effects;
+		this.effects = new StringBuffer(effects);
 		this.imCard = null;
+	}
+	
+	public static ImageIcon scale(Icon i) {
+		BufferedImage bi = new BufferedImage(64, 87, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.createGraphics();
+		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87, 0, 0, i.getIconWidth(), i.getIconHeight(), null);
+		g.dispose();
+		return new ImageIcon(bi);
 	}
 
 	/*public static Card getInt(int idx) {
@@ -140,6 +159,25 @@ public class Card {
 	public void setImCard(ImageIcon imCard) {
 		this.imCard = imCard;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.name + "\n");
+		sb.append(this.civilization + "\n");
+		sb.append(this.id + "\n");
+		sb.append(this.type + "\n");
+		sb.append(this.subtype + "\n");
+		sb.append(this.cost + "\n");
+		sb.append(this.power + "\n");
+		sb.append(this.manano + "\n");
+		return sb.toString();
+	}
+	
+	
 	
 
 	/*
