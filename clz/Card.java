@@ -24,27 +24,20 @@ package clz;
  */
 
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-//import java.util.Vector;
-
-import java.io.Serializable;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class Card implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7028456289629115594L;
+public class Card {
 	
 	//basic structure of a digital card
-	public String name = " ", subtype = " ", type = " ", civilization = " ", id = " ";
-	public StringBuffer effects = new StringBuffer(" ");
-	public Integer cost = 0 , power = 0, manano = 1;
+	public String name = " ", subtype = " ", type = " ", civility = " ", id = " ";
+	public String[] effects = new String[20];
+	public Integer[] cost = {0, 0, 0} , eno = {1, 0 , 0};
+	public Integer power = 0, dpbonus = 0;
+	public final static String[] SYMBOLS = {"\u2191", "\u2193", "~"};
+	public char armourPowType = ' ', enoType = 'F';
 	public ImageIcon imCard;
 	public ImageIcon bkCard;
 	
@@ -70,8 +63,8 @@ public class Card implements Serializable {
 	
 	public Card(String name0, String path0) {
 		try {
-			this.bkCard = scale(new ImageIcon(
-					ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg"))));
+			this.bkCard = ImageManipulator.scale(new ImageIcon(
+					ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg"))), 64, 87);
 		} catch (IOException e) {
 			this.bkCard = null;
 		}
@@ -92,66 +85,29 @@ public class Card implements Serializable {
 		this.name = name0;
 		this.imCard = im;
 	}
-
 	
-	public Card(String name1, String race1, String type1, String civilization1,
-			String cost1, String power1, String manano1, String id1, String effects, String path1) {
+	public Card(String name1, String subtype1, String type1, String civility1,
+			String eng1, String power1, String eno1, String id1, String effects) {
 		try {
 			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
 		} catch (IOException e) {
 			this.bkCard = null;
 		}
 		this.name = name1;
-		this.subtype = race1;
+		this.subtype = subtype1;
 		this.type = type1;
-		this.civilization = civilization1;
-		this.cost = Integer.parseInt(cost1);
+		this.civility = civility1;
+		this.cost[0] = Integer.parseInt(eng1.substring(1, 2));
+		this.cost[1] = Integer.parseInt(eng1.substring(3, 4));
+		this.cost[2] = Integer.parseInt(eng1.substring(5, 6));
 		this.power = Integer.parseInt(power1);
-		this.manano = Integer.parseInt(manano1);
+		this.eno[0] = Integer.parseInt(eno1.substring(1, 2));
+		this.eno[1] = Integer.parseInt(eno1.substring(3, 4));
+		this.eno[2] = Integer.parseInt(eno1.substring(5, 6));
 		this.id = id1;
-		try {
-			this.imCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream(path1)));
-		} catch (IOException e) {
-			this.imCard = null;
-		}
+		this.effects = effects.split("\n");
+		this.imCard = new ImageIcon(ImageManipulator.createImage(this));
 	}
-	
-	public Card(String name1, String race1, String type1, String civilization1,
-			String cost1, String power1, String manano1, String id1, String effects) {
-		try {
-			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
-		} catch (IOException e) {
-			this.bkCard = null;
-		}
-		this.name = name1;
-		this.subtype = race1;
-		this.type = type1;
-		this.civilization = civilization1;
-		this.cost = Integer.parseInt(cost1);
-		this.power = Integer.parseInt(power1);
-		this.manano = Integer.parseInt(manano1);
-		this.id = id1;
-		this.effects = new StringBuffer(effects);
-		this.imCard = null;
-	}
-	
-	public static ImageIcon scale(Icon i) {
-		BufferedImage bi = new BufferedImage(64, 87, BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bi.createGraphics();
-		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87, 0, 0, i.getIconWidth(), i.getIconHeight(), null);
-		g.dispose();
-		return new ImageIcon(bi);
-	}
-
-	/*public static Card getInt(int idx) {
-		return vInterruptor.elementAt(idx);
-	}
-	
-	public void stateChange(int st) {
-		state = st;
-		vInterruptor.addElement(this);
-	}*/
-
 	public ImageIcon getImCard() {
 		return this.imCard;
 	}
@@ -167,18 +123,27 @@ public class Card implements Serializable {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.name + "\n");
-		sb.append(this.civilization + "\n");
+		sb.append(this.civility + "\n");
 		sb.append(this.id + "\n");
 		sb.append(this.type + "\n");
 		sb.append(this.subtype + "\n");
-		sb.append(this.cost + "\n");
+		sb.append(SYMBOLS[0] + this.cost[0]);
+		sb.append(SYMBOLS[1] + this.cost[1]);
+		sb.append(SYMBOLS[2] + this.cost[2] + "\n");
+		if (this.type.equalsIgnoreCase("Armour")) {
+			sb.append(armourPowType);
+		}
 		sb.append(this.power + "\n");
-		sb.append(this.manano + "\n");
+		sb.append(SYMBOLS[0] + this.eno[0]);
+		sb.append(SYMBOLS[1] + this.eno[1]);
+		sb.append(SYMBOLS[2] + this.eno[2] + "\n");
+		for (String effect : effects) {
+			if (effect != null) {
+				sb.append(effect + "\n");
+			}
+		}
 		return sb.toString();
 	}
-	
-	
-	
 
 	/*
 	 * For automatic resolving of abilities.

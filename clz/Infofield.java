@@ -153,8 +153,8 @@ public Infofield() {
 		cntpane.add(jlb[8]);
 		cntpane.add(jtf[8]);
 		cntpane2.add(wscrl);
-		tpane.addTab("Infofield", cntpane);
-		tpane.addTab("Card2 Viewer", cntpane2);
+		tpane.addTab("Information", cntpane);
+		tpane.addTab("Card Viewer", cntpane2);
 		cntpane3.add(tpane);
 	}
 	
@@ -162,12 +162,12 @@ public Infofield() {
 		if (!(card == null)) {
 			this.card = card;
 			jtf[1].setText(card.name);
-			jtf[2].setText(card.civilization); //Changed
+			jtf[2].setText(card.civility); //Changed
 			jtf[3].setText(card.type);
 			jtf[4].setText(card.cost.toString());
 			jtf[5].setText(card.subtype);
 			jtf[7].setText(card.power.toString());
-			jtf[8].setText(card.manano.toString());
+			jtf[8].setText(card.eno.toString());
 			jta1.setText(card.effects.toString());
 			label.setCard(card);
 			label.showFullImage();
@@ -231,7 +231,7 @@ public Infofield() {
 			jfc.showOpenDialog(this);
 			File f = jfc.getSelectedFile();
 			if (f.getName().endsWith(".txt")) {
-				deck = new CScan().scan(jfc.getSelectedFile());
+				deck = new CScan().scanTxtFile(jfc.getSelectedFile().getAbsolutePath());
 			} else if (f.getName().endsWith(".zip")) {
 				deck = new CScan().scanZipFile(jfc.getSelectedFile().getAbsolutePath());
 			}

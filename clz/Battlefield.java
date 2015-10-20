@@ -58,6 +58,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 
 
@@ -79,10 +81,10 @@ implements ActionListener {
 	private CWindow MG, OG, MRA[], ORA[];
 	private JTextPane jtext;
 	private JMenuBar jmb = new JMenuBar();
-	private JMenu jmAct, jmGame, jmHelp;
+	private JMenu jmAct, jmGame, jmHelp, jmDeck;
 	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR[],
 						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout, jmiPref,
-						jmiSave, jmiOpen;
+						jmiSave, jmiOpen, jmiViewRecentCard;
 	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw,
 						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom, jpiRemove;
 	
@@ -102,6 +104,7 @@ implements ActionListener {
 	public static CardListener cl = new CardListener();
 	private Infofield inf, mi, oi;
 	public Card bkCard;
+	private JFrame viewer;
 
 	public Battlefield() {
 		//Setting Icon and Location
@@ -116,13 +119,13 @@ implements ActionListener {
 		deck2 = new ArrayDeque<Card>();
         
 		//Initializing CWindows
-		MG = new CWindow("My Graveyard", 20, cl);
-		OG = new CWindow("Opponent's Graveyard", 20, cl);
+		MG = new CWindow("Player 1's Graveyard", 20, cl);
+		OG = new CWindow("Player 2's Graveyard", 20, cl);
 		MRA = new CWindow[4];
 		ORA = new CWindow[4];
 		for (int i = 1; i < 5; i++) {
-			MRA[i - 1] = new CWindow("My Area " + i, 20, cl);
-			ORA[i - 1] = new CWindow("Opponent's Area " + i, 20, cl);
+			MRA[i - 1] = new CWindow("Player 1's Area " + i, 20, cl);
+			ORA[i - 1] = new CWindow("Player 2's Area " + i, 20, cl);
 		}
 		//Creating JPopupMenus
 		jpiSearch = new JMenuItem("Search");
@@ -134,6 +137,7 @@ implements ActionListener {
 		jpiUntap = new JMenuItem("Untap");
 		jpiUntap.addActionListener(this);
 		jpiDraw = new JMenuItem("Draw");
+		jpiDraw.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0));
 		jpiDraw.addActionListener(this);
 		jpiView = new JMenuItem("View");
 		jpiView.addActionListener(this);
@@ -151,7 +155,7 @@ implements ActionListener {
 		jpiToBottom.addActionListener(this);
 		jpiRemove = new JMenuItem("Remove Placeholder");
 		jpiRemove.addActionListener(this);
-		s1 = new JPopupMenu();
+		s1 = new JPopupMenu("Deck");
 		s1.add(jpiSearch);
 		s1.add(jpiShuffle);
 		s1.add(jpiDraw);
@@ -176,7 +180,7 @@ implements ActionListener {
 			imGrave = null;
 			imNoCard = null;
 		}
-		bkCard = new Card("Shield", "/images/Back.jpg");
+		bkCard = new Card("FDCard", "/images/Back.jpg");
 
 		//Creating the Hands
 		h1 = new Hand("Player 1's Hand", cl);
@@ -190,18 +194,19 @@ implements ActionListener {
 		jmAct = new JMenu("Actions");
 		jmGame = new JMenu("Game");
 		jmHelp = new JMenu("Help");
+		jmDeck = new JMenu("Deck");
 		jmiExit = new JMenuItem("Exit");
 		jmiExit.addActionListener(this);
-		jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-		jmiEndTurn = new JMenuItem("End Your Turn");
+		jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
+		jmiEndTurn = new JMenuItem("End Current Turn");
 		jmiEndTurn.addActionListener(this);
-		jmiEndTurn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
-		jmiShowMH = new JMenuItem("Show My Hand");
+		jmiEndTurn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0));
+		jmiShowMH = new JMenuItem("Show Player 1's Hand");
 		jmiShowMH.addActionListener(this);
-		jmiShowMH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
-		jmiShowOH = new JMenuItem("Show Opponent's Hand");
+		jmiShowMH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
+		jmiShowOH = new JMenuItem("Show Player 2's Hand");
 		jmiShowOH.addActionListener(this);
-		jmiShowOH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
+		jmiShowOH.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.SHIFT_MASK));
 		jmiShowR = new JMenuItem[4];
 		jmiShowR[0] = new JMenuItem("Show Reserved Area 1");
 		jmiShowR[0].addActionListener(this);
@@ -211,13 +216,14 @@ implements ActionListener {
 		jmiShowR[2].addActionListener(this);
 		jmiShowR[3] = new JMenuItem("Show Reserved Area 4");
 		jmiShowR[3].addActionListener(this);
-		jmiViewDeck = new JMenuItem("View Deck");
+		jmiViewDeck = new JMenuItem("View Current Player's Deck");
 		jmiViewDeck.addActionListener(this);
 		jmiShowTPL = new JMenuItem("Turn Player");
 		jmiShowTPL.addActionListener(this);
 		jmiPref = new JMenuItem("Preferences...");
 		jmiPref.addActionListener(this);
-		jmiHelp = new JMenuItem("Contents");
+		jmiHelp = new JMenuItem("Rules");
+		jmiHelp.setToolTipText("Rules of Paladins Returned");
 		jmiHelp.addActionListener(this);
 		jmiAbout = new JMenuItem("About");
 		jmiAbout.addActionListener(this);
@@ -225,6 +231,8 @@ implements ActionListener {
 		jmiSave.addActionListener(this);
 		jmiOpen = new JMenuItem("Open Game");
 		jmiOpen.addActionListener(this);
+		jmiViewRecentCard = new JMenuItem("View Recently Viewed Card");
+		jmiViewRecentCard.addActionListener(this);
 		jmHelp.add(jmiHelp);
 		jmHelp.add(jmiAbout);
 		jmGame.add(jmiEndTurn);
@@ -234,11 +242,17 @@ implements ActionListener {
 		jmAct.add(jmiShowMH);
 		jmAct.add(jmiShowOH);
 		jmAct.add(jmiViewDeck);
+		jmAct.add(jmiViewRecentCard);
+		jmDeck.add(jpiSearch);
+		jmDeck.add(jpiShuffle);
+		jmDeck.add(jpiDraw);
+		jmDeck.add(jpiToBottom);
 		for (int i = 0; i < jmiShowR.length; i++) {
 			jmAct.add(jmiShowR[i]);
 		}
 		jmb.add(jmGame);
 		jmb.add(jmAct);
+		jmb.add(jmDeck);
 		jmb.add(jmHelp);
 		this.setJMenuBar(jmb);
 
@@ -457,6 +471,11 @@ implements ActionListener {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
+						for (LookAndFeelInfo lafinf : UIManager.getInstalledLookAndFeels()) {
+							if ("Nimbus".equals(lafinf.getName())) {
+								UIManager.setLookAndFeel(lafinf.getClassName());
+							}
+						}
 						new Battlefield();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -518,6 +537,7 @@ implements ActionListener {
 	}
 	
 	public void addToShield(Card card, int index, boolean opturn) {
+		//Set cards and filp them
 		if (opturn) {
 			jlbOS[index].setCard(card);
 			jlbOS[index].flip();
@@ -621,7 +641,7 @@ implements ActionListener {
 			}
 			CLabel lblCard = new CLabel(((CLabel) lbl).getCard());
 			lblCard.addMouseListener(new ViewerListener(lblCard.getCard()));
-			JFrame viewer = new JFrame("Card Viewer");
+			viewer = new JFrame("Card Viewer");
 			viewer.setSize(400, 600);
 			viewer.getContentPane().add(lblCard);
 			viewer.addWindowListener(new WindowAdapter() {
@@ -634,7 +654,7 @@ implements ActionListener {
 		} else if(ae.getSource() == jpiViewName) {
 			CLabel label = (CLabel) s3.getInvoker();
 			String cardname = label.getCard().name;
-			cardname = cardname.substring(0, cardname.lastIndexOf("."));
+			cardname = cardname.substring(0, cardname.length() - 4);
 			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
 					"Card Name", JOptionPane.INFORMATION_MESSAGE);
 		} else if(ae.getSource() == jmiShowTPL) {
@@ -656,7 +676,6 @@ implements ActionListener {
 				deck1.addFirst(card);
 				inf.setCard(deck1.getFirst());
 			}
-			//} important
 		} else if(ae.getSource() == jpiToBottom) {
 			Card card;
 			if (opturn) {
@@ -684,6 +703,10 @@ implements ActionListener {
 			hf.setVisible(true);
 		} else if(ae.getSource() == jmiPref) {		
 			pif.setVisible(true);
+		} else if(ae.getSource() == jmiViewRecentCard) {
+			if ((viewer != null) && (!viewer.isVisible())) {
+				viewer.setVisible(true);
+			}
 		} else if(ae.getSource() == jmiAbout) {
 			message = "PR Player\nCreator : Subhraman Sarkar, 2014";
 			aboutFrame = new JFrame("About");
@@ -748,6 +771,7 @@ implements ActionListener {
 						h1.setVisible(true);
 					}
 				}
+				jpiToHand.setEnabled(false);
 			}
 		}
 	}

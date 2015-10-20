@@ -84,8 +84,9 @@ public class CScan extends JFrame {
 		return deck;
 	}
 	
-public Deque<Card> scan(File f) {
+public Deque<Card> scanTxtFile(String path) {
 		
+		File f = new File(path);
 		Scanner s = null;
 		List<String> clist = new ArrayList<String>();
 		Deque<Card> deck = new ArrayDeque<Card>();

@@ -24,9 +24,6 @@ package clz;
  */
 
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.util.Stack;
 
 import javax.swing.Icon;
@@ -36,8 +33,6 @@ import javax.swing.JLabel;
 
 public class CLabel extends JLabel {
 	
-	
-	private Image im;
 	private static final long serialVersionUID = 1L;
 	private Stack<Card> cards = new Stack<Card>();
 	private static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
@@ -47,11 +42,7 @@ public class CLabel extends JLabel {
 			" Move the mouse wheel to tap/untap.";
 
 	public CLabel() {
-		super(ImageManipulator.scale(ncrd.getImCard(), 64, 47));
-		cards.add(ncrd);
-		fliped = false;
-		tapped = false;
-		this.setToolTipText(tooltip);
+		this(ncrd);
 	}
 	
 	public CLabel(Card card1) {
@@ -128,6 +119,9 @@ public class CLabel extends JLabel {
 	public void setCard(Card card0) {
 		cards.add(card0);
 		super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
+		//super.setVerticalTextPosition(JLabel.BOTTOM);
+		//super.setHorizontalTextPosition(JLabel.CENTER);
+		//super.setText(card0.name);
 	}
 	
 	public void showFullImage() {
@@ -154,23 +148,27 @@ public class CLabel extends JLabel {
 	
 	public void tap() {
 		setTapped(true);
-		im = ((ImageIcon) getIcon()).getImage();
-		Graphics gd = im.getGraphics();
-		gd.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
-		gd.setColor(Color.BLACK);
-		gd.drawString("Tapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
-		gd.dispose();
+		//im = ((ImageIcon) getIcon()).getImage();
+		//Graphics gd = im.getGraphics();
+		//gd.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
+		//gd.setColor(Color.BLACK);
+		//gd.drawString("Tapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
+		//gd.dispose();
+		setIcon(ImageManipulator.rotate(getIcon()));
 		repaint();
 	}
 
 	public void untap() {
 		setTapped(false);
-		im = ((ImageIcon) getIcon()).getImage();
-		Graphics gd2 = im.getGraphics();
-		gd2.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
-		gd2.setColor(Color.BLACK);
-		gd2.drawString("Untapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
-		gd2.dispose();
+		//im = ((ImageIcon) getIcon()).getImage();
+		//Graphics gd2 = im.getGraphics();
+		//gd2.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
+		//gd2.setColor(Color.BLACK);
+		//gd2.drawString("Untapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
+		//gd2.dispose();
+		ImageIcon im = ImageManipulator.rotate(getIcon());
+		im = ImageManipulator.rotate(im);
+		setIcon(ImageManipulator.rotate(im));
 		repaint();
 	}
 	
