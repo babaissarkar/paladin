@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -28,25 +29,6 @@ public final class ImageManipulator {
 	
 	private ImageManipulator() {
 	};
-	
-	public static void main(String[] args) {
-		Card c = new Card("Ring of Hope", "Ring", "Armour", "Raenid", "F4B2Q0", "2000", "F1B0Q0", "R", "");
-//		c.name = "Ring of Hope";
-//		c.type = "Armour";
-//		c.subtype = "Ring";
-		c.armourPowType = '+';
-//		c.power = 2000;
-//		c.eno[0] = 1;
-//		c.eno[1] = 1;
-//		c.dpbonus = 1;
-//		c.cost[0] = 0;
-//		c.cost[1] = 4;
-//		c.cost[2] = 4;
-		
-//		ImageManipulator.createImage(c);
-//		ImageManipulator.saveImage();
-		System.out.println(c.toString());
-	}
 	
 	public static ImageIcon decode(String encodedText) {
 		Base64.Decoder dec = Base64.getDecoder();
@@ -65,9 +47,11 @@ public final class ImageManipulator {
 		g.setFont(fnt);
 		FontMetrics fm = g.getFontMetrics(fnt);
 		
-		AlphaComposite acom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.55f);
-		g.setComposite(acom);
-		
+		if (c.imCard != null) {
+			AlphaComposite acom = AlphaComposite.getInstance(
+					AlphaComposite.SRC_OVER, 0.55f);
+			g.setComposite(acom);
+		}
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.BLACK);
@@ -138,19 +122,45 @@ public final class ImageManipulator {
 			g.drawString(Card.SYMBOLS[2] + cost[2].toString(), width/2 - 15, y);
 		}
 		
-		BufferedImage im = null;
-		try {
-			im = (BufferedImage) scale(new ImageIcon(ImageIO.read(
-					ImageManipulator.class.getResourceAsStream("/images/hibiscus-3.jpg")))
-					, width - 14, height - 14)
+		g.setFont(new Font("DejaVu Serif", Font.PLAIN, 15));
+		int y2 = 120;
+		Vector<String> vlines = new Vector<String>();
+		StringBuffer sbLine = new StringBuffer();
+		for (String effect : c.effects) {
+			if (!effect.equals("")) {
+				String[] words = effect.split(" ");
+				int wordsPerLine = 5;
+				for (int i = 0; i < (words.length / wordsPerLine) + 1; i++) {
+					for (int j1 = 0; j1 < wordsPerLine; j1++) {
+						int k = j1 + i * wordsPerLine;
+						if (k < words.length) {
+							String str = words[k];
+							sbLine.append(str);
+							if (k != words.length - 1) {
+								sbLine.append(" ");
+							}
+						}
+					}
+					vlines.add(sbLine.toString());
+					sbLine = new StringBuffer();
+				}
+				for (String line : vlines) {
+					g.drawString(line, 15, y2);
+					y2 += fm.getHeight() + 2;
+				}
+				vlines.removeAllElements();
+				y2 += 6;
+			}
+		}
+		
+		if (c.imCard != null) {
+			BufferedImage im = null;
+			im = (BufferedImage) scale(c.imCard, width - 14, height - 14)
 					.getImage();
 			g.drawImage(im, 7, 7, null);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		g.dispose();
-		//showImage(cim);
+//		showImage(cim);
 //		for(String s : ImageIO.getWriterFormatNames()) {
 //			System.out.println(s);
 //		}
