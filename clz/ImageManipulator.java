@@ -36,12 +36,24 @@ public final class ImageManipulator {
 		return im;
 	}
 	
+	public static void main(String[] args) {
+		Card c = new Card("Ring of Hope", "Armour", "Ring", "Raenid", "F4R0Q0", "2000", "F1R0Q0", "0", "", "0");
+		c.effects = new String[2];
+		c.effects[0] = "When the armored character is destroyed, decrease its power by 5000 for one turn instead.";
+		c.effects[1] = "Hope never ends.";
+		c.imCard = null;
+		ImageManipulator.createImage(c);
+		ImageManipulator.saveImage();
+	}
+	
 	public static BufferedImage createImage(Card c) {
-		int width = 285, height = 405;
+		int width = 300, height = 415;
 		BufferedImage cim = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = cim.createGraphics();
-		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setRenderingHints(rh);
+		RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		RenderingHints rh2 = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.addRenderingHints(rh);
+		g.addRenderingHints(rh2);
 		g.setStroke(new BasicStroke(2f));
 		Font fnt = new Font("DejaVu Sans", Font.PLAIN, 14);
 		g.setFont(fnt);
@@ -56,7 +68,19 @@ public final class ImageManipulator {
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.BLACK);
 		g.drawRect(1, 1, width - 2, height - 2);
-		g.setColor(Color.YELLOW);
+		if (c.civility.equalsIgnoreCase("Raenid")) {
+			g.setColor(Color.YELLOW);
+		} else if (c.civility.equalsIgnoreCase("Asarn")) {
+			g.setColor(Color.RED);
+		} else if (c.civility.equalsIgnoreCase("Mayarth")) {
+			g.setColor(Color.ORANGE);
+		} else if (c.civility.equalsIgnoreCase("Zivar")) {
+			g.setColor(Color.BLACK);
+		} else if (c.civility.equalsIgnoreCase("Niaz")) {
+			g.setColor(Color.CYAN);
+		} else if (c.civility.equalsIgnoreCase("Kshiti")) {
+			g.setColor(Color.GREEN);
+		}
 		g.fillRect(2, 2, width - 4, height - 4);
 		g.setColor(Color.WHITE);
 		g.fillRect(7, 7, width - 14, height - 14);
@@ -93,17 +117,21 @@ public final class ImageManipulator {
 		}
 		g.setFont(new Font("DejaVu Sans", Font.BOLD, 16));
 		g.drawString(strEno.toString(), width/2 - 18, height - 17);
-		if (c.dpbonus != 0) {
-			String dpb = " ";
-			if (c.dpbonus > 0) {
-				dpb = "+" + c.dpbonus.toString();
-			} else if (c.dpbonus < 0) {
-				dpb = "-" + c.dpbonus.toString();
+		String dpb = " ";
+		if (c.type.equalsIgnoreCase("Armour")) {
+			if (c.damage > 0) {
+				dpb = "+" + c.damage.toString();
+			} else if (c.damage < 0) {
+				dpb = "-" + c.damage.toString();
+			} else {
+				dpb = "+" + c.damage.toString();
 			}
-			g.drawString(dpb, width - 40, height - 17);
+		} else {
+			dpb = c.damage.toString();
 		}
+			g.drawString(dpb, width - 40, height - 17);
 		
-		Integer[] cost = c.cost;
+		Integer[] cost = c.energy;
 		int y;
 		if ((cost[0] != 0) && (cost[1] != 0) && (cost[2] != 0)) {
 			y = 67;
@@ -122,7 +150,7 @@ public final class ImageManipulator {
 			g.drawString(Card.SYMBOLS[2] + cost[2].toString(), width/2 - 15, y);
 		}
 		
-		g.setFont(new Font("DejaVu Serif", Font.PLAIN, 15));
+		g.setFont(new Font("URW Bookman L", Font.PLAIN, 16));
 		int y2 = 120;
 		Vector<String> vlines = new Vector<String>();
 		StringBuffer sbLine = new StringBuffer();

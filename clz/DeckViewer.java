@@ -61,7 +61,7 @@ public class DeckViewer extends JPanel {
 	private String[] cardsnm;
 	private Card selCard;
 	private Infofield inf;
-	public JButton btnShow;
+	public JButton btnShow, btnRemove;
 
  public DeckViewer(Deque<Card> stack) {
  	setLocation(new Point(700, 60));
@@ -99,7 +99,9 @@ public class DeckViewer extends JPanel {
 	btnShow = new JButton("Show");
 	btnShow.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 	btnShow.setAlignmentX(Component.CENTER_ALIGNMENT);
-	panel.add(btnShow, BorderLayout.SOUTH);
+	btnRemove = new JButton("Remove");
+	panel.add(btnShow);
+	panel.add(btnRemove);
 }
 
 public void showDeck() {

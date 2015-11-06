@@ -59,7 +59,7 @@ public class CScan extends JFrame {
 	}
 	
 
-	public Deque<Card> scan(String path) {
+	public Deque<Card> scanNmeAndImg(String path) {
 		
 		Scanner s = null;
 		List<String> clist = new ArrayList<String>();
@@ -84,7 +84,7 @@ public class CScan extends JFrame {
 		return deck;
 	}
 	
-public Deque<Card> scanTxtFile(String path) {
+public Deque<Card> scanAllAtributes(String path) {
 		
 		File f = new File(path);
 		Scanner s = null;
@@ -95,31 +95,61 @@ public Deque<Card> scanTxtFile(String path) {
 		int id = 0;
 		try {
 			s = new Scanner(new BufferedInputStream(new FileInputStream(f)));
-			s.useDelimiter(";");
+			s.useDelimiter(";\n");
 			while (s.hasNext()) {
 				clist.add(s.next());
 			}
 			i = clist.iterator();
 			while (i.hasNext()) {
-				Card c = new Card(i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next());
-				String encimage = i.next();
-				byte[] bytes = Base64.decode(encimage);
-				ImageIcon im = new ImageIcon(bytes);
-				c.imCard = im;
+				Card c = new Card(i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next());
 				deck.addLast(c);
 				id++;
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
 					"Sorry!", JOptionPane.ERROR_MESSAGE);
-		} catch (Base64DecodingException e) {
-			JOptionPane.showMessageDialog(new JFrame("Error."), "Decoding Error.",
-					"Sorry!", JOptionPane.ERROR_MESSAGE);
 		} finally {
 			s.close();
 		}
 		return deck;
 	}
+
+public Deque<Card> scanAllAtributesWithImg(String path) {
+	
+	File f = new File(path);
+	Scanner s = null;
+	List<String> clist = new ArrayList<String>();
+	Deque<Card> deck = new ArrayDeque<Card>();
+	Iterator<String> i;
+	@SuppressWarnings("unused")
+	int id = 0;
+	try {
+		s = new Scanner(new BufferedInputStream(new FileInputStream(f)));
+		s.useDelimiter(";\n");
+		while (s.hasNext()) {
+			clist.add(s.next());
+		}
+		i = clist.iterator();
+		while (i.hasNext()) {
+			Card c = new Card(i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next(), i.next());
+			String encimage = i.next();
+			byte[] bytes = Base64.decode(encimage);
+			ImageIcon im = new ImageIcon(bytes);
+			c.imCard = im;
+			deck.addLast(c);
+			id++;
+		}
+	} catch (FileNotFoundException e) {
+		JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
+				"Sorry!", JOptionPane.ERROR_MESSAGE);
+	} catch (Base64DecodingException e) {
+		JOptionPane.showMessageDialog(new JFrame("Error."), "Decoding Error.",
+				"Sorry!", JOptionPane.ERROR_MESSAGE);
+	} finally {
+		s.close();
+	}
+	return deck;
+}
 
 public Deque<Card> scanZipFile(String str) {
 	Deque<Card> resDeck = new ArrayDeque<Card>();

@@ -222,13 +222,13 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		if (deck1.endsWith(".zip")) {
 			btf.deck1 = cs.scanZipFile(deck1);
 		} else if (deck1.endsWith(".txt")) {
-			btf.deck1 = cs.scanTxtFile(deck1);
+			btf.deck1 = cs.scanAllAtributes(deck1);
 		}
 		
 		if (deck2.endsWith(".zip")) {
 			btf.deck2 = cs.scanZipFile(deck2);
 		} else if (deck1.endsWith(".txt")) {
-			btf.deck2 = cs.scanTxtFile(deck2);
+			btf.deck2 = cs.scanAllAtributes(deck2);
 		}
 	}
 }

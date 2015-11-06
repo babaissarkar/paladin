@@ -34,10 +34,10 @@ public class Card {
 	//basic structure of a digital card
 	public String name = " ", subtype = " ", type = " ", civility = " ", id = " ";
 	public String[] effects = new String[20];
-	public Integer[] cost = {0, 0, 0} , eno = {1, 0 , 0};
-	public Integer power = 0, dpbonus = 0;
+	public Integer[] energy = {0, 0, 0} , eno = {1, 0 , 0};
+	public Integer power = 0, damage = 0;
 	public final static String[] SYMBOLS = {"\u2191", "\u2193", "~"};
-	public char armourPowType = ' ', enoType = 'F';
+	public char armourPowType = ' ';
 	public ImageIcon imCard;
 	public ImageIcon bkCard;
 	
@@ -86,8 +86,8 @@ public class Card {
 		this.imCard = im;
 	}
 	
-	public Card(String name1, String subtype1, String type1, String civility1,
-			String eng1, String power1, String eno1, String id1, String effects) {
+	public Card(String name1, String type1, String subtype1, String civility1,
+			String eng1, String power1, String eno1, String id1, String effects, String damage) {
 		try {
 			this.bkCard = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/Back.jpg")));
 		} catch (IOException e) {
@@ -97,15 +97,16 @@ public class Card {
 		this.subtype = subtype1;
 		this.type = type1;
 		this.civility = civility1;
-		this.cost[0] = Integer.parseInt(eng1.substring(1, 2));
-		this.cost[1] = Integer.parseInt(eng1.substring(3, 4));
-		this.cost[2] = Integer.parseInt(eng1.substring(5, 6));
+		this.energy[0] = Integer.parseInt(eng1.substring(1, 2));
+		this.energy[1] = Integer.parseInt(eng1.substring(3, 4));
+		this.energy[2] = Integer.parseInt(eng1.substring(5, 6));
 		this.power = Integer.parseInt(power1);
 		this.eno[0] = Integer.parseInt(eno1.substring(1, 2));
 		this.eno[1] = Integer.parseInt(eno1.substring(3, 4));
 		this.eno[2] = Integer.parseInt(eno1.substring(5, 6));
 		this.id = id1;
 		this.effects = effects.split("\n");
+		this.damage = Integer.parseInt(damage);
 		this.imCard = new ImageIcon(ImageManipulator.createImage(this));
 	}
 	public ImageIcon getImCard() {
@@ -115,36 +116,81 @@ public class Card {
 	public void setImCard(ImageIcon imCard) {
 		this.imCard = imCard;
 	}
-
+	
+	public static String energyToString(Integer[] engs) {
+		String convEngString;
+		StringBuffer sbEngString = new StringBuffer();
+		sbEngString.append(SYMBOLS[0] + engs[0]);
+		sbEngString.append(SYMBOLS[1] + engs[1]);
+		sbEngString.append(SYMBOLS[2] + engs[2]);
+		convEngString = sbEngString.toString();
+		return convEngString;
+	}
+	
+	public static Integer[] stringToEnergy(String engs) {
+		Integer[] arEngs = new Integer[3];
+		char[] chrEngs = engs.toUpperCase().toCharArray();
+		for (int i = 0; i < chrEngs.length; i++) {
+			if (chrEngs[i] == 'F') {
+				arEngs[0] = Integer.parseInt(new Character(chrEngs[i++]).toString());
+			} else if (chrEngs[i] == 'R') {
+				arEngs[1] = Integer.parseInt(new Character(chrEngs[i++]).toString());
+			} if (chrEngs[i] == 'Q') {
+				arEngs[2] = Integer.parseInt(new Character(chrEngs[i++]).toString());
+			}
+		}
+		return arEngs;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.name + "\n");
-		sb.append(this.civility + "\n");
-		sb.append(this.id + "\n");
-		sb.append(this.type + "\n");
-		sb.append(this.subtype + "\n");
-		sb.append(SYMBOLS[0] + this.cost[0]);
-		sb.append(SYMBOLS[1] + this.cost[1]);
-		sb.append(SYMBOLS[2] + this.cost[2] + "\n");
+		sb.append("Name : " + this.name + "\n");
+		sb.append("Civility : " + this.civility + "\n");
+		sb.append("Id : " + this.id + "\n");
+		sb.append("Type : " + this.type + "\n");
+		sb.append("Subtype : " + this.subtype + "\n");
+		sb.append("Energy required :" + energyToString(this.energy) + "\n");
 		if (this.type.equalsIgnoreCase("Armour")) {
+			sb.append("Power : ");
 			sb.append(armourPowType);
+		} else {
+			sb.append("Power bonus : ");
 		}
 		sb.append(this.power + "\n");
-		sb.append(SYMBOLS[0] + this.eno[0]);
-		sb.append(SYMBOLS[1] + this.eno[1]);
-		sb.append(SYMBOLS[2] + this.eno[2] + "\n");
+		sb.append("Energy number : " + energyToString(this.eno) + "\n");
+		sb.append("Effects :\n");
 		for (String effect : effects) {
 			if (effect != null) {
 				sb.append(effect + "\n");
 			}
 		}
+		sb.append("Damage points : " + this.damage + "\n");
 		return sb.toString();
 	}
-
+	
+	public String writeInfo() {
+		StringBuilder sbCardInfo = new StringBuilder();
+		sbCardInfo.append(this.name + ";\n");
+		sbCardInfo.append(this.type + ";\n");
+		sbCardInfo.append(this.subtype + ";\n");
+		sbCardInfo.append(this.civility + ";\n");
+		sbCardInfo.append(energyToString(this.energy) + ";\n");
+		sbCardInfo.append(power.toString() + ";\n");
+		sbCardInfo.append(energyToString(this.eno) + ";\n");
+		sbCardInfo.append(this.id + ";\n");
+		for (String effect : effects) {
+			if (effect != null) {
+				sbCardInfo.append(effect + "\n");
+			}
+		}
+		sbCardInfo.append(";\n");
+		sbCardInfo.append(this.damage + ";");
+		return sbCardInfo.toString();
+	}
 	/*
 	 * For automatic resolving of abilities.
 	 * 
