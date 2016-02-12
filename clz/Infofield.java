@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayDeque;
 //import java.io.FileInputStream;
 //import java.io.FileNotFoundException;
 import java.util.Deque;
@@ -56,7 +57,7 @@ public class Infofield extends JFrame implements ActionListener {
 
 private static final long serialVersionUID = 6555470512771760138L;
 
-public JFrame win = new JFrame("Card2 Image");
+public JFrame win = new JFrame("Card Image");
 private JLabel[] jlb = new JLabel[11];
 private JTextField[] jtf = new JTextField[11];
 private Container cntpane, cntpane2, cntpane3;
@@ -65,10 +66,10 @@ private JTextArea jta1;
 private JScrollPane jscroll, wscrl;
 private JMenuBar jmb;
 private JMenu jmFile, jmDeck;
-private JMenuItem jmiExit, jmiOpen, jmiCreateDeck, jmiSaveDeck, jmiAddCard, jmiAppend;
+private JMenuItem jmiExit, jmiOpen, jmiCreateDeck, jmiSaveDeck, jmiAddCard, jmiAppend, jmiExport;
 private JFileChooser jfc;
 private Card card;
-private Deque<Card> deck;
+private Deque<Card> deck = null;
 private DeckViewer dv;
 private JTabbedPane tpane;
 
@@ -96,8 +97,11 @@ public Infofield() {
 	jmiOpen = new JMenuItem("Open");
 	jmiOpen.addActionListener(this);
 	jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+	jmiExport = new JMenuItem("Export As Text Document...");
+	jmiExport.addActionListener(this);
 	jmFile = new JMenu("File");
 	jmFile.add(jmiOpen);
+	jmFile.add(jmiExport);
 	jmFile.add(jmiExit);
 	jmiCreateDeck = new JMenuItem("Create A New Deck");
 	jmiCreateDeck.addActionListener(this);
@@ -109,7 +113,6 @@ public Infofield() {
 	jmiAddCard.setEnabled(false);
 	jmiAppend = new JMenuItem("Append To Existing Deck");
 	jmiAppend.addActionListener(this);
-	jmiAppend.setEnabled(true);
 	jmDeck = new JMenu("Deck");
 	jmDeck.add(jmiCreateDeck);
 	jmDeck.add(jmiAppend);
@@ -144,6 +147,7 @@ public Infofield() {
 		jtf[3] = new JTextField(20);
 		jlb[4] = new JLabel("Energy");
 		jtf[4] = new JTextField(20);
+		jtf[4].setText("↑0↓0~0(0)");
 		jlb[5] = new JLabel("Subtype");
 		jtf[5] = new JTextField(20);
 		jlb[6] = new JLabel("Effects");
@@ -153,10 +157,13 @@ public Infofield() {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		jlb[7] = new JLabel("Power");
 		jtf[7] = new JTextField(20);
+		jtf[7].setText("0");
 		jlb[8] = new JLabel("Energy No.");
 		jtf[8] = new JTextField(20);
+		jtf[8].setText("↑0↓0~0");
 		jlb[9] = new JLabel("Damage Points");
 		jtf[9] = new JTextField(5);
+		jtf[9].setText("0");
 		jlb[10] = new JLabel("ID");
 		jtf[10] = new JTextField(10);
 		label = new CLabel(new Card("No Card2", "/images/NCRD.jpg"));
@@ -220,8 +227,23 @@ public Infofield() {
 	public final void prepareDeck() {
 		if (this.deck != null) {
 			dv = new DeckViewer(this.deck);
-			dv.btnShow.addActionListener(this);
-			dv.btnRemove.addActionListener(this);
+			dv.btnShow.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					if (deck != null) {
+						setCard(dv.getCard());
+					}
+				}
+			});
+			dv.btnRemove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					if (deck != null) {
+						deck.remove(dv.getCard());
+							dv.lblNoOfCards.setText("No of cards in this deck is :" + dv.noOfCards); //Check
+							prepareDeck();
+						}
+				}
+			});
+			dv.btnSort.addActionListener(this);
 			this.getContentPane().remove(tpane);
 			if (tpane.getTabCount() == 3) {
 				tpane.removeTabAt(2);
@@ -258,18 +280,17 @@ public Infofield() {
 				}
 				prepareDeck();
 			}
-		} else if (ae.getSource() == dv.btnShow) {
-			this.setCard(dv.getCard());
-		} else if (ae.getSource() == dv.btnRemove) {
-			this.deck.remove(dv.getCard());
-			prepareDeck();
 		} else if (ae.getSource() == jmiCreateDeck) {
 			this.jmiAddCard.setEnabled(true);
 			this.jmiSaveDeck.setEnabled(true);
 			this.jmiCreateDeck.setEnabled(false);
 			this.jmiAppend.setEnabled(false);
-			for (Card c : deck) {
-				deck.remove(c);
+			if (deck != null) {
+				deck.removeAll(deck);
+				prepareDeck();
+			} else {
+				deck = new ArrayDeque<Card>();
+				prepareDeck();
 			}
 		} else if (ae.getSource() == jmiAppend) {
 			if (deck != null) {
@@ -283,6 +304,7 @@ public Infofield() {
 					jtf[2].getText(), jtf[4].getText(), jtf[7].getText(),
 					jtf[8].getText(), jtf[10].getText(), jta1.getText(), jtf[9].getText());
 			deck.add(card);
+			dv.lblNoOfCards.setText("No of cards in this deck is :" + this.dv.noOfCards); //Check
 			prepareDeck();
 		} else if (ae.getSource() == jmiSaveDeck) {
 			int stat = jfc.showSaveDialog(this);
@@ -297,6 +319,8 @@ public Infofield() {
 					write.println(c.writeInfo());
 				}
 				write.close();
+				JOptionPane.showMessageDialog(this, "Deck Sucessfully Saved!", "",
+						JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e) {
 				}
 			}
@@ -304,6 +328,28 @@ public Infofield() {
 			jmiAddCard.setEnabled(false);
 			jmiCreateDeck.setEnabled(true);
 			jmiAppend.setEnabled(true);
+		} else if (ae.getSource() == jmiExport) {
+			int stat = jfc.showSaveDialog(this);
+			if (stat == JFileChooser.APPROVE_OPTION) {
+				File f = jfc.getSelectedFile();
+				try {
+					if (!f.exists()) {
+						f.createNewFile();
+					}
+				PrintWriter write = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f)));
+				write.println("Card Database");
+				write.println("-------------------------------------------");
+				for (Card c : deck) {
+					write.println(c.toString());
+					write.println("-------------------------------------------");
+				}
+				write.println("-------------------------------------------");
+				write.close();
+				JOptionPane.showMessageDialog(this, "Deck Sucessfully Exported!", "",
+						JOptionPane.INFORMATION_MESSAGE);
+				} catch (Exception e) {
+				}
+			}
 		}
 	}
 }

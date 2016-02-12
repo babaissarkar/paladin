@@ -25,29 +25,51 @@ package clz;
 
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SwingUtilities;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 
 @SuppressWarnings("serial")
 public class Hand extends JFrame {
+	private JPanel panel, pnlBPoints;
+	private JLabel lblBPoints;
+	private JSpinner bPoints;
 	private CLabel[] clbl = new CLabel[30];
 	private int i;
+	public int maxBPoints = 6;
 	public CardListener a;
 	
 	public Hand(String title, CardListener al) {
 		i = 0;
 		a = al;
-		setSize(new Dimension(508, 146));
+		bPoints = new JSpinner();
+		bPoints.setValue(maxBPoints);
+		panel = new JPanel();
+		pnlBPoints = new JPanel();
+		lblBPoints = new JLabel("Barrier Points :");
+		setSize(new Dimension(508, 200));
 		setTitle(title);
-		getContentPane().setLayout(new GridLayout(0, 5, 0, 0));
+		getContentPane().setLayout(new BorderLayout());
+		panel.setLayout(new GridLayout(0, 5, 0, 0));
+		pnlBPoints.setLayout(new FlowLayout());
+		pnlBPoints.add(lblBPoints);
+		pnlBPoints.add(bPoints);
+		getContentPane().add(pnlBPoints, BorderLayout.NORTH);
+		getContentPane().add(panel, BorderLayout.CENTER);
 	}
 	
 	public void add(Card c) {
 		clbl[i] = new CLabel(c);
 		clbl[i].addMouseListener(a);
-		getContentPane().add(clbl[i]);
+		panel.add(clbl[i]);
+		SwingUtilities.updateComponentTreeUI(this);
 		i++;
 	}
 	

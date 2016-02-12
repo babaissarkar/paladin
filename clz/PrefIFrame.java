@@ -28,9 +28,8 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	// GUI Components
 	public JButton btnCancel, btnOk, btnBrowse, btnBrowse2;
 	private JCheckBox chckbxShields, chckbxDraw;
-	private JTextField txtDk1, txtDk2, textField_2;
+	private JTextField txtDk1, txtDk2, textField_2, textField_1;
 	private JFileChooser files;
-	private JTextField textField_4;
 	
 	public Battlefield btf;
 
@@ -61,7 +60,6 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		txtDk2 = new JTextField();
 		txtDk2.setText(Battlefield.userhome + "/.PRPlayer/decks/deck2.zip");
 		txtDk2.setColumns(10);
-		
 		btnBrowse2 = new JButton("Browse...");
 		btnBrowse2.addActionListener(this);
 		
@@ -80,9 +78,9 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		chckbxDraw.setSelected(true);
 		hboxDraw.add(chckbxDraw);
 		
-		textField_2 = new JTextField();
-		textField_2.setText("5");
+		textField_2 = new JTextField("5");
 		hboxDraw.add(textField_2);
+		
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -150,9 +148,9 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		chckbxShields.addActionListener(this);
 		hboxFCards.add(chckbxShields);
 		
-		textField_4 = new JTextField();
-		textField_4.setEnabled(false);
-		hboxFCards.add(textField_4);
+		textField_1 = new JTextField();
+		textField_1.setEnabled(false);
+		hboxFCards.add(textField_1);
 		
 		getContentPane().setLayout(groupLayout);
 		setTitle("Preferences");
@@ -169,8 +167,8 @@ public class PrefIFrame extends JFrame implements ActionListener {
 			this.setVisible(false);
 			this.btnCancel.setEnabled(true);
 			int i = 0, j = 0;
-			if (!textField_4.getText().equals("")) {
-				i = new Integer(textField_4.getText());
+			if (!textField_1.getText().equals("")) {
+				i = new Integer(textField_1.getText());
 			}
 			if (!textField_2.getText().equals("")) {
 				j = new Integer(textField_2.getText());
@@ -187,21 +185,11 @@ public class PrefIFrame extends JFrame implements ActionListener {
 				txtDk2.setText(files.getSelectedFile().getAbsolutePath());
 			}
 		} else if(arg0.getSource() == chckbxShields) {
-			if (false == shields) {
-				textField_4.setEnabled(true);
-				shields = true;
-			} else {
-				textField_4.setEnabled(false);
-				shields = false;
-			}
+			textField_1.setEnabled(chckbxShields.isSelected());
+			shields = chckbxShields.isSelected();
 		} else if(arg0.getSource() == chckbxDraw) {
-			if (draw) {
-				textField_2.setEditable(false);
-				draw = false;
-			} else {
-				textField_2.setEditable(true);
-				draw = true;
-			}
+			textField_2.setEnabled(chckbxDraw.isSelected());
+			draw = chckbxDraw.isSelected();
 		}
 		
 	}

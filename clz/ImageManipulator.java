@@ -37,12 +37,13 @@ public final class ImageManipulator {
 	}
 	
 	public static void main(String[] args) {
-		Card c = new Card("Ring of Hope", "Armour", "Ring", "Raenid", "F4R0Q0", "2000", "F1R0Q0", "0", "", "0");
+		Card c = new Card("Azen, Dancer of Kuren", "Armour", "Ring", "Raenid", "F4R0Q0(3)", "2000", "F1R0Q0", "0", "", "0");
 		c.effects = new String[2];
 		c.effects[0] = "When the armored character is destroyed, decrease its power by 5000 for one turn instead.";
 		c.effects[1] = "Hope never ends.";
 		c.imCard = null;
 		ImageManipulator.createImage(c);
+		//System.out.println(c.toString());
 		ImageManipulator.saveImage();
 	}
 	
@@ -95,7 +96,13 @@ public final class ImageManipulator {
 		g.drawLine(width/2 + 25, height - 40, width/2 + 30, height - 9);
 		
 		String name = c.name.toUpperCase();
-		g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
+		Font titleFont = new Font(g.getFont().getFontName(), Font.BOLD, 20);
+		//System.out.println(g.getFontMetrics(titleFont).stringWidth(name) + 20);
+		if (g.getFontMetrics(titleFont).stringWidth(name) + 20 > width) {
+			g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 14));
+		} else {
+			g.setFont(titleFont);
+		}
 		g.drawString(name, 20, 35);
 		String type = c.type.toUpperCase();
 		g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 16));
@@ -103,7 +110,17 @@ public final class ImageManipulator {
 		String subtype = c.subtype;
 		g.setFont(new Font("URW Palladio L", Font.ITALIC, 20));
 		g.drawString(subtype, width/2 + 40, 70);
-		String power = new Character(c.armourPowType).toString() + " " + c.power.toString();
+		//String power = new Character(c.armourPowType).toString() + " " + c.power.toString();
+		String power;
+		if (c.type.equalsIgnoreCase("Armour")) {
+			if (c.power < 0) {
+				power = "- " + c.power.toString();
+			} else {
+				power = "+ " + c.power.toString();
+			}
+		} else {
+			power = c.power.toString();
+		}
 		g.setFont(new Font("DejaVu Sans", Font.BOLD, 18));
 		g.drawString(power, 18, height - 17);
 		StringBuffer strEno = new StringBuffer();
@@ -129,8 +146,11 @@ public final class ImageManipulator {
 		} else {
 			dpb = c.damage.toString();
 		}
+		if ((c.damage != 0) && (!c.subtype.equalsIgnoreCase("Character"))) {
 			g.drawString(dpb, width - 40, height - 17);
-		
+		} else if ((c.damage == 0) && (c.subtype.equalsIgnoreCase("Character"))) {
+			g.drawString(dpb, width - 40, height - 17);
+		}
 		Integer[] cost = c.energy;
 		int y;
 		if ((cost[0] != 0) && (cost[1] != 0) && (cost[2] != 0)) {
@@ -148,6 +168,9 @@ public final class ImageManipulator {
 		}
 		if (cost[2] != 0) {
 			g.drawString(Card.SYMBOLS[2] + cost[2].toString(), width/2 - 15, y);
+		}
+		if ((c.generic == true) && (cost[3] != 0)) {
+			g.drawString("(" + cost[3] + ")", width/2 - 12, y);
 		}
 		
 		g.setFont(new Font("URW Bookman L", Font.PLAIN, 16));
@@ -197,6 +220,10 @@ public final class ImageManipulator {
 	}
 	
 	public static void saveImage() {
+		saveImage(lastImage);
+	}
+	
+	public static void saveImage(BufferedImage im) {
 		JFileChooser files = new JFileChooser();
 		int stat = files.showSaveDialog(new JFrame());
 		if (stat == JFileChooser.APPROVE_OPTION) {
@@ -205,7 +232,7 @@ public final class ImageManipulator {
 			if (!f.exists()) {
 				f.createNewFile();
 			}
-				ImageIO.write(lastImage, "png", f);
+				ImageIO.write(im, "png", f);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -224,7 +251,7 @@ public final class ImageManipulator {
 			try {
 				BufferedImage im = ImageIO.read(selImage);
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				ImageIO.write(im, "jpg", out);
+				ImageIO.write(im, "png", out);
 				out.flush();
 				imbytes = benc.encode(out.toByteArray());
 				out.close();

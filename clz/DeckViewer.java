@@ -24,12 +24,14 @@ package clz;
  */
 
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Deque;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -44,35 +46,72 @@ import java.awt.Point;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-
 /**
  * @author babaissarkar
  *
  */
 public class DeckViewer extends JPanel {
 	private static final long serialVersionUID = 1L;
+	public int noOfCards = 0;
 	public JList<String> jlsDeck;
 	public Deque<Card> deck;
-	private Container cdv;
 	private Card[] cards;
 	private String[] cardsnm;
 	private Card selCard;
 	private Infofield inf;
-	public JButton btnShow, btnRemove;
+	public JButton btnShow, btnRemove, btnSort;
+	public JLabel lblNoOfCards;
 
  public DeckViewer(Deque<Card> stack) {
  	setLocation(new Point(700, 60));
  	setForeground(Color.BLACK);
 	this.setSize(new Dimension(330, 226));
 	deck = stack;
-	cdv = this;
-	cdv.setLayout(new BorderLayout());
-	cards = new Card[deck.size()+1];
+	GridBagConstraints gbc = new GridBagConstraints();
+	this.setLayout(new GridBagLayout());
+	noOfCards = deck.size();
+	cards = new Card[noOfCards];
 	deck.toArray(cards);
-	cardsnm = new String[deck.size()+1];
+	cardsnm = new String[noOfCards];
+	initializeDeck();
+	jlsDeck.setForeground(Color.BLACK);
+	jlsDeck.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	JScrollPane jsl = new JScrollPane(jlsDeck,
+			  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+			  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	jsl.setBorder(new LineBorder(Color.BLUE, 2, true));
+	
+	gbc.gridx = 0;
+	gbc.gridy = 0;
+	gbc.gridheight = 5;
+	gbc.gridwidth = 4;
+	jsl.setPreferredSize(new Dimension(500, 250));
+	this.add(jsl, gbc);
+	
+	JPanel panel = new JPanel();
+	panel.setPreferredSize(new Dimension(5, 5));
+	gbc.gridx = 0;
+	gbc.gridy = 6;
+	gbc.gridheight = 2;
+	panel.setPreferredSize(new Dimension(500, 50));
+	panel.setLayout(new FlowLayout());
+	
+	btnShow = new JButton("Show");
+	btnRemove = new JButton("Remove");
+	btnSort = new JButton("Sort");
+	panel.add(btnShow);
+	panel.add(btnSort);
+	panel.add(btnRemove);
+	this.add(panel, gbc);
+	
+	lblNoOfCards = new JLabel("No of cards in this deck is :" + noOfCards);
+	gbc.gridx = 0;
+	gbc.gridy = 8;
+	gbc.gridheight = 2;
+	this.add(lblNoOfCards, gbc);
+}
+
+public void initializeDeck() {
 	for (int i = 0; i < deck.size(); i++) {
 		cardsnm[i] = cards[i].name;
 	}
@@ -83,25 +122,6 @@ public class DeckViewer extends JPanel {
 		lm.addElement(cardsnm[i]);
 	}
 	jlsDeck.setModel(lm);
-	jlsDeck.setForeground(Color.BLACK);
-	jlsDeck.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	JScrollPane jsl = new JScrollPane(jlsDeck,
-			  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-			  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	jsl.setBorder(new LineBorder(Color.BLUE, 2, true));
-	cdv.add(jsl, BorderLayout.NORTH);
-	
-	JPanel panel = new JPanel();
-	panel.setPreferredSize(new Dimension(5, 5));
-	this.add(panel, BorderLayout.CENTER);
-	panel.setLayout(new FlowLayout());
-	
-	btnShow = new JButton("Show");
-	btnShow.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-	btnShow.setAlignmentX(Component.CENTER_ALIGNMENT);
-	btnRemove = new JButton("Remove");
-	panel.add(btnShow);
-	panel.add(btnRemove);
 }
 
 public void showDeck() {

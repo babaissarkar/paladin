@@ -34,12 +34,13 @@ public class Card {
 	//basic structure of a digital card
 	public String name = " ", subtype = " ", type = " ", civility = " ", id = " ";
 	public String[] effects = new String[20];
-	public Integer[] energy = {0, 0, 0} , eno = {1, 0 , 0};
+	public Integer[] energy = {0, 0, 0, 0} , eno = {1, 0 , 0};
 	public Integer power = 0, damage = 0;
 	public final static String[] SYMBOLS = {"\u2191", "\u2193", "~"};
 	public char armourPowType = ' ';
 	public ImageIcon imCard;
 	public ImageIcon bkCard;
+	public boolean generic = false;
 	
 	/*
 	 * The state variable denotes the current
@@ -100,6 +101,10 @@ public class Card {
 		this.energy[0] = Integer.parseInt(eng1.substring(1, 2));
 		this.energy[1] = Integer.parseInt(eng1.substring(3, 4));
 		this.energy[2] = Integer.parseInt(eng1.substring(5, 6));
+		if (eng1.endsWith(")")) {
+			this.generic = true;
+			this.energy[3] = Integer.parseInt(eng1.substring(eng1.length() - 2, eng1.length() - 1));
+		}
 		this.power = Integer.parseInt(power1);
 		this.eno[0] = Integer.parseInt(eno1.substring(1, 2));
 		this.eno[1] = Integer.parseInt(eno1.substring(3, 4));
@@ -123,6 +128,9 @@ public class Card {
 		sbEngString.append(SYMBOLS[0] + engs[0]);
 		sbEngString.append(SYMBOLS[1] + engs[1]);
 		sbEngString.append(SYMBOLS[2] + engs[2]);
+		if (engs.length > 3) {
+			sbEngString.append("(" + engs[3] + ")");
+		}
 		convEngString = sbEngString.toString();
 		return convEngString;
 	}
@@ -135,8 +143,10 @@ public class Card {
 				arEngs[0] = Integer.parseInt(new Character(chrEngs[i++]).toString());
 			} else if (chrEngs[i] == 'R') {
 				arEngs[1] = Integer.parseInt(new Character(chrEngs[i++]).toString());
-			} if (chrEngs[i] == 'Q') {
+			} else if (chrEngs[i] == 'Q') {
 				arEngs[2] = Integer.parseInt(new Character(chrEngs[i++]).toString());
+			} else if (chrEngs[i] == '(') {
+				arEngs[3] = Integer.parseInt(new Character(chrEngs[i++]).toString());
 			}
 		}
 		return arEngs;

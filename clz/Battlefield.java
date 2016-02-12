@@ -129,6 +129,7 @@ implements ActionListener {
 		}
 		//Creating JPopupMenus
 		jpiSearch = new JMenuItem("Search");
+		jpiSearch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
 		jpiSearch.addActionListener(this);
 		jpiShuffle = new JMenuItem("Shuffle");
 		jpiShuffle.addActionListener(this);
