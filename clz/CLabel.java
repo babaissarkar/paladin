@@ -50,7 +50,11 @@ public class CLabel extends JLabel {
 		cards.add(card1);
 		fliped = false;
 		tapped = false;
-		this.setToolTipText(tooltip);
+		if (card1.name.equalsIgnoreCase("No Card")) {
+			this.setToolTipText(tooltip);
+		} else {
+			this.setToolTipText(card1.name);
+		}
 	}
 
 	public CLabel(String text) {
@@ -119,9 +123,11 @@ public class CLabel extends JLabel {
 	public void setCard(Card card0) {
 		cards.add(card0);
 		super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
-		//super.setVerticalTextPosition(JLabel.BOTTOM);
-		//super.setHorizontalTextPosition(JLabel.CENTER);
-		//super.setText(card0.name);
+		if (card0.name.equalsIgnoreCase("No Card")) {
+			this.setToolTipText(tooltip);
+		} else {
+			this.setToolTipText(card0.name);
+		}
 	}
 	
 	public void showFullImage() {

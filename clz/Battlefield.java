@@ -657,12 +657,12 @@ implements ActionListener {
 			});
 			lblCard.showFullImage();
 			viewer.setVisible(true);
-		} else if(ae.getSource() == jpiViewName) {
-			CLabel label = (CLabel) s3.getInvoker();
-			String cardname = label.getCard().name;
-			cardname = cardname.substring(0, cardname.length() - 4);
-			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
-					"Card Name", JOptionPane.INFORMATION_MESSAGE);
+//		} else if(ae.getSource() == jpiViewName) {
+//			CLabel label = (CLabel) s3.getInvoker();
+//			String cardname = label.getCard().name;
+//			cardname = cardname.substring(0, cardname.length() - 4);
+//			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
+//					"Card Name", JOptionPane.INFORMATION_MESSAGE);
 		} else if(ae.getSource() == jmiShowTPL) {
 			String plname;
 			if (opturn) {
