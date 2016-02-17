@@ -34,8 +34,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
-//import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
 import java.util.Deque;
 
 import javax.swing.JFileChooser;
@@ -51,6 +49,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 
 public class Infofield extends JFrame implements ActionListener {
@@ -66,12 +65,14 @@ private JTextArea jta1;
 private JScrollPane jscroll, wscrl;
 private JMenuBar jmb;
 private JMenu jmFile, jmDeck;
-private JMenuItem jmiExit, jmiOpen, jmiCreateDeck, jmiSaveDeck, jmiAddCard, jmiAppend, jmiExport;
+private JMenuItem jmiExit, jmiOpen, jmiCreateDeck, jmiSaveDeck,
+					jmiAddCard, jmiAppend, jmiExport, jmiNewWin;
 private JFileChooser jfc;
 private Card card;
 private Deque<Card> deck = null;
 private DeckViewer dv;
 private JTabbedPane tpane;
+public static Card buff = null;
 
 /**
  * @author babaissarkar
@@ -88,6 +89,7 @@ public Infofield() {
 	cntpane3 = new Container();
 	cntpane3.setLayout(new GridLayout(0, 1));
 	this.setContentPane(cntpane3);
+	buff = new Card();
 	createInfofield();
 
 	//Setting the menus
@@ -99,7 +101,11 @@ public Infofield() {
 	jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 	jmiExport = new JMenuItem("Export As Text Document...");
 	jmiExport.addActionListener(this);
+	jmiNewWin = new JMenuItem("New Window");
+	jmiNewWin.addActionListener(this);
+	jmiNewWin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 	jmFile = new JMenu("File");
+	jmFile.add(jmiNewWin);
 	jmFile.add(jmiOpen);
 	jmFile.add(jmiExport);
 	jmFile.add(jmiExit);
@@ -127,8 +133,9 @@ public Infofield() {
 	this.setSize(900, 500);
 	this.setLocation(80, 20);
 	this.setTitle("Card Info");
-	this.setIconImage(Toolkit.getDefaultToolkit().getImage(Infofield.class.getResource("/images/INF.png")));
-	this.setAlwaysOnTop(true);
+	this.setIconImage(Toolkit.getDefaultToolkit().getImage(
+			Infofield.class.getResource("/images/INF.png")));
+	//this.setAlwaysOnTop(true);
 }
 
 	public Infofield(Deque<Card> deck) {
@@ -167,7 +174,8 @@ public Infofield() {
 		jlb[10] = new JLabel("ID");
 		jtf[10] = new JTextField(10);
 		label = new CLabel(new Card("No Card2", "/images/NCRD.jpg"));
-		label.addMouseListener(Battlefield.cl);
+		label.setToolTipText("");
+		label.addMouseListener(new ViewerListener(label.getCard(), Battlefield.bf.h1, Battlefield.bf.h2));
 		wscrl = new JScrollPane(label,
 				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -207,6 +215,7 @@ public Infofield() {
 				jta1.append("\n");
 			}
 			label.setCard(card);
+			label.addMouseListener(new ViewerListener(label.getCard(), Battlefield.bf.h1, Battlefield.bf.h2));
 			label.showFullImage();
 		}
 	}
@@ -238,18 +247,38 @@ public Infofield() {
 				public void actionPerformed(ActionEvent evt) {
 					if (deck != null) {
 						deck.remove(dv.getCard());
-							dv.lblNoOfCards.setText("No of cards in this deck is :" + dv.noOfCards); //Check
+							dv.lblNoOfCards.setText(
+								"No of cards in this deck is :" 
+								+ dv.noOfCards); //Check
 							prepareDeck();
 						}
 				}
 			});
+			dv.btnMove.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					buff = label.getCard();
+					label.showFullImage();
+				}
+			});
+			dv.btnGet.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if (buff != null) {
+						deck.add(buff);
+						dv.lblNoOfCards.setText("No of cards in this deck is :" + dv.noOfCards); //Check
+						prepareDeck();
+					}
+				}
+			});
 			dv.btnSort.addActionListener(this);
 			this.getContentPane().remove(tpane);
-			if (tpane.getTabCount() == 3) {
+			tpane.addTab("Deck Viewer", dv);
+			if (tpane.getTabCount() == 4) {
 				tpane.removeTabAt(2);
 			}
-			tpane.addTab("Deck Viewer", dv);
 			this.getContentPane().add(tpane);
+			SwingUtilities.updateComponentTreeUI(this);
 			try {
 				this.setCard(deck.getLast());
 			} catch (Exception e) {
@@ -350,6 +379,8 @@ public Infofield() {
 				} catch (Exception e) {
 				}
 			}
+		} else if (ae.getSource() == jmiNewWin) {
+			new Infofield().setVisible(true);
 		}
 	}
 }

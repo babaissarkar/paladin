@@ -59,7 +59,7 @@ public class DeckViewer extends JPanel {
 	private String[] cardsnm;
 	private Card selCard;
 	private Infofield inf;
-	public JButton btnShow, btnRemove, btnSort;
+	public JButton btnShow, btnRemove, btnSort, btnGet, btnMove;
 	public JLabel lblNoOfCards;
 
  public DeckViewer(Deque<Card> stack) {
@@ -99,8 +99,12 @@ public class DeckViewer extends JPanel {
 	btnShow = new JButton("Show");
 	btnRemove = new JButton("Remove");
 	btnSort = new JButton("Sort");
+	btnGet = new JButton("Get");
+	btnMove = new JButton("Move");
 	panel.add(btnShow);
 	panel.add(btnSort);
+	panel.add(btnGet);
+	panel.add(btnMove);
 	panel.add(btnRemove);
 	this.add(panel, gbc);
 	

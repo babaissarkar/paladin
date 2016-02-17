@@ -65,12 +65,19 @@ public class Hand extends JFrame {
 		getContentPane().add(panel, BorderLayout.CENTER);
 	}
 	
+	
+	
 	public void add(Card c) {
 		clbl[i] = new CLabel(c);
 		clbl[i].addMouseListener(a);
 		panel.add(clbl[i]);
 		SwingUtilities.updateComponentTreeUI(this);
 		i++;
+	}
+	
+	public void remove(CLabel clb) {
+		panel.remove(clb);
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
 	public Card get(int index) {

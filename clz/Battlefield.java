@@ -33,8 +33,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -100,13 +98,14 @@ implements ActionListener {
 	public static boolean opturn;
 	public static ImageIcon imNoCard;
 	public Deque<Card> deck1, deck2; //Changed
-	private static Hand h1, h2;
+	public Hand h1, h2;
 	public static CardListener cl = new CardListener();
 	private Infofield inf, mi, oi;
 	public Card bkCard;
 	private JFrame viewer;
+	public static Battlefield bf = null;
 
-	public Battlefield() {
+	private Battlefield() {
 		//Setting Icon and Location
 		this.setIconImage(
 				Toolkit.getDefaultToolkit().getImage(
@@ -465,6 +464,13 @@ implements ActionListener {
 		  pif.setVisible(true);
 		 
 	}
+	
+	public static Battlefield newInstance() {
+		if (bf == null) {
+			bf = new Battlefield();
+		}
+		return bf;
+	}
 	/**
 	 * @param args
 	 */
@@ -477,7 +483,7 @@ implements ActionListener {
 								UIManager.setLookAndFeel(lafinf.getClassName());
 							}
 						}
-						new Battlefield();
+						Battlefield.newInstance();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -525,9 +531,9 @@ implements ActionListener {
 		}
 		
 		if (pif.isDraw()) {
-			//Drawing
+			//Drawing, if any
 			if (!(deck1.isEmpty() && deck2.isEmpty())) {
-				for (int k = 0; k < 5; k++) {
+				for (int k = 0; k < j; k++) {
 					draw(true);
 					draw(false);
 				}
@@ -562,7 +568,6 @@ implements ActionListener {
 			}
 			JOptionPane.showMessageDialog(this, "The current player is : " + player,
 					"Turn Ended", JOptionPane.INFORMATION_MESSAGE);
-			
 		} else if(ae.getSource() == jpiShuffle) {
 			if (opturn) {
 				shuffle(deck2);
@@ -641,7 +646,7 @@ implements ActionListener {
 				h1.setVisible(true);
 			}
 			CLabel lblCard = new CLabel(((CLabel) lbl).getCard());
-			lblCard.addMouseListener(new ViewerListener(lblCard.getCard()));
+			lblCard.addMouseListener(new ViewerListener(lblCard.getCard(), h1, h2));
 			viewer = new JFrame("Card Viewer");
 			viewer.setSize(400, 600);
 			viewer.getContentPane().add(lblCard);
@@ -689,15 +694,11 @@ implements ActionListener {
 				inf.setCard(deck1.getFirst());
 			}
 		} else if(ae.getSource() == jpiRemove) {
-			Component lbl = s3.getInvoker();
+			CLabel lbl = (CLabel) s3.getInvoker();
 			if (opturn) {
-				h2.setVisible(false);
-				h2.getContentPane().remove(lbl);
-				h2.setVisible(true);
+				h2.remove(lbl);
 			} else {
-				h1.setVisible(false);
-				h1.getContentPane().remove(lbl);
-				h1.setVisible(true);
+				h1.remove(lbl);
 			}
 		} else if(ae.getSource() == jmiHelp) {
 			HelpFrame hf = new HelpFrame();
@@ -742,40 +743,5 @@ implements ActionListener {
 			h1.add(deck1.pop());
 		}
 	}
-	
-	public class ViewerListener extends MouseAdapter implements ActionListener {
-		JPopupMenu s4 = new JPopupMenu();
-		JMenuItem jpiToHand = new JMenuItem("Move to Hand");
-		Card c;
-		
-		public ViewerListener(Card card) {
-			jpiToHand.addActionListener(this);
-			s4.add(jpiToHand);
-			c = card;
-		}
-		
-		public void mouseClicked(MouseEvent me) {
-			s4.show(me.getComponent(), me.getX(), me.getY());
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent aevt) {
-			if (aevt.getSource() == jpiToHand) {
-				if (c != null) {
-					if (opturn) {
-						h2.setVisible(false);
-						h2.add(c);
-						h2.setVisible(true);
-					} else {
-						h1.setVisible(false);
-						h1.add(c);
-						h1.setVisible(true);
-					}
-				}
-				jpiToHand.setEnabled(false);
-			}
-		}
-	}
-	
 }
 

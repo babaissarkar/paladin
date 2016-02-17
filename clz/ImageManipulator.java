@@ -103,7 +103,7 @@ public final class ImageManipulator {
 		} else {
 			g.setFont(titleFont);
 		}
-		g.drawString(name, 20, 35);
+		g.drawString(name, 16, 35);
 		String type = c.type.toUpperCase();
 		g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 16));
 		g.drawString(type, 16, 70);
@@ -119,7 +119,11 @@ public final class ImageManipulator {
 				power = "+ " + c.power.toString();
 			}
 		} else {
-			power = c.power.toString();
+			if (c.power != 0) {
+				power = c.power.toString();
+			} else {
+				power = " ";
+			}
 		}
 		g.setFont(new Font("DejaVu Sans", Font.BOLD, 18));
 		g.drawString(power, 18, height - 17);
