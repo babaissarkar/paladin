@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * CardListener.java
  * 
@@ -22,6 +20,7 @@ package clz;
  * 
  * 
  */
+package clz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

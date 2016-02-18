@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * Battlefield2.java
  * 
@@ -22,7 +20,8 @@ package clz;
  * 
  * 
  */
-
+ 
+package clz;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -84,7 +83,7 @@ implements ActionListener {
 						jmiViewDeck, jmiShowTPL, jmiHelp, jmiAbout, jmiPref,
 						jmiSave, jmiOpen, jmiViewRecentCard;
 	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiTap, jpiUntap, jpiDraw,
-						jpiView, jpiViewCard, jpiViewName, jpiToDeck, jpiToBottom, jpiRemove;
+						jpiView, jpiViewCard, jpiToDeck, jpiToBottom, jpiRemove;
 	
 	private JButton jbLicence;
 	private JFrame aboutFrame;
@@ -145,8 +144,6 @@ implements ActionListener {
 		jpiFlip.addActionListener(this);
 		jpiViewCard = new JMenuItem("View Full Image");
 		jpiViewCard.addActionListener(this);
-		jpiViewName = new JMenuItem("View Name");
-		jpiViewName.addActionListener(this);
 		jpiToDeck = new JMenuItem("To Deck");
 		jpiToDeck.setToolTipText("Move this card to deck.");
 		jpiToDeck.addActionListener(this);
@@ -165,7 +162,6 @@ implements ActionListener {
 		s3 = new JPopupMenu();
 		s3.add(jpiFlip);
 		s3.add(jpiViewCard);
-		s3.add(jpiViewName);
 		s3.add(jpiToDeck);
 		s3.add(jpiRemove);
 		
@@ -657,12 +653,6 @@ implements ActionListener {
 			});
 			lblCard.showFullImage();
 			viewer.setVisible(true);
-//		} else if(ae.getSource() == jpiViewName) {
-//			CLabel label = (CLabel) s3.getInvoker();
-//			String cardname = label.getCard().name;
-//			cardname = cardname.substring(0, cardname.length() - 4);
-//			JOptionPane.showMessageDialog(this, "The selected card's name is : " + cardname,
-//					"Card Name", JOptionPane.INFORMATION_MESSAGE);
 		} else if(ae.getSource() == jmiShowTPL) {
 			String plname;
 			if (opturn) {
@@ -710,7 +700,23 @@ implements ActionListener {
 				viewer.setVisible(true);
 			}
 		} else if(ae.getSource() == jmiAbout) {
-			message = "PR Player\nCreator : Subhraman Sarkar, 2014";
+			message = "PR Player"
+					+ "\n"
+					+ "Copyright 2014-2016 Subhraman Sarkar\n\n"
+					+ "This program is free software; you can redistribute it and/or modify"
+					+ "\n it under the terms of the GNU General Public License as published by"
+					+ "\n  the Free Software Foundation; either version 2 of the License, or"
+					+ "\n  (at your option) any later version."
+					+ "\n  "
+					+ "\n  This program is distributed in the hope that it will be useful,"
+					+ "\n  but WITHOUT ANY WARRANTY; without even the implied warranty of"
+					+ "\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+					+ "\n  GNU General Public License for more details."
+					+ "\n "
+					+ "\n  You should have received a copy of the GNU General Public License"
+					+ "\n  along with this program; if not, write to the Free Software"
+					+ "\n Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,"
+					+ "\n MA 02110-1301, USA.";
 			aboutFrame = new JFrame("About");
 			aboutFrame.getContentPane().setLayout(new BorderLayout());
 			jtext = new JTextPane();
@@ -731,7 +737,7 @@ implements ActionListener {
 				}				
 			});
 			aboutFrame.getContentPane().add(jbLicence, BorderLayout.SOUTH);
-			aboutFrame.setSize(new Dimension(400, 400));
+			aboutFrame.setSize(new Dimension(500, 500));
 			aboutFrame.setVisible(true);
 		}
 	}

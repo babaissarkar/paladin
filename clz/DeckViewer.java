@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * DeckViewer.java
  * 
@@ -23,6 +21,7 @@ package clz;
  * 
  */
 
+package clz;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

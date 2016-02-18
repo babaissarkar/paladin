@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * CScan.java
  * 
@@ -22,6 +20,8 @@ package clz;
  * 
  * 
  */
+ 
+package clz;
 
 import java.awt.Image;
 import java.io.BufferedInputStream;

@@ -1,5 +1,3 @@
-package clz;
-
 /*
  *      Card.java
  *
@@ -23,6 +21,7 @@ package clz;
  *
  */
 
+package clz;
 
 import java.io.IOException;
 

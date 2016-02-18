@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * CWindow.java
  * 
@@ -23,6 +21,7 @@ package clz;
  * 
  */
 
+package clz;
 
 import java.awt.Container;
 import java.awt.Dimension;

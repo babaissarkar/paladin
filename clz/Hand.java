@@ -1,5 +1,3 @@
-package clz;
-
 /*
  * Hand.java
  * 
@@ -23,6 +21,7 @@ package clz;
  * 
  */
 
+package clz;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
