@@ -23,22 +23,23 @@
 
 package clz;
 
+import java.awt.Color;
 import java.util.Stack;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.border.LineBorder;
 
 
 public class CLabel extends JLabel {
 	
 	private static final long serialVersionUID = 1L;
 	private Stack<Card> cards = new Stack<Card>();
-	private static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
+	public static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
 	private boolean fliped;
-	private boolean tapped;
+	private boolean used;
 	private String tooltip = "Click to move and click again on another card to paste.\n" +
-			" Move the mouse wheel to tap/untap.";
+			" Move the mouse wheel to use/unuse.";
 
 	public CLabel() {
 		this(ncrd);
@@ -48,7 +49,7 @@ public class CLabel extends JLabel {
 		super(ImageManipulator.scale(card1.getImCard(), 64, 87));
 		cards.add(card1);
 		fliped = false;
-		tapped = false;
+		used = false;
 		if (card1.name.equalsIgnoreCase("No Card")) {
 			this.setToolTipText(tooltip);
 		} else {
@@ -60,7 +61,7 @@ public class CLabel extends JLabel {
 		super(text);
 		cards.add(ncrd);
 		fliped = false;
-		tapped = false;
+		used = false;
 		this.setToolTipText(tooltip);
 	}
 
@@ -68,7 +69,7 @@ public class CLabel extends JLabel {
 		super(ImageManipulator.scale(image, 64, 87));
 		cards.add(ncrd);
 		fliped = false;
-		tapped = false;
+		used = false;
 		this.setToolTipText(tooltip);
 	}
 
@@ -76,7 +77,7 @@ public class CLabel extends JLabel {
 		super(text, horizontalAlignment);
 		cards.add(ncrd);
 		fliped = false;
-		tapped = false;
+		used = false;
 		this.setToolTipText(tooltip);
 	}
 
@@ -84,7 +85,7 @@ public class CLabel extends JLabel {
 		super(ImageManipulator.scale(image, 64, 87), horizontalAlignment);
 		cards.add(ncrd);
 		fliped = false;
-		tapped = false;
+		used = false;
 		this.setToolTipText(tooltip);
 	}
 
@@ -92,16 +93,16 @@ public class CLabel extends JLabel {
 		super(text, ImageManipulator.scale(image, 64, 87), horizontalAlignment);
 		cards.add(ncrd);
 		fliped = false;
-		tapped = false;
+		used = false;
 		this.setToolTipText(tooltip);
 	}
 	
-	public final boolean isTapped() {
-		return this.tapped;
+	public final boolean isUsed() {
+		return this.used;
 	}
 
-	public final void setTapped(boolean tapped) {
-		this.tapped = tapped;
+	public final void setUsed(boolean used) {
+		this.used = used;
 	}
 
 	public Card getCard() {
@@ -151,38 +152,31 @@ public class CLabel extends JLabel {
 		}
 	}
 	
-	public void tap() {
-		setTapped(true);
-		//im = ((ImageIcon) getIcon()).getImage();
-		//Graphics gd = im.getGraphics();
-		//gd.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
-		//gd.setColor(Color.BLACK);
-		//gd.drawString("Tapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
-		//gd.dispose();
-		setIcon(ImageManipulator.rotate(getIcon()));
+	public void use() {
+		setUsed(true);
+		Card c = this.getCard();
+		if (c.civility.equalsIgnoreCase("Raenid")) {
+			this.setBorder(new LineBorder(Color.YELLOW, 2));
+		} else if (c.civility.equalsIgnoreCase("Asarn")) {
+			this.setBorder(new LineBorder(Color.RED, 2));
+		} else if (c.civility.equalsIgnoreCase("Mayarth")) {
+			this.setBorder(new LineBorder(Color.ORANGE, 2));
+		} else if (c.civility.equalsIgnoreCase("Zivar")) {
+			this.setBorder(new LineBorder(Color.BLACK, 2));
+		} else if (c.civility.equalsIgnoreCase("Niaz")) {
+			this.setBorder(new LineBorder(Color.BLUE, 2));
+		} else if (c.civility.equalsIgnoreCase("Kshiti")) {
+			this.setBorder(new LineBorder(Color.GREEN, 2));
+		} else {
+			this.setBorder(new LineBorder(Color.PINK, 2));
+		}
 		repaint();
 	}
 
-	public void untap() {
-		setTapped(false);
-		//im = ((ImageIcon) getIcon()).getImage();
-		//Graphics gd2 = im.getGraphics();
-		//gd2.fillRect(im.getWidth(null)/2 - 20, im.getHeight(null)/2 - 18, 68, 16);
-		//gd2.setColor(Color.BLACK);
-		//gd2.drawString("Untapped", im.getWidth(null)/2 - 13, im.getHeight(null)/2 - 5);
-		//gd2.dispose();
-		ImageIcon im = ImageManipulator.rotate(getIcon());
-		im = ImageManipulator.rotate(im);
-		setIcon(ImageManipulator.rotate(im));
+	public void unuse() {
+		setUsed(false);
+		this.setBorder(null);
 		repaint();
 	}
-	
-	/*public static ImageIcon scale(Icon i) {
-		BufferedImage bi = new BufferedImage(64, 87, BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bi.createGraphics();
-		g.drawImage(((ImageIcon) i).getImage(), 0, 0, 64, 87, 0, 0, i.getIconWidth(), i.getIconHeight(), null);
-		g.dispose();
-		return new ImageIcon(bi);
-	}*/
 
 }

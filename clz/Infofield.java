@@ -175,7 +175,7 @@ public Infofield() {
 		jtf[10] = new JTextField(10);
 		label = new CLabel(new Card("No Card2", "/images/NCRD.jpg"));
 		label.setToolTipText("");
-		label.addMouseListener(new ViewerListener(label.getCard(), Battlefield.bf.h1, Battlefield.bf.h2));
+		label.addMouseListener(new ViewerListener(label.getCard(), PRPlayer.bf.h1, PRPlayer.bf.h2));
 		wscrl = new JScrollPane(label,
 				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -215,7 +215,7 @@ public Infofield() {
 				jta1.append("\n");
 			}
 			label.setCard(card);
-			label.addMouseListener(new ViewerListener(label.getCard(), Battlefield.bf.h1, Battlefield.bf.h2));
+			label.addMouseListener(new ViewerListener(label.getCard(), PRPlayer.bf.h1, PRPlayer.bf.h2));
 			label.showFullImage();
 		}
 	}

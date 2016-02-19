@@ -43,7 +43,7 @@ public class Card {
 	
 	/*
 	 * The state variable denotes the current
-	 * state of the Battlefield. 0 means normal.
+	 * state of the PRPlayer. 0 means normal.
 	 * Players can continue playing. 1 means conditon
 	 * is abnormal for the oppponent. 2 means the
 	 * condition is abnormal for the current

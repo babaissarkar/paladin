@@ -90,6 +90,7 @@ public class CardListener implements MouseListener, ActionListener, MouseWheelLi
 			this.setLbuf(label);
 			Card dcard = (Card) label.grCard();
 			this.setCard(dcard);
+			label.setCard(CLabel.ncrd);
 			this.setMoved(true);
 		}
 	}
@@ -104,18 +105,18 @@ public class CardListener implements MouseListener, ActionListener, MouseWheelLi
 	}
 	
 	public void mousePressed(MouseEvent me) {
-		if (me.getSource() == Battlefield.jlbMD||me.getSource() == Battlefield.jlbOD) {
+		if (me.getSource() == PRPlayer.jlbMD||me.getSource() == PRPlayer.jlbOD) {
 			if (me.isPopupTrigger()) {
-					Battlefield.s1.show(me.getComponent(),
+					PRPlayer.s1.show(me.getComponent(),
 					 me.getX(), me.getY());
 				 }
 		} else if(me.getSource() instanceof JLabel) {
-			if (me.isPopupTrigger() && (me.getSource() == Battlefield.jlbMG||me.getSource() == Battlefield.jlbOG)) {
-					Battlefield.s2.show(me.getComponent(),
+			if (me.isPopupTrigger() && (me.getSource() == PRPlayer.jlbMG||me.getSource() == PRPlayer.jlbOG)) {
+					PRPlayer.s2.show(me.getComponent(),
 					 me.getX(), me.getY());
 			} else if (me.isPopupTrigger() == true &&
-					!(me.getSource() == Battlefield.jlbMG||me.getSource() == Battlefield.jlbOG)) {
-				Battlefield.s3.show(me.getComponent(),
+					!(me.getSource() == PRPlayer.jlbMG||me.getSource() == PRPlayer.jlbOG)) {
+				PRPlayer.s3.show(me.getComponent(),
 						 me.getX(), me.getY());
 			} else if (this.isMoved() == true) {
 				CLabel label2;
@@ -131,10 +132,10 @@ public class CardListener implements MouseListener, ActionListener, MouseWheelLi
 	public void mouseWheelMoved(MouseWheelEvent mwe) {
 			CLabel lbl;
 			lbl = (CLabel) mwe.getComponent();
-		if (!lbl.isTapped()) {
-			lbl.tap();
+		if (!lbl.isUsed()) {
+			lbl.use();
 		} else {
-			lbl.untap();
+			lbl.unuse();
 		} 
 	}
 

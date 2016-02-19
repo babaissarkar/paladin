@@ -301,7 +301,7 @@ public final class ImageManipulator {
 		return im2;
 	}
 	
-	public static ImageIcon rotate(Icon im) {
+/*	public static ImageIcon rotate(Icon im) {
 		Image img = ((ImageIcon) im).getImage();
 		int h = im.getIconHeight();
 		int w = im.getIconWidth();
@@ -313,7 +313,7 @@ public final class ImageManipulator {
 		g.dispose();
 		ImageIcon im2 = new ImageIcon(bi);
 		return im2;
-	}
+	}*/
 	
 	public static void showImage(Image im) {
 		JFrame imgFrame = new JFrame("Image");
