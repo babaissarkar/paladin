@@ -23,46 +23,68 @@
 
 package clz;
 
-import java.awt.Container;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import java.awt.Color;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
-public class CWindow extends JFrame {
+public class CWindow {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private Container cnp = this.getContentPane();
+	private JFrame win;
+	private JPanel cnp;
 	private GridLayout g = new GridLayout(5, 6);
-	private CLabel[] labels = new CLabel[50];
-	private Card noCard = new Card("No Card", "/images/NCRD.jpg");
-	private int id;
+	private JMenuBar jmbar;
+	private JMenu jpmAdd;
+	private JMenuItem jmiAdd;
+	private JScrollPane scroll;
 	
-	public CWindow(String title, int noc, CardListener c) {
-		setAlwaysOnTop(true);
-		setBackground(Color.WHITE);
-		id = 0;
-		this.setTitle(title);
-		this.setSize(new Dimension(600, 600));
+	public CWindow(String title, CardListener c) {
+		cnp = new JPanel();
+		win = new JFrame();
+		win.setBackground(Color.WHITE);
+		win.setTitle(title);
+		win.setSize(new Dimension(600, 600));
+		jmbar = new JMenuBar();
+		jpmAdd = new JMenu("Add");
+		jmiAdd = new JMenuItem("Add empty placeholder");
+		jmiAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (ae.getSource() == jmiAdd) {
+					add(CLabel.ncrd);
+				}
+			}
+		});
+		jpmAdd.add(jmiAdd);
+		jmbar.add(jpmAdd);
+		win.setJMenuBar(jmbar);
 		g.setHgap(4);
 		g.setVgap(4);
 		cnp.setLayout(g);
-		for (int j = 0; j < noc; j++) {
-			labels[j+1] = new CLabel(noCard);
-			labels[j+1].addMouseListener(c);
-			cnp.add(labels[j+1]);
-		}
+		scroll = new JScrollPane(cnp,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		win.setContentPane(scroll);
 	}
 	
-	public void addCard(Card card) {
-		labels[id+1].setCard(card);
-		id++;
+	public void add(Card c) {
+		cnp.add(new CLabel(c));
+		SwingUtilities.updateComponentTreeUI(win);
 	}
 	
 	public void showWin() {
-		this.setVisible(true);
+		win.setVisible(true);
 	}
+	
 }
