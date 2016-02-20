@@ -24,6 +24,7 @@
 package clz;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.Stack;
 
 import javax.swing.Icon;
@@ -43,6 +44,7 @@ public class CLabel extends JLabel {
 
 	public CLabel() {
 		this(ncrd);
+		setPreferredSize(new Dimension(64, 87));
 	}
 	
 	public CLabel(Card card1) {
@@ -55,6 +57,7 @@ public class CLabel extends JLabel {
 		} else {
 			this.setToolTipText(card1.name);
 		}
+		setPreferredSize(new Dimension(64, 87));
 	}
 
 	public CLabel(String text) {
@@ -63,6 +66,7 @@ public class CLabel extends JLabel {
 		fliped = false;
 		used = false;
 		this.setToolTipText(tooltip);
+		setPreferredSize(new Dimension(64, 87));
 	}
 
 	public CLabel(Icon image) {
@@ -71,6 +75,7 @@ public class CLabel extends JLabel {
 		fliped = false;
 		used = false;
 		this.setToolTipText(tooltip);
+		setPreferredSize(new Dimension(64, 87));
 	}
 
 	public CLabel(String text, int horizontalAlignment) {
@@ -79,6 +84,7 @@ public class CLabel extends JLabel {
 		fliped = false;
 		used = false;
 		this.setToolTipText(tooltip);
+		setPreferredSize(new Dimension(64, 87));
 	}
 
 	public CLabel(Icon image, int horizontalAlignment) {
@@ -87,6 +93,7 @@ public class CLabel extends JLabel {
 		fliped = false;
 		used = false;
 		this.setToolTipText(tooltip);
+		setPreferredSize(new Dimension(64, 87));
 	}
 
 	public CLabel(String text, Icon image, int horizontalAlignment) {
@@ -95,6 +102,7 @@ public class CLabel extends JLabel {
 		fliped = false;
 		used = false;
 		this.setToolTipText(tooltip);
+		setPreferredSize(new Dimension(64, 87));
 	}
 	
 	public final boolean isUsed() {

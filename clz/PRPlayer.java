@@ -28,6 +28,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+//import java.awt.GridBagConstraints;
+//import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -278,13 +280,13 @@ implements ActionListener {
 		jlbMG.addMouseWheelListener(cl);
 		jlbOG.addMouseWheelListener(cl);
 
-		//Clearing Tooltip texts from jlbMD, jlbOD, jlbMG and jlbOG
-		jlbMD.setToolTipText("");
-		jlbOD.setToolTipText("");
-		jlbMG.setToolTipText("");
-		jlbOG.setToolTipText("");
+		//Setting Tooltip texts from jlbMD, jlbOD, jlbMG and jlbOG
+		jlbMD.setToolTipText("Player 1's Library");
+		jlbOD.setToolTipText("Player 2's Library");
+		jlbMG.setToolTipText("Player 1's Cemetery");
+		jlbOG.setToolTipText("Player 2's Cemetery");
 		
-		//creating Mana JLabels
+		//creating Energy Zone JLabels
 		for(int i = 0; i <= 12; i++) {
 			jlbMM[i+1] = new CLabel(imNoCard);
 			jlbMM[i+1].addMouseListener(cl);
@@ -430,10 +432,24 @@ implements ActionListener {
 				);
 		gl2.setVerticalGroup(ovGroup);
 		
+		//Laying out
+/*		jplMB.setLayout(new GridBagLayout());
+		jplOB.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();*/
+		
+		
 		//Adding the JPanels
+		JScrollPane scrMe, scrOp;
+		scrMe = new JScrollPane(jplMB, 
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrOp = new JScrollPane(jplOB, 
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
 		bc.setLayout(new BorderLayout());
-		bc.add(jplOB, BorderLayout.NORTH);
-		bc.add(jplMB, BorderLayout.SOUTH);
+		bc.add(scrOp, BorderLayout.NORTH);
+		bc.add(scrMe, BorderLayout.SOUTH);
 		
 		//Finalizing
 		this.setVisible(true);
