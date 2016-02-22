@@ -24,6 +24,7 @@
 package clz;
 
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -179,6 +180,24 @@ public class Card {
 		}
 		sb.append("Damage points : " + this.damage + "\n");
 		return sb.toString();
+	}
+	
+	public Vector<String> getData() {
+		Vector<String> data = new Vector<String>();
+		data.add(id);
+		data.add(name);
+		data.add(civility);
+		data.add(type);
+		data.add(subtype);
+		data.add(Card.energyToString(energy));
+		data.add(power.toString());
+		data.add(Card.energyToString(eno));
+		for (String effect : effects) {
+			if (effect != null) {
+				data.add(effect);
+			}
+		}
+		return data;
 	}
 	
 	public String writeInfo() {

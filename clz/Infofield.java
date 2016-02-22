@@ -271,7 +271,6 @@ public Infofield() {
 					}
 				}
 			});
-			dv.btnSort.addActionListener(this);
 			this.getContentPane().remove(tpane);
 			tpane.addTab("Deck Viewer", dv);
 			if (tpane.getTabCount() == 4) {

@@ -72,7 +72,7 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		lblDeck.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
 		txtDk1 = new JTextField();
-		txtDk1.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck1.zip");
+		txtDk1.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck1.txt");
 		txtDk1.setColumns(10);
 		
 		btnBrowse = new JButton("Browse...");
@@ -82,7 +82,7 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		lblDeck_1.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
 		txtDk2 = new JTextField();
-		txtDk2.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck2.zip");
+		txtDk2.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck2.txt");
 		txtDk2.setColumns(10);
 		btnBrowse2 = new JButton("Browse...");
 		btnBrowse2.addActionListener(this);

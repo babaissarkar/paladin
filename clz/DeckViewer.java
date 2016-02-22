@@ -41,6 +41,8 @@ import java.awt.Color;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -58,7 +60,7 @@ public class DeckViewer extends JPanel {
 	private String[] cardsnm;
 	private Card selCard;
 	private Infofield inf;
-	public JButton btnShow, btnRemove, btnSort, btnGet, btnMove;
+	public JButton btnShow, btnRemove, btnGet, btnMove, btnShowDBV;
 	public JLabel lblNoOfCards;
 
  public DeckViewer(Deque<Card> stack) {
@@ -97,14 +99,23 @@ public class DeckViewer extends JPanel {
 	
 	btnShow = new JButton("Show");
 	btnRemove = new JButton("Remove");
-	btnSort = new JButton("Sort");
 	btnGet = new JButton("Get");
 	btnMove = new JButton("Move");
+	btnShowDBV = new JButton("Show Database");
+	btnShowDBV.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			CDBViewer view = new CDBViewer(deck);
+			view.setVisible(true);
+		}
+		
+	});
 	panel.add(btnShow);
-	panel.add(btnSort);
 	panel.add(btnGet);
 	panel.add(btnMove);
 	panel.add(btnRemove);
+	panel.add(btnShowDBV);
 	this.add(panel, gbc);
 	
 	lblNoOfCards = new JLabel("No of cards in this deck is :" + noOfCards);
