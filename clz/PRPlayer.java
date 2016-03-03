@@ -57,8 +57,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 //import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 
@@ -487,11 +490,6 @@ implements ActionListener {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-//						for (LookAndFeelInfo lafinf : UIManager.getInstalledLookAndFeels()) {
-//							if ("Nimbus".equals(lafinf.getName())) {
-//								UIManager.setLookAndFeel(lafinf.getClassName());
-//							}
-//						}
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 						PRPlayer.newInstance();
 					} catch (Exception e) {
@@ -561,6 +559,14 @@ implements ActionListener {
 		} else {
 			jlbMS[index].setCard(card);
 			jlbMS[index].flip();
+		}
+	}
+	
+	public void draw(boolean opt) {
+		if (opt) {
+			h2.add(deck2.pop());
+		} else {
+			h1.add(deck1.pop());
 		}
 	}
 
@@ -756,12 +762,44 @@ implements ActionListener {
 		}
 	}
 	
-	public void draw(boolean opt) {
-		if (opt) {
-			h2.add(deck2.pop());
-		} else {
-			h1.add(deck1.pop());
+	public void setNimbusLF() {
+		for (LookAndFeelInfo lafinf : UIManager.getInstalledLookAndFeels()) {
+			if ("Nimbus".equals(lafinf.getName())) {
+				try {
+					UIManager.setLookAndFeel(lafinf.getClassName());
+				} catch (ClassNotFoundException | InstantiationException
+						| IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+					setMetalLF();
+				}
+				SwingUtilities.updateComponentTreeUI(this);
+				SwingUtilities.updateComponentTreeUI(pif);
+			}
 		}
+	}
+	
+	public void setMetalLF() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		SwingUtilities.updateComponentTreeUI(this);
+		SwingUtilities.updateComponentTreeUI(pif);
+	}
+	
+	public void setSystemLF() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+			setMetalLF();
+		}
+		SwingUtilities.updateComponentTreeUI(this);
+		SwingUtilities.updateComponentTreeUI(pif);
 	}
 }
 

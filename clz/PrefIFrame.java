@@ -43,6 +43,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
+import java.awt.Component;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
 
 @SuppressWarnings("serial")
 public class PrefIFrame extends JFrame implements ActionListener {
@@ -56,6 +59,10 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	private JFileChooser files;
 	
 	public PRPlayer btf;
+	private Component horizontalStrut;
+	private JButton tglbtnSystem;
+	private Component horizontalStrut_1;
+	private JButton tglbtnNimbus;
 
 	/**
 	 * Create the frame.
@@ -105,6 +112,9 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		textField_2 = new JTextField("5");
 		hboxDraw.add(textField_2);
 		
+		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox.setBorder(new TitledBorder(new MatteBorder(2, 2, 2, 2, (Color) new Color(0, 255, 255)), "Look and Feel", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
+		
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -136,6 +146,10 @@ public class PrefIFrame extends JFrame implements ActionListener {
 					.addGap(18)
 					.addComponent(hboxDraw, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(275, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addContainerGap(16, Short.MAX_VALUE)
+					.addComponent(horizontalBox, GroupLayout.PREFERRED_SIZE, 553, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -156,17 +170,47 @@ public class PrefIFrame extends JFrame implements ActionListener {
 							.addComponent(btnBrowse2)))
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(hboxFCards, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnOk)
-								.addComponent(btnCancel))
-							.addGap(25))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(hboxDraw, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-							.addContainerGap())))
+						.addComponent(hboxFCards, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(hboxDraw, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
+					.addComponent(horizontalBox, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnOk)
+						.addComponent(btnCancel))
+					.addGap(25))
 		);
+		
+		JButton tglbtnMetal = new JButton("Metal");
+		tglbtnMetal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				btf.setMetalLF();
+			}
+		});
+		horizontalBox.add(tglbtnMetal);
+		
+		horizontalStrut = Box.createHorizontalStrut(120);
+		horizontalBox.add(horizontalStrut);
+		
+		tglbtnSystem = new JButton("System");
+		tglbtnSystem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				btf.setSystemLF();
+			}
+		});
+		
+		horizontalBox.add(tglbtnSystem);
+		
+		horizontalStrut_1 = Box.createHorizontalStrut(120);
+		horizontalBox.add(horizontalStrut_1);
+		
+		tglbtnNimbus = new JButton("NImbus");
+		tglbtnNimbus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				btf.setNimbusLF();
+			}
+		});
+		horizontalBox.add(tglbtnNimbus);
 		
 		chckbxShields = new JCheckBox("Flipped Cards");
 		chckbxShields.addActionListener(this);
