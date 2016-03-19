@@ -85,7 +85,7 @@ implements ActionListener {
 	private JMenuBar jmb = new JMenuBar();
 	private JMenu jmAct, jmGame, jmHelp, jmLibrary;
 	private JMenuItem jmiExit, jmiEndTurn, jmiShowMH, jmiShowOH, jmiShowR[],
-						jmiViewLibrary, jmiShowTPL, jmiHelp, jmiAbout, jmiPref,
+						jmiViewLibrary, jmiShowTPL, jmiAbout, jmiPref,
 						jmiSave, jmiOpen, jmiViewRecentCard;
 	private JMenuItem jpiShuffle, jpiSearch, jpiFlip, jpiDraw,
 						jpiView, jpiViewCard, jpiToLibrary, jpiToBottom, jpiRemove;
@@ -220,9 +220,6 @@ implements ActionListener {
 		jmiShowTPL.addActionListener(this);
 		jmiPref = new JMenuItem("Preferences...");
 		jmiPref.addActionListener(this);
-		jmiHelp = new JMenuItem("Rules");
-		jmiHelp.setToolTipText("Rules of Paladins Returned");
-		jmiHelp.addActionListener(this);
 		jmiAbout = new JMenuItem("About");
 		jmiAbout.addActionListener(this);
 		jmiSave = new JMenuItem("Save Game");
@@ -231,7 +228,6 @@ implements ActionListener {
 		jmiOpen.addActionListener(this);
 		jmiViewRecentCard = new JMenuItem("View Recently Viewed Card");
 		jmiViewRecentCard.addActionListener(this);
-		jmHelp.add(jmiHelp);
 		jmHelp.add(jmiAbout);
 		jmGame.add(jmiEndTurn);
 		jmGame.add(jmiShowTPL);
@@ -710,9 +706,6 @@ implements ActionListener {
 			} else {
 				h1.remove(lbl);
 			}
-		} else if(ae.getSource() == jmiHelp) {
-			HelpFrame hf = new HelpFrame();
-			hf.setVisible(true);
 		} else if(ae.getSource() == jmiPref) {		
 			pif.setVisible(true);
 		} else if(ae.getSource() == jmiViewRecentCard) {
