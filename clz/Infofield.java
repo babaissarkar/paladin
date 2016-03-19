@@ -265,6 +265,7 @@ public Infofield() {
 				public void actionPerformed(ActionEvent arg0) {
 					buff = label.getCard();
 					label.showFullImage();
+					dv.btnGet.setEnabled(true);
 				}
 			});
 			dv.btnGet.addActionListener(new ActionListener() {

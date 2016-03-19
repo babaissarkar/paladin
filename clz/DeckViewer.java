@@ -98,10 +98,16 @@ public class DeckViewer extends JPanel {
 	panel.setLayout(new FlowLayout());
 	
 	btnShow = new JButton("Show");
+	btnShow.setToolTipText("Show selected card.");
 	btnRemove = new JButton("Remove");
+	btnRemove.setToolTipText("Remove selected card.");
 	btnGet = new JButton("Get");
-	btnMove = new JButton("Move");
+	btnGet.setToolTipText("Append selected card to current library.");
+	btnGet.setEnabled(false);
+	btnMove = new JButton("Copy");
+	btnMove.setToolTipText("Copy selected card from library.");
 	btnShowDBV = new JButton("Show Database");
+	btnShowDBV.setToolTipText("Show current library as database.");
 	btnShowDBV.addActionListener(new ActionListener() {
 
 		@Override
