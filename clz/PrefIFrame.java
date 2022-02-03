@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 
 import java.awt.Component;
 import java.io.File;
+import java.nio.file.FileSystems;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 
@@ -72,9 +73,11 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		
 		JLabel lblDeck = new JLabel("Deck 1 :");
 		lblDeck.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
-		
+
+		String sep = FileSystems.getDefault().getSeparator();
+
 		txtDk1 = new JTextField();
-		txtDk1.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck1.txt");
+		txtDk1.setText(PRPlayer.userhome + sep + ".PRPlayer" + sep + "decks" + sep + "deck1.txt");
 		txtDk1.setColumns(10);
 		
 		btnBrowse = new JButton("Browse...");
@@ -84,7 +87,7 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		lblDeck_1.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
 		txtDk2 = new JTextField();
-		txtDk2.setText(PRPlayer.userhome + "/.PRPlayer/decks/deck2.txt");
+		txtDk2.setText(PRPlayer.userhome + sep + ".PRPlayer" + sep + "decks" + sep + "deck2.txt");
 		txtDk2.setColumns(10);
 		
 		btnBrowse2 = new JButton("Browse...");
