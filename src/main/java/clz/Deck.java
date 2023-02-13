@@ -27,6 +27,10 @@ public class Deck extends ArrayDeque<Card> {
     public List<Card> getExtraDeck() {
         return extras;
     }
+    
+    public void setExtraDeck(List<Card> extraDeck) {
+    	this.extras = extraDeck;
+    }
 
     public boolean hasExtras() {
 //        boolean hasExtra = (extras != null) && (extras.size() > 0);

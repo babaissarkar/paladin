@@ -572,8 +572,16 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 		} else if (ae.getSource() == jmiDelCard) {
 			int index = jlsDeck.getSelectedIndex();
 			List<Card> ls = new ArrayList<Card>(deck);
-			ls.remove(index);
+			List<Card> lsEx = deck.getExtraDeck();
+			if (index < deck.size()) {
+				ls.remove(index);
+			} else {
+				int indexEx = index - deck.size();
+				lsEx.remove(indexEx);
+			}
+			
 			deck = new Deck(ls);
+			deck.setExtraDeck(lsEx);
 
 			update();
 		} else if (ae.getSource() == jmiSave) {

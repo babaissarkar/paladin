@@ -190,13 +190,20 @@ public class Card {
 	}
 	
 	public static Integer[] stringToEnergy(String eng1) {
-		Integer[] arEngs = new Integer[4];
+		Integer[] arEngs;
+		arEngs = new Integer[4];
 		Arrays.fill(arEngs, 0);
-		arEngs[0] = Integer.parseInt(eng1.substring(1, 2));
-		arEngs[1] = Integer.parseInt(eng1.substring(3, 4));
-		arEngs[2] = Integer.parseInt(eng1.substring(5, 6));
-		if (eng1.length() > 6) {
-			arEngs[3] = Integer.parseInt(eng1.substring(7, 8));
+		try {
+			Integer cost = Integer.parseInt(eng1);
+			arEngs[3] = cost;
+			System.out.println("Simple cost");
+		} catch(Exception e) {
+			arEngs[0] = Integer.parseInt(eng1.substring(1, 2));
+			arEngs[1] = Integer.parseInt(eng1.substring(3, 4));
+			arEngs[2] = Integer.parseInt(eng1.substring(5, 6));
+			if (eng1.length() > 6) {
+				arEngs[3] = Integer.parseInt(eng1.substring(7, 8));
+			} 
 		}
 		return arEngs;
 	}
