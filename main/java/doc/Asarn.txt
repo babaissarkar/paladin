@@ -1,0 +1,281 @@
+Aggresive Slash;
+Sorcery;
+Attacker;
+Asarn;
+↑4↓1~0(0);
+0;
+↑1↓0~0(0);
+Aii;
+Trigger
+Attacker
+Destroy a opponent's character
+with <= 5000 power. If there is a Paladin in your battle zone, destroy 1 of your op's character's with <= 7000 power instead.
+;
+1;
+Arn, the Runner;
+Character;
+Armanoid;
+Asarn;
+↑3↓0~0(0);
+1000;
+↑0↓1~0(0);
+Avi;
+Fury Blade 1000
+It gains 500 power during its attacks for each of your opponent's barrier points.
+;
+1;
+Blern, Fire Manipulator;
+Character;
+Manipulator;
+Asarn;
+↑4↓2~0(0);
+5000;
+↑1↓1~0(0);
+Avii;
+When this ct. attacks, destroy 1 of your opponent's cts. with power <= the no. of cards in your cemetry x 500.
+When you put it into the battle zone, reveal the top card of your library. If that card is a sorcery or Paladin, this character gains "Fury Blade 2000" for this turn.
+;
+2;
+Commander's Lance;
+Armour;
+Mobilizer;
+Asarn;
+↑2↓3~0(0);
+5000;
+↑0↓1~0(0);
+2A1;
+Mobilize (This armour can only be armoured with the controlling player. If so, this armour represents a Ct. with power and dp equal to this armour's power and dp.)
+Your other characters gain 2000 power.
+Whenever the mobilized player  attacks, 1 of your characters gain +1 dp.
+;
+1;
+Dome of Flare;
+Environ.;
+Ground;
+Asarn;
+↑4↓0~0(0);
+0;
+↑1↓1~0(0);
+Axiii;
+Your opponent's
+characters will need 1 more energy for summoning or casting or using.
+;
+0;
+Doubled Fury;
+Sorcery;
+Aid, Assail;
+Asarn;
+↑4↓0~0(0);
+0;
+↑1↓0~0(0);
+Aviii;
+Choose a card in your opponent's rest zone which is a trap and destroy it.
+OR
+One of your characters gain "Fury Blade 1000" for one turn.
+;
+0;
+Ezdarn;
+Character;
+Armanoid;
+Asarn;
+↑2↓1~0(0);
+2000;
+↑1↓1~0(0);
+Axxi;
+During the attack phase, all of your characters gain 1000 power for each other Armanoid present in your battle zone.
+;
+1;
+Fireball of Blern;
+Sorcery;
+Attacker;
+Asarn;
+↑4↓0~0(0);
+0;
+↑1↓0~0(0);
+Aix;
+Before your opponent declares
+defender traps, destroy 1 of his or her traps.
+;
+1;
+Flame Circle;
+Trap;
+Defender;
+Asarn;
+↑3↓1~0(0);
+0;
+↑1↓0~0(0);
+Axxii;
+Destroy one of your op's. cts. with <= 4000 power.
+Activate -- F2
+;
+0;
+Flame of Change;
+Sorcery;
+Attacker;
+Asarn;
+↑4↓0~0(0);
+0;
+↑1↓0~0(0);
+Av;
+Trigger
+Destroy 1 of your opponent's character's with power 6000 or less
+OR
+Destroy 1 of your opponent's non-character cards in the battle zone.
+(except an environment)
+;
+1;
+Inarn, Paladin of Asarn;
+Character;
+Paladin;
+Asarn;
+↑4↓3~0(0);
+9000;
+↑1↓0~0(0);
+Ai;
+Fury Blade 2000
+All of your other cts. gain 2000 power and can not be destroyed by Zivar sorceries.
+;
+2;
+Infinity Swordfighter;
+Character;
+Armanoid;
+Asarn;
+↑5↓0~0(0);
+4000;
+↑1↓0~0(0);
+Aiii;
+When this character wins a battle for the first time in a turn, this charactr can attack once more that turn.
+;
+1;
+Novaedar, Knight of Rescue;
+Character;
+Knight;
+Asarn;
+↑3↓0~0(0);
+2000;
+↑1↓0~0(0);
+Aiv;
+Fury Blade 1000
+When it is destroyed, veiled search your deck for a Paladin character.
+;
+1;
+Overburn;
+Sorcery;
+Assail;
+Asarn;
+↑4↓2~0(0);
+0;
+↑1↓0~0(0);
+Axix;
+Select and destroy 1 of your opponent's
+characters that require <= F4 energy and <= R2 energy and any other kind of energy for summoning in the battle zone.
+;
+0;
+Rikeryrn Anarn;
+Character;
+Paladin;
+Asarn;
+↑5↓3~0(0);
+10000;
+↑1↓0~0(0);
+Axvii;
+Fury Blade 3000
+When this character attacks,
+destroy 1 of your opponent's traps
+All of your other Asarn characters gain 2000 power.
+;
+3;
+Ritual of Fusion;
+Sorcery;
+Attacker;
+Asarn;
+↑0↓4~0(0);
+0;
+↑0↓1~0(0);
+Axii;
+Select 1 of your cts. and engage it. If you do, select another of your cts. The second ct. gains the abilities of that ct. and its power is decreased by that ct's. power.
+;
+1;
+Rodian, the Exploder;
+Character;
+Armanoid;
+Asarn;
+↑5↓0~0(0);
+3000;
+↑0↓1~0(0);
+Ax;
+When this character is put into the battle zone, you may destroy one of your characters. If so, your opponent chooses and destroys 1 of his or her characters with power less than or equal to that character's power.
+;
+1;
+Royrn, the Eagle;
+Character;
+Bird;
+Asarn;
+↑2↓1~0(0);
+3000;
+↑1↓1~0(0);
+Axvi;
+Fury Blade 1000
+;
+1;
+Siron, Messenger Falcon;
+Character;
+Bird;
+Asarn;
+↑3↓0~0(0);
+3000;
+↑1↓0~0(0);
+Axi;
+Hidden Blade 1
+(When this ct. is barrier guarded and the guarding ct. has equal or less power than this ct., your opponent receives one barrier damage.)
+Your Knight characters with >= 1 energy will require 1 less energy of any time for summoning.
+;
+1;
+The Great Market;
+Environ.;
+Ground;
+Asarn;
+↑2↓2~0(0);
+0;
+↑1↓0~0(0);
+Axviii;
+All characters belonging to Asarn gain 2000 power.
+All non Asarn characters' power is decreased by 2000.
+;
+0;
+Trident of Trust;
+Armour;
+;
+Asarn;
+↑3↓4~0(0);
+5000;
+↑1↓0~0(0);
+Axx;
+The armored character cannot be targeted by non character cards.
+;
+1;
+Unity;
+Sorcery;
+Aid;
+Asarn;
+↑3↓2~0(0);
+0;
+↑1↓1~0(0);
+Axiv;
+All of your characters gain 3000 power for this turn.
+Your may engage a character in your battle zone to add its power to another character for this turn.
+;
+0;
+X Inferno;
+Sorcery;
+Aid;
+Asarn;
+↑4↓3~0(0);
+0;
+↑1↓1~0(0);
+Axv;
+Select 2 of your cts. on the battlefield. This turn, they will be considered as one character.
+(Their abilities, powers, damage  points  and energies are combined. When one of them changes its state, so changes the other.
+e.g., if one of them is engaged, the other is engaged as well. )
+;
+0;

@@ -1,0 +1,147 @@
+Asyar, Paladin of Sein;
+Character;
+Paladin;
+Kshiti;
+↑4↓4~0(0);
+9000;
+↑1↓1~0(0);
+Kiii;
+Substitute 2 (FR)
+Untargetable
+If any of your other characters win any battles, this turn, that character becomes 
+untargetable.
+If this character wins any battles while one of your charcters won another already,
+this character can attack twice.
+;
+2;
+Desertland;
+Environ.;
+Ground;
+Kshiti;
+↑0↓4~0(0);
+0;
+↑0↓1~0(0);
+Kix;
+All Nyaz characters with power < 5000 can not attack.
+All non Nyaz characters' except Kshiti characters' power is
+decreased by 2000.
+;
+0;
+Drakn, the Unsealed;
+Character;
+Sabertooth;
+Kshiti;
+↑1↓5~0(0);
+6000;
+↑0↓1~0(0);
+Kii;
+Sealbreak (When you have no other characters in the battle zone, double this ct's power at that moment.)
+Unattackable
+;
+2;
+Earthquake;
+Sorcery;
+Assail;
+Kshiti;
+↑0↓5~0(0);
+0;
+↑0↓1~0(0);
+2K4;
+Each player selects one of their characters and reshuffles it to their library.
+;
+0;
+Lyora, the Princess;
+Character;
+Norakh;
+Kshiti;
+↑0↓5~0(0);
+4000;
+↑0↓1~0(0);
+Kvi;
+Substitute 2 (FR)
+All of your other characters in the battle zone gain 2000 power.
+;
+2;
+Petrify;
+Sorcery;
+Assail;
+Kshiti;
+↑0↓3~0(0);
+0;
+↑0↓1~0(0);
+2K2;
+Imprison 2.
+(Select 1 of your opponent's characters. Until the end of your 2nd turn counting from this turn, that character can not attack, can not be selected and none of its effects or abilities can be activated.)
+;
+0;
+Secret Tunnel;
+Trap;
+Aid;
+Kshiti;
+↑0↓4~0(0);
+0;
+↑0↓1~0(0);
+2K3;
+Choose 2 of your cts. in the battle zone and interchange their positions.
+Those cards must be in the same state of engaging.
+Activate R1.
+;
+0;
+Syon, the Talking Tree;
+Character;
+Tree;
+Kshiti;
+↑0↓5~0(0);
+5000;
+↑0↓1~0(0);
+Kviii;
+When this character is attacked, your opponent gets 1 damage.
+While this character is in the battle zone, your opponent will require 1 more R energy for using Environ. cards.
+;
+1;
+The Bird Guide;
+Character;
+Bird;
+Kshiti;
+↑3↓0~0(0);
+3000;
+↑1↓0~0(0);
+2K1;
+When this character attacks, look at the top card of your deck. You may add it to your collection. If you do, reshuffle a card from your collection.
+;
+1;
+The Valley of Songs;
+Environ.;
+Ground;
+Kshiti;
+↑0↓3~0(0);
+0;
+↑0↓1~0(0);
+Kv;
+Reduce 1
+(Your characters with >= 1 energy will require 1 less energy to summon.)
+;
+0;
+Tribal Hero;
+Character;
+Norakh;
+Kshiti;
+↑1↓2~0(0);
+3000;
+↑1↓1~0(0);
+Ki;
+Substitute 1 (FR)
+;
+1;
+Tribal Sorcerer;
+Character;
+Healer;
+Kshiti;
+↑0↓4~0(0);
+2000;
+↑0↓1~0(0);
+Kiv;
+Substitute 1 (FR)
+Heal 1
+;
+1;
