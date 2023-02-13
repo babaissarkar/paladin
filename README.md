@@ -7,5 +7,6 @@ Clone the repository, then run
 # Running
 Download the latest release, then run the `.jar` file. You will need the latest Java Runtime (JRE).
 
-Author: Subhraman Sarkar
+# License
+Available under the GNU GPL 2.0 license.
 
