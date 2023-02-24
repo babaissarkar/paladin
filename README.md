@@ -14,6 +14,9 @@ Download the latest release, then run the `.jar` file. You will need the latest 
 4. Click OK, then click Yes twice. You should now be able to see Player 1's hand. Many actions can be done by right clicking on the Cards or Deck or Graveyard. Move cards by clicking on the card and then clicking on the destination square. Rotate cards by the right click menu or mouse wheel scroll.
 5. When you are finished with your turn, click **Actions > End Current Turn**. This will end your turn and will show the 2nd player's hand.
 
+# Double-sided card support
+Use the Deck editor's new Link Card button to link a card with another card in the extra deck. The first card can be in either the main deck or the extra deck. For a double sided card in the main deck, one side should be in the main deck, and the second in the extra deck. Once a card is successfully linked, you will be able to flip it to the other side using the _View Linked_ menu item in the right click card menu.
+
 # Screenshots
 ![Starting the Game](/screenshots/1.png "Starting the Game")
 ![In Play](/screenshots/2.png "In Play")

@@ -110,6 +110,7 @@ public class CWindow {
 						//System.out.println(selCard.name);
 						if ((de != null) && (selCard != null)) {
 							de.indicateSelection(selCard);
+							hide();
 						}
 					}
 				}

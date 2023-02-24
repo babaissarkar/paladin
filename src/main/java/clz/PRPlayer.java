@@ -171,7 +171,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 		jpiSummon = new JMenuItem("Summon/Cast");
 		jpiSummon.addActionListener(this);
 
-		deckMenu = new JPopupMenu();
+		deckMenu = new JPopupMenu("Deck");
 		deckMenu.add(jpiLook);
 		deckMenu.add(jpiSearch);
 		deckMenu.add(jpiViewExtra);
@@ -179,9 +179,9 @@ public class PRPlayer extends JFrame implements ActionListener {
 		deckMenu.add(jpiDraw);
 		deckMenu.add(jpiDrawMult);
 		deckMenu.add(jpiToBottom);
-		graveMenu = new JPopupMenu();
+		graveMenu = new JPopupMenu("Cemetry");
 		graveMenu.add(jpiView);
-		cardMenu = new JPopupMenu();
+		cardMenu = new JPopupMenu("Card");
 		cardMenu.add(jpiFlip);
 		cardMenu.add(jpiFlipVert);
 		cardMenu.add(jpiRot270);
@@ -1180,6 +1180,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 	public void setMetalLF() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException
 				| IllegalAccessException | UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
