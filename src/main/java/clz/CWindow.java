@@ -26,7 +26,10 @@ package clz;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -35,6 +38,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+
+import clz.xml.DeckEditor;
 
 public class CWindow {
 	/**
@@ -48,8 +53,19 @@ public class CWindow {
 	private JMenuItem jmiAdd;
 	private JScrollPane scroll;
 	private CardListener cl;
+	private Card selCard;
+	private SelectorParent de;
+	
+	private boolean selector = false;
 	
 	public CWindow(String title, CardListener c) {
+		this(title, c, false, null);
+	}
+	
+	public CWindow(String title, CardListener c, boolean selector, SelectorParent de) {
+		this.selector = selector;
+		this.de = de;
+		
 		cnp = new JPanel();
 		cnp.setLayout(new GridLayout(0, 6, 0, 0));
 		win = new JFrame();
@@ -80,10 +96,26 @@ public class CWindow {
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		win.setContentPane(scroll);
 	}
-	
+
 	public void add(Card c) {
 		CLabel lbl = new CLabel(c);
-		lbl.addMouseListener(cl);
+		if (!selector) {
+			lbl.addMouseListener(cl);
+		} else {
+			//.removeMouseListener(PRPlayer.cl);
+			lbl.addMouseListener(
+				new MouseAdapter() {
+					public void mousePressed(MouseEvent me) {
+						selCard = lbl.getCard();
+						//System.out.println(selCard.name);
+						if ((de != null) && (selCard != null)) {
+							de.indicateSelection(selCard);
+						}
+					}
+				}
+			);
+		}
+
 		cnp.add(lbl);
 		SwingUtilities.updateComponentTreeUI(win);
 	}
@@ -98,6 +130,18 @@ public class CWindow {
 		}
 		SwingUtilities.updateComponentTreeUI(win);
 	}
+	
+//	private Vector<CLabel> getControls() {
+//		Vector<CLabel> cardLabels = new Vector<CLabel>();
+//		for (Component c : win.getContentPane().getComponents()) {
+//			if (c instanceof CLabel) {
+//				if (((CLabel) c).getCard() != null) {
+//					cardLabels.add((CLabel) c);
+//				}
+//			}
+//		}
+//		return cardLabels;
+//	}
 	
 	public void show() {
 		win.setVisible(true);

@@ -3,29 +3,60 @@ package clz.xml;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import clz.CScan;
+import clz.CWindow;
 import clz.Card;
 import clz.Deck;
 import clz.ImageManipulator;
+import clz.PRPlayer;
+import clz.SelectorParent;
 
-public class DeckEditor extends MouseAdapter implements ActionListener {
+public class DeckEditor extends MouseAdapter implements ActionListener, SelectorParent {
 	Deck deck = new Deck();
 	Deck deckLeft = new Deck();
 	Deck deckRight = new Deck();
+	Card selCard = null;
+	Card curCard = null; 
 	private CScan scan;
+	
+	private JButton btnViewLinked;
 	private JFrame frmInfo = null;
 	private JList<String> jlsDeck;
 	private JPanel cpane3;
@@ -91,27 +122,47 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jsl.setPreferredSize(new Dimension(300,340));
 		
+		jcbIsExtra = new JCheckBox("Extra Card?");
+		jcbIsExtra.addActionListener(
+				evt -> {
+					if (this.isExtra == false) {
+						JOptionPane.showMessageDialog(frmInfo, "Marked as Extra!");
+						this.isExtra = true;
+					} else {
+						JOptionPane.showMessageDialog(frmInfo, "Marked as Normal.");
+						this.isExtra = false;
+					}
+				}
+		);
+		
 		jlsDeck.addListSelectionListener(
 			e -> {
 				if (deck.size() > 0) {
 					int index = jlsDeck.getSelectedIndex();
 					if (index != -1) {
 						Card c;
+						this.isExtra = jcbIsExtra.isSelected();
 						if (index < deck.size()) {
-							Card[] cards = new Card[deck.size()];
-							deck.toArray(cards);
-							c = cards[index];
-//							System.out.println("Main deck card # : " + index);
+							c = new ArrayList<Card>(deck).get(index);
 							setCard(c, false);
+							
+							if (c.getParts().size() > 0) {
+								btnViewLinked.setEnabled(true);
+							} else {
+								btnViewLinked.setEnabled(false);
+							}
 						} else {
 							int extraIndex = index - deck.size();
 							List<Card> extras = deck.getExtraDeck();
 							if (extras != null) {
-								Card[] cards = new Card[extras.size()];
-								extras.toArray(cards);
-								c = cards[extraIndex];
-//							System.out.println("Extra deck card # : " + extraIndex);
+								c = new ArrayList<Card>(extras).get(extraIndex);
+								//System.out.println(c.getParts().size());
 								setCard(c, true);
+								if (c.getParts().size() > 0) {
+									btnViewLinked.setEnabled(true);
+								} else {
+									btnViewLinked.setEnabled(false);
+								}
 							}
 						}
 					}
@@ -140,18 +191,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		//jscroll.setPreferredSize(new Dimension(400, 100));
 
-		jcbIsExtra = new JCheckBox("Extra Card?");
-		jcbIsExtra.addActionListener(
-				evt -> {
-					if (this.isExtra == false) {
-						JOptionPane.showMessageDialog(frmInfo, "Marked as Extra!");
-						this.isExtra = true;
-					} else {
-						JOptionPane.showMessageDialog(frmInfo, "Marked as Normal.");
-						this.isExtra = false;
-					}
-				}
-		);
+		
 
 		// Adding to content pane
 		for (int i = 0; i < jlb.length; i++) {
@@ -183,7 +223,38 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 			cpane.add(panels[i]);
 		}
 
-		cpane.add(jcbIsExtra);
+		JButton btnLink = new JButton("Link Card...");
+		btnLink.addActionListener(
+			e -> {
+				CWindow extras = new CWindow("Extra Cards", PRPlayer.cl, true, this);
+				for (Card c : deck.getExtraDeck()) {
+					extras.add(c);
+				}
+				
+				extras.show();
+			}
+		);
+		
+		btnViewLinked = new JButton("View linked card");
+		btnViewLinked.addActionListener(
+			e -> {
+				// Only two sides supported for now. To be updated later.
+				if (getCard2().getParts().size() > 0) {
+					setCard(getCard2().getParts().get(0));
+				}
+			}
+		);
+//		btnViewLinked.setEnabled(false);
+		
+		JPanel pnlExtras = new JPanel();
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignment(FlowLayout.LEFT);
+		pnlExtras.setLayout(layout);
+		
+		pnlExtras.add(btnLink);
+		pnlExtras.add(btnViewLinked);
+		pnlExtras.add(jcbIsExtra);
+		cpane.add(pnlExtras);
 		
 		jtf[3].setText("↑0↓0~0(0)");
 		jtf[6].setText("0");
@@ -390,30 +461,6 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 		
 		return frmMain;
 	}
-	
-//	private void update() {
-//		if (deck != null) {
-//			//cpane3.setDeck(deck);
-//			prepareDeck();
-//
-//			DefaultListModel<String> lm = new DefaultListModel<String>();
-//			for (Card c : deck) {
-//				lm.addElement(
-//						String.format("<html><body><font color='blue'>%s</font></body></html>", c.name));
-//			}
-//			if (deck.hasExtras()) {
-//				for (Card c2 : deck.getExtraDeck()) {
-//					lm.addElement(
-//							String.format("<html><body><i><font color='red'>%s</font></i></body></html>", c2.name));
-//				}
-//			}
-//			jlsDeck.setModel(lm);
-//
-//			//setCard(deck.getLast());
-//
-//			SwingUtilities.updateComponentTreeUI(this.frmInfo);
-//		}
-//	}
 
 	private void update() {
 		update(jlsDeck, this.deck);
@@ -449,7 +496,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 
 	public void setCard(Card card, boolean isExtra) {
 		if (!(card == null)) {
-			//this.card = card;
+			this.curCard = card;
+			
 			jtf[0].setText(card.name);
 			jcbCivility.setSelectedItem(card.civility);
 			//jcbType.setSelectedItem(card.type);
@@ -480,6 +528,32 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 			card_image.setText("");
 			card_image.setIcon(ImageManipulator.scale(card.getImCard(), 300, 400));
 		}
+	}
+	
+	public Card getCard() {
+		// Gets the card data from interface
+		
+		Card c = new Card();
+		c.name = jtf[0].getText();
+        //c.civility = (String) jcbCivility.getSelectedItem();
+		c.civility = (String) jcbCivility.getEditor().getItem();
+
+		c.type = jtf[2].getText();
+		c.energy = Card.stringToEnergy(jtf[3].getText());
+		c.subtype = jtf[4].getText();     
+		c.power = Integer.parseInt(jtf[6].getText());
+		c.eno = Card.stringToEnergy(jtf[7].getText());
+		c.damage = Integer.parseInt(jtf[8].getText());
+		c.id = jtf[9].getText();
+		c.effects = jtaEffects.getText().split("\n");
+		c.setImCard((ImageIcon) card_image.getIcon());
+		
+		return c;
+	}
+	
+	public Card getCard2() {
+		// Gets the current card object that is stored.
+		return this.curCard;
 	}
 
 	public void setDeck(Deck deck2) {
@@ -533,38 +607,41 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 				}
 			}
 			
-			Card c = new Card();
-			c.name = jtf[0].getText();
-            //c.civility = (String) jcbCivility.getSelectedItem();
-			c.civility = (String) jcbCivility.getEditor().getItem();
-
-			c.type = jtf[2].getText();
-			c.energy = Card.stringToEnergy(jtf[3].getText());
-			c.subtype = jtf[4].getText();     
-			c.power = Integer.parseInt(jtf[6].getText());
-			c.eno = Card.stringToEnergy(jtf[7].getText());
-			c.damage = Integer.parseInt(jtf[8].getText());
-			c.id = jtf[9].getText();
-			c.effects = jtaEffects.getText().split("\n");
-			c.setImCard((ImageIcon) card_image.getIcon());
+			Card c = getCard();
 			
-			if (ae.getSource() == jmiUpdateCard) {
-				// Remove the previous card if the user is update/editing the card.
-				int index = jlsDeck.getSelectedIndex();
-				List<Card> ls = new ArrayList<Card>(deck);
-				ls.remove(index);
-				deck = new Deck(ls);
-			}
+//			if (ae.getSource() == jmiUpdateCard) {
+//				// Remove the previous card if the user is update/editing the card.
+//				int index = jlsDeck.getSelectedIndex();
+////				List<Card> ls = new ArrayList<Card>(deck);
+////				ls.remove(index);
+////				deck = new Deck(ls);
+//				deck.update(c, index);
+//			}
 
 			for (int i = 0; i < copies; i++) {
-				if (!isExtra) {
-					deck.add(c);
-					//System.out.println("Adding as main card.");
+				if (ae.getSource() == jmiUpdateCard) {
+					int id = jlsDeck.getSelectedIndex();
+					if (id != -1) {
+						deck.update(c, id); // Check this
+						System.out.println("Updated card : " + c.name);
+					} else {
+						JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
+								"Nothing is selected!", JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
-					deck.addAsExtra(c);
-					//System.out.println("Adding as extra card.");
+					if (!isExtra) {
+						deck.add(c);
+					} else {
+						deck.addAsExtra(c);
+					}
 				}
 			}
+			
+//			if (c.getParts().size() > 0) {
+//				btnViewLinked.setEnabled(true);
+//			} else {
+//				btnViewLinked.setEnabled(false);
+//			}
 
 			update();
 			
@@ -634,6 +711,24 @@ public class DeckEditor extends MouseAdapter implements ActionListener {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void indicateSelection(Card selCard) {
+		
+		//Linking
+		Card curCard = getCard();
+		curCard.addPart(selCard);
+		selCard.addPart(curCard);
+		//curCard.name = curCard.name + " [Linked]";
+		//System.out.println(curCard.getParts().size());
+		
+		// Updating interface
+		int index = jlsDeck.getSelectedIndex();
+		deck.update(curCard, index);
+		setCard(curCard);
+		update();
+		
+		System.out.println("Linked : " + curCard.name + " and " + selCard.name);
 	}
 
 }

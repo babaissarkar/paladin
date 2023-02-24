@@ -60,12 +60,12 @@ public class XMLCardWriter {
 		xw.writeCharacters("\n");
 		xw.writeStartElement("Deck");
 		for (Card c : cards) {
-			System.out.println("Writing main cards!");
+			//System.out.println("Writing main cards!");
 			writeCard(xw, c, false);
 		}
 
 		if (cards.hasExtras()) {
-			System.out.println("Writing extra cards!");
+			//System.out.println("Writing extra cards!");
 			for (Card extra : cards.getExtraDeck()) {
 				writeCard(xw, extra, true);
 			}
@@ -148,6 +148,16 @@ public class XMLCardWriter {
 			xw.writeCharacters("\t\t");
 			xw.writeEmptyElement("isExtra");
 			xw.writeCharacters("\n");
+		}
+		
+		if (c.getParts().size() > 0) {
+			for (Card part : c.getParts()) {
+				xw.writeCharacters("\t\t");
+				xw.writeStartElement("link");
+				xw.writeCharacters(part.name);
+				xw.writeEndElement();
+				xw.writeCharacters("\n");
+			}
 		}
 
 //			xw.writeCharacters("\t\t");

@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -29,6 +30,7 @@ public class XMLCardReader {
 	public StringBuffer effects = new StringBuffer();
 	public Card c = null;
 	public boolean isExtra;
+	private HashMap<String, String> links = new HashMap<String, String>();
 	
 	public XMLCardReader() {
 		isExtra = false;
@@ -108,6 +110,9 @@ public class XMLCardReader {
 						c.damage =  Integer.parseInt(reader.getText());
 					} else if (stag.equalsIgnoreCase("eno")) {
 						c.eno = Card.stringToEnergy(reader.getText());
+					} else if (stag.equalsIgnoreCase("link")) {
+						String linkName = reader.getText();
+						links.put(c.name, linkName);
 					}
 				}
 			
@@ -125,6 +130,36 @@ public class XMLCardReader {
 
 					isExtra = false;
 					effects.delete(0, effects.length());
+				} else if (etag.equals("Deck")) {
+					
+					// Add all links
+					int i = 0;
+					
+					for (Card c : cards) {
+						String linkname = links.get(c.name);
+						if (linkname != null) {
+							for (Card exCard : cards.getExtraDeck()) {
+								if (exCard.name.equals(linkname)) {
+									c.addPart(exCard);
+									cards.update(c, i);
+								}
+							}
+						}
+						i++;
+					}
+					
+					for (Card c : cards.getExtraDeck()) {
+						String linkname = links.get(c.name);
+						if (linkname != null) {
+							for (Card exCard : cards.getExtraDeck()) {
+								if (exCard.name.equals(linkname)) {
+									c.addPart(exCard);
+									cards.update(c, i);
+								}
+							}
+						}
+						i++;
+					}
 				}
 				break;
 
@@ -136,12 +171,12 @@ public class XMLCardReader {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		XMLCardReader xcr = new XMLCardReader();
-		for (Card c : xcr.getDeck()) {
-			System.out.println(c.toString());
-		}
-	}
+//	public static void main(String[] args) {
+//		XMLCardReader xcr = new XMLCardReader();
+//		for (Card c : xcr.getDeck()) {
+//			System.out.println(c.toString());
+//		}
+//	}
 	/**
 	 * @return the cards
 	 */

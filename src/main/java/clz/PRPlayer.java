@@ -88,6 +88,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 	private ImageIcon imLibrary, imGrave;
 	private JPopupMenu deckMenu, graveMenu, cardMenu;
 	private JMenuItem jpiShuffle, jpiSearch, jpiViewExtra, jpiFlip, jpiDraw, jpiDrawMult, jpiLook, jpiFlipVert,
+		jpiLink,
 		jpiView, jpiViewCard, jpiToLibrary, jpiToBottom, jpiRemove, jpiToLibBottom, jpiToGrave, jpiSummon;
 	public static boolean opturn;
 	public static ImageIcon imNoCard;
@@ -150,6 +151,8 @@ public class PRPlayer extends JFrame implements ActionListener {
 		jpiFlipVert.addActionListener(this);
 		jpiRot270 = new JMenuItem("Rotate 270");
 		jpiRot270.addActionListener(this);
+		jpiLink = new JMenuItem("View Linked Card");
+		jpiLink.addActionListener(this);
 		jpiToLibrary = new JMenuItem("To Top of Library");
 		jpiToLibrary.setToolTipText("Move this card to library's top.");
 		jpiToLibrary.addActionListener(this);
@@ -183,6 +186,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 		cardMenu.add(jpiFlipVert);
 		cardMenu.add(jpiRot270);
 		cardMenu.add(jpiViewCard);
+		cardMenu.add(jpiLink);
 		cardMenu.add(jpiSummon);
 		cardMenu.add(jpiToLibrary);
 		cardMenu.add(jpiToLibBottom);
@@ -913,6 +917,12 @@ public class PRPlayer extends JFrame implements ActionListener {
 		} else if(ae.getSource() == jpiRot270) {
 			CLabel lbl = (CLabel) cardMenu.getInvoker();
 			lbl.rot_270();
+		} else if(ae.getSource() == jpiLink) {
+			CLabel lbl = (CLabel) cardMenu.getInvoker();
+			Card c = lbl.getCard();
+			if (c.getParts().size() > 0) {
+				lbl.setCard(c.getParts().get(0));
+			}
 		} else if(ae.getSource() == jpiToLibrary) {
 			CLabel lbl = (CLabel) cardMenu.getInvoker();
 			Card card = lbl.grCard();
@@ -1094,8 +1104,6 @@ public class PRPlayer extends JFrame implements ActionListener {
 			}
 			JOptionPane.showMessageDialog(this, "The current player is : " + plname,
 					"Current Player", JOptionPane.INFORMATION_MESSAGE);
-			
-		
 		} else if(ae.getSource() == jmiHelp) {
 			HelpFrame hf = new HelpFrame();
 			hf.setVisible(true);

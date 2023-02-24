@@ -329,6 +329,8 @@ public void writeToZip(Deck deck) {
 				zstream.closeEntry();
 				zstream.close();
 				
+				clearCount();
+				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -351,19 +353,23 @@ public void writeToZip(Deck deck) {
 			return count;
 		}
 	}
+	
+	private void clearCount() {
+		counts.clear();
+	}
 
 
 	private void writeMetadata(Deck deck, ZipOutputStream zstream) {
-	XMLCardWriter writer = new XMLCardWriter(deck);
-	System.out.println("No of main cards : " + deck.size());
-	if (deck.hasExtras()) {
-		System.out.println("No of extra cards : " + deck.getExtraDeck().size());
+		XMLCardWriter writer = new XMLCardWriter(deck);
+//		System.out.println("No of main cards : " + deck.size());
+//		if (deck.hasExtras()) {
+//			System.out.println("No of extra cards : " + deck.getExtraDeck().size());
+//		}
+		try {
+			writer.writeDeck(zstream);
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
 	}
-	try {
-		writer.writeDeck(zstream);
-	} catch (XMLStreamException e) {
-		e.printStackTrace();
-	}
-}
 
 }

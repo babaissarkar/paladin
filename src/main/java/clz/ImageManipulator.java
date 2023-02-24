@@ -162,9 +162,9 @@ public final class ImageManipulator {
 		Integer[] enos = c.eno;
 		for (int i = 0; i < enos.length; i++) {
 			if (enos[i] > 1) {
-				strEno.append(Constants.Symbols[i] + "" + enos[i].toString());
+				strEno.append(Constants.symbols[i] + "" + enos[i].toString());
 			} else if (enos[i] == 1) {
-				strEno.append(Constants.Symbols[i]);
+				strEno.append(Constants.symbols[i]);
 			}
 		}
 		//g.setFont(new Font(fnt.getName(), Font.BOLD, 16));
@@ -194,15 +194,15 @@ public final class ImageManipulator {
 			y = 75;
 		}
 		if (cost[0] != 0) {
-			g.drawString(Constants.Symbols[0] + cost[0].toString(), width/2 - 15, y);
+			g.drawString(Constants.symbols[0] + cost[0].toString(), width/2 - 15, y);
 			y += g.getFontMetrics().getHeight() - 4;
 		}
 		if (cost[1] != 0) {
-			g.drawString(Constants.Symbols[1] + cost[1].toString(), width/2 - 15, y);
+			g.drawString(Constants.symbols[1] + cost[1].toString(), width/2 - 15, y);
 			y += g.getFontMetrics().getHeight() - 4;
 		}
 		if (cost[2] != 0) {
-			g.drawString(Constants.Symbols[2] + cost[2].toString(), width/2 - 15, y);
+			g.drawString(Constants.symbols[2] + cost[2].toString(), width/2 - 15, y);
 		}
 		if ((c.generic == true) && (cost[3] != 0)) {
 			g.drawString("(" + cost[3] + ")", width/2 - 12, y);

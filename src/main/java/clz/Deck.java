@@ -19,6 +19,19 @@ public class Deck extends ArrayDeque<Card> {
             extras.add(extraCard);
         }
     }
+    
+    public void update(Card c, int id) {
+    	//Card c;
+    	if (id < this.size()) {
+    		List<Card> bkp = new ArrayList<Card>(this);
+    		bkp.set(id, c);
+    		this.clear();
+    		this.addAll(bkp);
+    	} else if (id >= this.size()) {
+    		int idEx = id - this.size();
+    		getExtraDeck().set(idEx, c);
+    	}
+    }
 
     public Card getExtra(int i) {
         return extras.get(i);

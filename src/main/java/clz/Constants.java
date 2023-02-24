@@ -2,11 +2,10 @@ package clz;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Constants {
     static String[] attr_names = {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "Energy No.", "Damage Points", "ID"};
-    static String[] Symbols = {"\u2191", "\u2193", "~", " "};
+    static String[] symbols = {"\u2191", "\u2193", "~", "(", " "};
 
     /* Colors corresponding to each civility */
     static String[] civilities = {"Raenid", "Asarn", "Niaz", "Zivar", "Mayarth", "Kshiti"};

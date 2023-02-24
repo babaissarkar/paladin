@@ -137,6 +137,10 @@ public class Card {
 	public void addPart(Card partToBeAdded) {
 		this.parts.add(partToBeAdded);
 	}
+	
+	public List<Card> getParts() {
+		return this.parts;
+	}
 
 	public void setMulti(boolean multi) { this.multi = multi; }
 
@@ -179,9 +183,9 @@ public class Card {
 	public static String energyToString(Integer[] engs) {
 		String convEngString;
 		StringBuilder sbEngString = new StringBuilder();
-		sbEngString.append(Constants.Symbols[0] + engs[0])
-		           .append(Constants.Symbols[1] + engs[1])
-		           .append(Constants.Symbols[2] + engs[2]);
+		sbEngString.append(Constants.symbols[0] + engs[0])
+		           .append(Constants.symbols[1] + engs[1])
+		           .append(Constants.symbols[2] + engs[2]);
 		if (engs.length > 3) {
 			sbEngString.append("(" + engs[3] + ")");
 		}
@@ -198,11 +202,18 @@ public class Card {
 			arEngs[3] = cost;
 			System.out.println("Simple cost");
 		} catch(Exception e) {
-			arEngs[0] = Integer.parseInt(eng1.substring(1, 2));
-			arEngs[1] = Integer.parseInt(eng1.substring(3, 4));
-			arEngs[2] = Integer.parseInt(eng1.substring(5, 6));
+			for (int i = 0; i < 3; i++) {
+				arEngs[i] = Integer.parseInt(
+						eng1.substring(
+								eng1.indexOf(Constants.symbols[i]) + 1,
+								eng1.indexOf(Constants.symbols[i+1])));
+			}
+//			arEngs[1] = Integer.parseInt(eng1.substring(3, 4));
+//			arEngs[2] = Integer.parseInt(eng1.substring(5, 6));
 			if (eng1.length() > 6) {
-				arEngs[3] = Integer.parseInt(eng1.substring(7, 8));
+				arEngs[3] = Integer.parseInt(
+						eng1.substring(
+								eng1.indexOf("(") + 1, eng1.indexOf(")")));
 			} 
 		}
 		return arEngs;
