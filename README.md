@@ -22,6 +22,9 @@ Use the Deck editor's new Link Card button to link a card with another card in t
 ![In Play](/screenshots/2.png "In Play")
 ![Deck Editor](/screenshots/3.png "Deck Editor")
 
+# Views
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fbabaissarkar.github.io&count_bg=%23765000&title_bg=%23380D0D&icon=yamahamotorcorporation.svg&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
+
 # License
 Available under the [GNU GPL 2.0 license](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
 
