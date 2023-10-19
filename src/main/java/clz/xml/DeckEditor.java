@@ -1,8 +1,10 @@
 package clz.xml;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,6 +19,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,6 +34,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -47,6 +51,7 @@ import clz.Deck;
 import clz.ImageManipulator;
 import clz.PRPlayer;
 import clz.SelectorParent;
+import wscrap.Scrapper;
 
 public class DeckEditor extends MouseAdapter implements ActionListener, SelectorParent {
 	Deck deck = new Deck();
@@ -65,19 +70,24 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	private JTextArea jtaEffects;
 	private JComboBox<String> jcbCivility;
 	private JLabel card_image;
+	private JTextField txtURL;
 	
 	private JMenu mnuDeck;
 	private JMenuItem jmiNewDeck, jmiAddCard, jmiDelCard, jmiUpdateCard, jmiSave, jmiOpen;
+	private JMenuItem jmiAddMult;
 	
 	private final String[] attr_names = {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "Energy No.", "Damage Points", "ID"};
 	private String[] civilities;
 	private JCheckBox jcbIsExtra;
 
 	private boolean isExtra;
-	private JMenuItem jmiAddMult;
+	private boolean isImageOn, isCustom;
+	
 
 	public DeckEditor() {
 		isExtra = false;
+		isImageOn = true;
+		isCustom = false;
 
 		this.scan = new CScan();
 		this.frmInfo = createGUI();
@@ -86,9 +96,9 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	
 	private JFrame createGUI() {
 		JFrame frmMain = new JFrame("Deck Editor");
-		frmMain.setSize(900, 750);
+		frmMain.setSize(900, 780);
 		frmMain.setLocation(40, 20);
-		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmMain.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
 		// Layouting
 		JPanel mpane = new JPanel();
@@ -100,10 +110,11 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		Border b2 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		Border mainBorder = BorderFactory.createCompoundBorder(
 								BorderFactory.createCompoundBorder(b2, b1), b2);
-		cpane.setPreferredSize(new Dimension(500,500));
+		cpane.setPreferredSize(new Dimension(500,600));
 		cpane.setBorder(mainBorder);
 		
 		JPanel cpane2 = new JPanel();
+		cpane2.setLayout(new BorderLayout());
 		cpane2.setBorder(mainBorder);
 		card_image = new JLabel("Click here to add card image", SwingConstants.CENTER);
 		card_image.addMouseListener(this);
@@ -112,6 +123,17 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jslImg.setPreferredSize(new Dimension(340,400));
+		
+		JLabel lblImgCaption = new JLabel("Card Image");
+		lblImgCaption.setFont(lblImgCaption.getFont().deriveFont(Font.BOLD, 20));
+		
+		JPanel pnlCaption1 = new JPanel();
+		FlowLayout layout5 = new FlowLayout();
+		layout5.setAlignment(FlowLayout.CENTER);
+		pnlCaption1.setLayout(layout5);
+		pnlCaption1.add(lblImgCaption);
+		cpane2.add(pnlCaption1, BorderLayout.SOUTH);
+		cpane2.add(jslImg, BorderLayout.CENTER);
 		
 		
 		cpane3 = new JPanel();
@@ -170,7 +192,18 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 			}
 		);
 		
-		cpane3.add(jsl);
+		JLabel lblListCaption = new JLabel("Card List");
+		lblListCaption.setFont(lblListCaption.getFont().deriveFont(Font.BOLD, 20));
+		
+		JPanel pnlCaption2 = new JPanel();
+		FlowLayout layout6 = new FlowLayout();
+		layout6.setAlignment(FlowLayout.CENTER);
+		pnlCaption2.setLayout(layout5);
+		pnlCaption2.add(lblListCaption);
+		
+		cpane3.setLayout(new BorderLayout());
+		cpane3.add(pnlCaption2, BorderLayout.SOUTH);
+		cpane3.add(jsl, BorderLayout.CENTER);
 		cpane3.setPreferredSize(new Dimension(380,400));
 		cpane3.setBorder(mainBorder);
 		
@@ -246,6 +279,93 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		);
 //		btnViewLinked.setEnabled(false);
 		
+		JButton btnFetchData = new JButton("Fetch card data (DM Wiki)...");
+		btnFetchData.addActionListener(
+			e -> {
+				String cardName = jtf[0].getText();
+				if ((cardName != null) && (isImageOn == true)) {
+					try {
+//						Card c = new Card();
+						if (isCustom) {
+							Card c = Scrapper.getData(cardName, true, true, txtURL.getText());
+							setCard(c);
+						} else {
+							Card c = Scrapper.getData(cardName, true, false, "");
+							txtURL.setText(Scrapper.getLastURL());
+							setCard(c);
+						}
+						
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+		);
+
+		JPanel pnlExtras2 = new JPanel();
+		FlowLayout layout2 = new FlowLayout();
+		layout2.setAlignment(FlowLayout.LEFT);
+		pnlExtras2.setLayout(layout2);
+		pnlExtras2.add(btnFetchData);
+		
+		JLabel lblImgBtn = new JLabel("Fetch Image :");
+		JRadioButton imgOn = new JRadioButton("On");
+		JRadioButton imgOff = new JRadioButton("Off");
+		JRadioButton imgCustom = new JRadioButton("Custom Image");
+		ButtonGroup grpImg = new ButtonGroup();
+		grpImg.add(imgOn);
+		grpImg.add(imgOff);
+		grpImg.add(imgCustom);
+		
+		txtURL = new JTextField(30);
+		JLabel lblURL = new JLabel("Image URL :");
+		lblURL.setEnabled(false);
+		txtURL.setEditable(false);
+		
+		imgOn.addActionListener(
+			e -> {
+				isImageOn = true;
+				isCustom = false;
+				lblURL.setEnabled(false);
+				txtURL.setEditable(false);
+			}
+		);
+		
+		imgOff.addActionListener(
+			e -> {
+				isImageOn = false;
+				isCustom = false;
+				lblURL.setEnabled(false);
+				txtURL.setEditable(false);
+			}
+		);
+		
+		imgCustom.addActionListener(
+			e -> {
+				isImageOn = true;
+				isCustom = true;
+				lblURL.setEnabled(true);
+				txtURL.setEditable(true);
+			}
+		);
+
+		imgOn.setSelected(true);
+		JPanel pnlImg1 = new JPanel();
+		FlowLayout layout3 = new FlowLayout();
+		layout3.setAlignment(FlowLayout.LEFT);
+		pnlImg1.setLayout(layout3);
+		pnlImg1.add(lblImgBtn);
+		pnlImg1.add(imgOn);
+		pnlImg1.add(imgOff);
+		pnlImg1.add(imgCustom);
+		
+		JPanel pnlImg2 = new JPanel();
+		FlowLayout layout4 = new FlowLayout();
+		layout4.setAlignment(FlowLayout.LEFT);
+		pnlImg2.setLayout(layout4);
+		pnlImg2.add(lblURL);
+		pnlImg2.add(txtURL);
+		
 		JPanel pnlExtras = new JPanel();
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.LEFT);
@@ -254,14 +374,16 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		pnlExtras.add(btnLink);
 		pnlExtras.add(btnViewLinked);
 		pnlExtras.add(jcbIsExtra);
+		
+		cpane.add(pnlImg1);
+		cpane.add(pnlImg2);
+		cpane.add(pnlExtras2);
 		cpane.add(pnlExtras);
 		
 		jtf[3].setText("↑0↓0~0(0)");
 		jtf[6].setText("0");
 		jtf[7].setText("↑0↓0~0");
 		jtf[8].setText("0");
-		
-		cpane2.add(jslImg);
 		
 		mnuDeck = new JMenu("Deck");
 		jmiNewDeck = new JMenuItem("New Deck");
@@ -704,9 +826,11 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		files.showOpenDialog(this.frmInfo);
 		if (files.getSelectedFile() != null) {
 			try {
+				File selFile = files.getSelectedFile();
+				txtURL.setText(selFile.getAbsolutePath());
 				card_image.setIcon(
 					new ImageIcon(
-						ImageIO.read(files.getSelectedFile())));
+						ImageIO.read(selFile)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

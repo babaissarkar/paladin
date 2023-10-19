@@ -25,20 +25,30 @@
 package clz;
 
 import java.awt.Color;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-
-import java.awt.Font;
-
-import javax.swing.LayoutStyle.ComponentPlacement;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.FileSystems;
+import java.util.prefs.Preferences;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 
@@ -48,7 +58,8 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	private boolean draw;
 	
 	// GUI Components
-	public JButton btnCancel, btnOk, btnBrowse, btnBrowse2;
+	public JButton btnCancel;
+	private JButton btnOk, btnBrowse, btnBrowse2;
 	private final JCheckBox chckbxShields;
 	private final JCheckBox chckbxDraw;
 	private final JTextField txtDk1;
@@ -57,6 +68,8 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	private final JTextField textField_1;
 	private final JFileChooser files;
 	private final JSpinner spinBPoints;
+	private JRadioButton tglbtnSystem, tglbtnNimbus, tglbtnMetal;
+	private int themeNo;
 	
 	public PRPlayer btf;
 
@@ -71,36 +84,51 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		getContentPane().setBackground(Color.WHITE);
 		
+		// Load Preferences
+		Preferences prefs = Preferences.userNodeForPackage(PrefIFrame.class);
+		themeNo = prefs.getInt("theme", 1);
+		
+		// Deck 1 selection
 		JLabel lblDeck = new JLabel("Deck 1 :");
 		lblDeck.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 
 		String sep = FileSystems.getDefault().getSeparator();
 
 		txtDk1 = new JTextField();
-		txtDk1.setText(PRPlayer.userhome + ".PRPlayer" + sep + "decks" + sep + "deck1.txt");
-		txtDk1.setColumns(10);
+		String deck1Path = PRPlayer.userhome + ".PRPlayer" + sep + "decks" + sep + "deck1.txt";
+		String path = prefs.get("deck1", deck1Path);
+		txtDk1.setText(path);
+		txtDk1.setColumns(30);
 		
 		btnBrowse = new JButton("Browse...");
 		btnBrowse.addActionListener(this);
 		
+		JPanel pnlDeck1 = new JPanel();
+		pnlDeck1.setLayout(new FlowLayout());
+		pnlDeck1.add(lblDeck);
+		pnlDeck1.add(txtDk1);
+		pnlDeck1.add(btnBrowse);
+		
+		// Deck2 selection
 		JLabel lblDeck_1 = new JLabel("Deck 2 :");
 		lblDeck_1.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
 		txtDk2 = new JTextField();
-		txtDk2.setText(PRPlayer.userhome + ".PRPlayer" + sep + "decks" + sep + "deck2.txt");
-		txtDk2.setColumns(10);
+		String deck2Path = PRPlayer.userhome + ".PRPlayer" + sep + "decks" + sep + "deck2.txt";
+		String path2 = prefs.get("deck2", deck1Path);
+		txtDk2.setText(path2);
+		txtDk2.setColumns(30);
 		
 		btnBrowse2 = new JButton("Browse...");
 		btnBrowse2.addActionListener(this);
 		
-		btnOk = new JButton("OK");
-		btnOk.addActionListener(this);
+		JPanel pnlDeck2 = new JPanel();
+		pnlDeck2.setLayout(new FlowLayout());
+		pnlDeck2.add(lblDeck_1);
+		pnlDeck2.add(txtDk2);
+		pnlDeck2.add(btnBrowse2);
 		
-		btnCancel = new JButton("Cancel");
-		btnCancel.addActionListener(this);
-		
-		Box hboxFCards = Box.createHorizontalBox();
-		
+		// Draw area
 		Box hboxDraw = Box.createHorizontalBox();
 		
 		chckbxDraw = new JCheckBox("Draw");
@@ -108,126 +136,148 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		chckbxDraw.setSelected(true);
 		hboxDraw.add(chckbxDraw);
 		
-		textField_2 = new JTextField("6");
+		textField_2 = new JTextField();
+		textField_2.setText(""+prefs.getInt("draw", 6));
+		if(textField_2.getText().equals("")) {
+			textField_2.setEnabled(false);
+			chckbxDraw.setSelected(false);
+			draw = false;
+		} else {
+			textField_2.setEnabled(true);
+			chckbxDraw.setSelected(true);
+			draw = true;
+		}
+		
+		textField_2.setColumns(2);
 		hboxDraw.add(textField_2);
 		
-		Box horizontalBox = Box.createHorizontalBox();
-		horizontalBox.setBorder(new TitledBorder(
-				new MatteBorder(2, 2, 2, 2, new Color(0, 255, 255)), "Look and Feel", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		
+		// Barrier points selection
+		JLabel lblBarrierPoints = new JLabel("Barrier Points");
 		spinBPoints = new JSpinner();
 		spinBPoints.setModel(
 				new SpinnerNumberModel(7, null, null, 1));
+		((JSpinner.DefaultEditor) spinBPoints.getEditor()).getTextField().setColumns(4);
+		spinBPoints.setValue(prefs.getInt("bp", 7));
 		
-		JLabel lblBarrierPoints = new JLabel("Barrier Points");
+		Box hboxBarrier = Box.createHorizontalBox();
+		hboxBarrier.add(lblBarrierPoints);
+		hboxBarrier.add(spinBPoints);
 		
-		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblDeck, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txtDk1, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
-							.addGap(29)
-							.addComponent(btnBrowse))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblDeck_1, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
-							.addGap(12)
-							.addComponent(txtDk2, GroupLayout.PREFERRED_SIZE, 249, GroupLayout.PREFERRED_SIZE)
-							.addGap(29)
-							.addComponent(btnBrowse2, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(109, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(24)
-					.addComponent(btnOk)
-					.addPreferredGap(ComponentPlacement.RELATED, 400, Short.MAX_VALUE)
-					.addComponent(btnCancel)
-					.addGap(22))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(hboxFCards, GroupLayout.PREFERRED_SIZE, 169, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(hboxDraw, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblBarrierPoints)
-					.addGap(4)
-					.addComponent(spinBPoints, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(71, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(16, Short.MAX_VALUE)
-					.addComponent(horizontalBox, GroupLayout.PREFERRED_SIZE, 553, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap())
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblDeck, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtDk1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnBrowse))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblDeck_1, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(5)
-							.addComponent(txtDk2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(2)
-							.addComponent(btnBrowse2)))
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(18)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(hboxFCards, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(hboxDraw, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblBarrierPoints)
-								.addComponent(spinBPoints, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))))
-					.addGap(18)
-					.addComponent(horizontalBox, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
-					.addGap(90)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnOk)
-						.addComponent(btnCancel))
-					.addGap(25))
-		);
-		
-		JButton tglbtnMetal = new JButton("Metal");
-		tglbtnMetal.addActionListener(arg0 -> btf.setMetalLF());
-		horizontalBox.add(tglbtnMetal);
-
-		Component horizontalStrut = Box.createHorizontalStrut(120);
-		horizontalBox.add(horizontalStrut);
-
-		JButton tglbtnSystem = new JButton("System");
-		tglbtnSystem.addActionListener(arg0 -> btf.setSystemLF());
-		
-		horizontalBox.add(tglbtnSystem);
-
-		Component horizontalStrut_1 = Box.createHorizontalStrut(120);
-		horizontalBox.add(horizontalStrut_1);
-
-		JButton tglbtnNimbus = new JButton("Nimbus");
-		tglbtnNimbus.addActionListener(arg0 -> btf.setNimbusLF());
-		horizontalBox.add(tglbtnNimbus);
-		
+		// Shields selection
+		Box hboxFCards = Box.createHorizontalBox();
 		chckbxShields = new JCheckBox("Flipped Cards");
 		chckbxShields.addActionListener(this);
 		hboxFCards.add(chckbxShields);
 		
 		textField_1 = new JTextField();
-		textField_1.setEnabled(false);
+		int flipped = prefs.getInt("flipped", 0);
+		if(flipped == 0) {
+			textField_1.setText("");
+			textField_1.setEnabled(false);
+			chckbxShields.setSelected(false);
+			shields = false;
+		} else {
+			textField_1.setText("" + flipped);
+			textField_1.setEnabled(true);
+			chckbxShields.setSelected(true);
+			shields = true;
+		}
+		
+		textField_1.setColumns(2);
+		//textField_1.setEnabled(false);
 		hboxFCards.add(textField_1);
 		
-		getContentPane().setLayout(groupLayout);
+		// Parameters selection panel
+		JPanel pnlParams = new JPanel();
+		pnlParams.setLayout(new FlowLayout());
+		pnlParams.add(hboxDraw);
+		pnlParams.add(hboxFCards);
+		pnlParams.add(hboxBarrier);
+		
+		// Ok and Cancel Buttons
+		btnOk = new JButton("OK");
+		btnOk.addActionListener(this);
+		
+		btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(this);
+		
+		JPanel pnlOkCancel = new JPanel();
+		pnlOkCancel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		pnlOkCancel.add(btnOk);
+		pnlOkCancel.add(btnCancel);
+		
+		// Look and Feel selection
+		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox.setBorder(new TitledBorder(
+				new MatteBorder(2, 2, 2, 2, new Color(0, 255, 255)), "Look and Feel", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
+
+
+		tglbtnMetal = new JRadioButton("Metal");
+		tglbtnMetal.addActionListener(arg0 -> {
+			themeNo = 3; // Metal laf : number 3
+			btf.setMetalLF();
+			SwingUtilities.updateComponentTreeUI(this);
+		});
+		horizontalBox.add(tglbtnMetal);
+
+		Component horizontalStrut = Box.createHorizontalStrut(120);
+		horizontalBox.add(horizontalStrut);
+
+		tglbtnSystem = new JRadioButton("System");
+		tglbtnSystem.addActionListener(arg0 -> {
+			themeNo = 1; // System laf : number 3
+			btf.setSystemLF();
+			SwingUtilities.updateComponentTreeUI(this);
+		});
+
+		horizontalBox.add(tglbtnSystem);
+
+		Component horizontalStrut_1 = Box.createHorizontalStrut(120);
+		horizontalBox.add(horizontalStrut_1);
+
+		tglbtnNimbus = new JRadioButton("Nimbus");
+		tglbtnNimbus.addActionListener(arg0 -> {
+			themeNo = 2; // Nimbus laf : number 3
+			btf.setNimbusLF();
+			SwingUtilities.updateComponentTreeUI(this);
+		});
+		horizontalBox.add(tglbtnNimbus);
+
+		ButtonGroup lafButtons = new ButtonGroup();
+		lafButtons.add(tglbtnMetal);
+		lafButtons.add(tglbtnSystem);
+		lafButtons.add(tglbtnNimbus);
+		
+		switch(themeNo) {
+		case 2 :
+			tglbtnNimbus.setSelected(true);
+			break;
+		case 3 :
+			tglbtnMetal.setSelected(true);
+			break;
+		default :
+			tglbtnSystem.setSelected(true);
+			break;
+		}
+		
+		// Set overall window layout manager
+		getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
+		
+		// Final Layouting
+		JPanel pnlDeckSelection = new JPanel();
+		pnlDeckSelection.setLayout(new BoxLayout(pnlDeckSelection, BoxLayout.PAGE_AXIS));
+		pnlDeckSelection.add(pnlDeck1);
+		pnlDeckSelection.add(pnlDeck2);
+		
+		getContentPane().add(pnlDeckSelection);
+		getContentPane().add(pnlParams);
+		getContentPane().add(horizontalBox);
+		getContentPane().add(pnlOkCancel);
+		
+		pack();
 		setTitle("Preferences");
-		setBounds(100, 100, 587, 375);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setLocation(200, 200);
 
 	}
 
@@ -237,6 +287,16 @@ public class PrefIFrame extends JFrame implements ActionListener {
 			this.setVisible(false);
 		} else if (arg0.getSource() == btnOk) {
 			//PRPlayer.restart();
+			//Save Preferences
+			Preferences prPref = Preferences.userNodeForPackage(PrefIFrame.class);
+			prPref.put("deck1", txtDk1.getText());
+			prPref.put("deck2", txtDk2.getText());
+			prPref.putInt("flipped", Integer.parseInt(textField_1.getText()));
+			prPref.putInt("draw", Integer.parseInt(textField_2.getText()));
+			prPref.putInt("bp", Integer.parseInt(spinBPoints.getValue().toString()));	
+			prPref.putInt("theme", themeNo);
+			
+			//Setup game
 			setDeck();
 			proceed();
 		} else if (arg0.getSource() == btnBrowse) {

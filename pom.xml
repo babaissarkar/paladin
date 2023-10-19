@@ -8,7 +8,7 @@
 
   <groupId>com.babai.prplayer</groupId>
   <artifactId>PRPlayer</artifactId>
-  <version>4.1.0</version>
+  <version>5.0.0</version>
 
   <name>PRPlayer</name>
   <url>http://www.github.com/babaissarkar/ssplot</url>
@@ -40,7 +40,7 @@
   </properties>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+<!--    <pluginManagement> lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
@@ -93,7 +93,7 @@
           <version>3.0.0</version>
         </plugin>
         
-        <!--plugin for executing the jar. just use mvn exec:java -->
+        <!--plugin for executing the jar. just use mvn exec:java 
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -101,10 +101,62 @@
             <configuration>
                 <mainClass>clz.PRPlayer</mainClass>
             </configuration>
+        </plugin>-->
+        
+        <plugin>
+        	<groupId>org.jsoup</groupId>
+  			<artifactId>jsoup</artifactId>
+  			<version>1.16.1</version>
+        </plugin>
+        
+        <plugin>
+        	<groupId>io.github.darkxanter</groupId>
+  			<artifactId>webp-imageio</artifactId>
+  			<version>0.3.2</version>
+        </plugin>
+        
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+            <shadedArtifactAttached>true</shadedArtifactAttached>
+                <artifactSet>
+                    <includes>
+                        <include>org.jsoup:jsoup</include>
+                        <include>io.github.darkxanter:webp-imageio</include>
+                    </includes>
+                </artifactSet>
+            <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>clz.PRPlayer</mainClass>
+                </transformer>
+            </transformers>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
         </plugin>
         
       </plugins>
-    </pluginManagement>
-    
+<!--    </pluginManagement> --> 
   </build>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.jsoup</groupId>
+  		<artifactId>jsoup</artifactId>
+  		<version>1.16.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>io.github.darkxanter</groupId>
+  		<artifactId>webp-imageio</artifactId>
+  		<version>0.3.2</version>
+  	</dependency>
+  </dependencies>
 </project>

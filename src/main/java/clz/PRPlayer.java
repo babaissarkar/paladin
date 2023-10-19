@@ -44,6 +44,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
+import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -574,6 +575,24 @@ public class PRPlayer extends JFrame implements ActionListener {
 		bc.add(scrOp, BorderLayout.NORTH);
 		bc.add(statusBar, BorderLayout.CENTER);
 		bc.add(scrMe, BorderLayout.SOUTH);
+		
+		// Load preference and set laf
+		Preferences prefs = Preferences.userNodeForPackage(PrefIFrame.class);
+		int themeNo = prefs.getInt("theme", 1);
+		switch(themeNo) {
+		case 2 :
+			setNimbusLF();
+			break;
+		case 3 :
+			setMetalLF();
+			break;
+		default :
+			setSystemLF();
+			break;
+		}
+		
+		// Switching default to Nimbus
+		setNimbusLF();
 		
 		//Finalizing
 		this.setVisible(true);
@@ -1172,7 +1191,6 @@ public class PRPlayer extends JFrame implements ActionListener {
 					setMetalLF();
 				}
 				SwingUtilities.updateComponentTreeUI(this);
-				SwingUtilities.updateComponentTreeUI(pif);
 			}
 		}
 	}
@@ -1186,7 +1204,6 @@ public class PRPlayer extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 		SwingUtilities.updateComponentTreeUI(this);
-		SwingUtilities.updateComponentTreeUI(pif);
 	}
 	
 	public void setSystemLF() {
@@ -1198,7 +1215,6 @@ public class PRPlayer extends JFrame implements ActionListener {
 			setMetalLF();
 		}
 		SwingUtilities.updateComponentTreeUI(this);
-		SwingUtilities.updateComponentTreeUI(pif);
 	}
 
 //	public void proceed() {
