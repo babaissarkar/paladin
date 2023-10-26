@@ -31,6 +31,9 @@ import clz.ImageManipulator;
 
 public class Scrapper {
 	private static String lastImgURL = "";
+	private static String baseURL;
+	public static final String DM_URL = "https://duelmasters.fandom.com/wiki/";
+	public static final String DMPS_URL = "https://duelmastersplays.fandom.com/wiki/";
 	
 	public static String getLastURL() {
 		return Scrapper.lastImgURL;
@@ -40,10 +43,14 @@ public class Scrapper {
 		Scrapper.lastImgURL = url;
 	}
 	
+	public static void setBaseURL(String url) {
+		Scrapper.baseURL = url;
+	}
+	
 	public static void save(String name) throws IOException {
 		String rname = name.replace(" ", "_"); //.replace("/", "%2F");
 		
-		Document doc = Jsoup.connect("https://duelmasters.fandom.com/wiki/" + rname).get();
+		Document doc = Jsoup.connect(baseURL + rname).get();
 		
 		Element body = doc.body();
 		Elements div = body.getElementsByTag("div");
@@ -122,7 +129,7 @@ public class Scrapper {
 		BufferedImage img = null;
 		String rname = name.replace(" ", "_"); //.replace("/", "%2F");
 		
-		Document doc = Jsoup.connect("https://duelmasters.fandom.com/wiki/" + rname).get();
+		Document doc = Jsoup.connect(baseURL + rname).get();
 		
 		Element body = doc.body();
 		Elements div = body.getElementsByTag("div");
@@ -130,8 +137,9 @@ public class Scrapper {
 			if(e.attr("class").equals("mw-parser-output")) {
 				System.out.println("Name : " + name);
 				for (Element e2 : e.select("a[href]")) {
+//					System.out.println("URL : " + linkname + "\n");
 					String linkname = e2.attr("href");
-					if (linkname.contains("jpg")) {
+					if (linkname.contains("jpg")||linkname.contains("png")) {
 						System.out.println("URL : " + linkname + "\n");
 						InputStream in = new URL(linkname).openStream();
 						img = ImageIO.read(in);
@@ -150,7 +158,7 @@ public class Scrapper {
 		Card c = new Card();
 		
 		String rname = name.replace(" ", "_"); //.replace("/", "%2F");
-		Document doc = Jsoup.connect("https://duelmasters.fandom.com/wiki/" + rname).get();
+		Document doc = Jsoup.connect(baseURL + rname).get();
 		Elements table = doc.body().getElementsByTag("table");
 		
 		if (fetchImage) {
@@ -161,7 +169,7 @@ public class Scrapper {
 						System.out.println("Name : " + name);
 						for (Element e2 : e.select("a[href]")) {
 							String linkname = e2.attr("href");
-							if (linkname.contains("jpg")) {
+							if (linkname.contains("jpg")||linkname.contains("png")) {
 								System.out.println("URL : " + linkname + "\n");
 								Scrapper.setLastURL(linkname);
 								InputStream in = new URL(linkname).openStream();
@@ -180,13 +188,17 @@ public class Scrapper {
 				in.close();
 			}
 		}
+		
 		for (Element e : table) {
 			if(e.attr("class").equals("wikitable")) {
 //				BufferedWriter writer = Files.newBufferedWriter(Path.of("/home/ssarkar/out.html"));
+				Elements th = e.getElementsByTag("th");
 				Elements tr = e.getElementsByTag("td");
+				
+				c.name = th.get(0).text();
+				
 				for(int i = 0; i < tr.size(); i++) {
 //					writer.write(node.nodeName() + ":" + node.text() + "\n");
-					c.name = name;
 					if (tr.get(i).text().contains("Race")) {
 						i++;
 //						writer.write(tr.get(i).text());

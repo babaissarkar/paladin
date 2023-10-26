@@ -278,19 +278,82 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 			}
 		);
 //		btnViewLinked.setEnabled(false);
+
+		JLabel lblImgBtn = new JLabel("Fetch Image :");
+		JRadioButton imgOn = new JRadioButton("On");
+		JRadioButton imgOff = new JRadioButton("Off");
+		JRadioButton imgCustom = new JRadioButton("Custom Image");
+		ButtonGroup grpImg = new ButtonGroup();
+		grpImg.add(imgOn);
+		grpImg.add(imgOff);
+		grpImg.add(imgCustom);
 		
-		JButton btnFetchData = new JButton("Fetch card data (DM Wiki)...");
+		txtURL = new JTextField(30);
+		JLabel lblURL = new JLabel("Image URL :");
+		lblURL.setEnabled(false);
+		txtURL.setEditable(false);
+		imgOn.addActionListener(
+				e -> {
+					isImageOn = true;
+					isCustom = false;
+					lblURL.setEnabled(false);
+					txtURL.setEditable(false);
+				}
+				);
+
+		imgOff.addActionListener(
+				e -> {
+					isImageOn = false;
+					isCustom = false;
+					lblURL.setEnabled(false);
+					txtURL.setEditable(false);
+				}
+				);
+
+		imgCustom.addActionListener(
+				e -> {
+					isImageOn = true;
+					isCustom = true;
+					lblURL.setEnabled(true);
+					txtURL.setEditable(true);
+				}
+				);
+
+		imgOn.setSelected(true);
+		JPanel pnlImg1 = new JPanel();
+		FlowLayout layout3 = new FlowLayout();
+		layout3.setAlignment(FlowLayout.LEFT);
+		pnlImg1.setLayout(layout3);
+		pnlImg1.add(lblImgBtn);
+		pnlImg1.add(imgOn);
+		pnlImg1.add(imgOff);
+		pnlImg1.add(imgCustom);
+		
+		JRadioButton rbDM = new JRadioButton("DM Wiki");
+		JRadioButton rbDMPS = new JRadioButton("DMP Wiki");
+		ButtonGroup bgSources = new ButtonGroup();
+		bgSources.add(rbDM);
+		bgSources.add(rbDMPS);
+		rbDM.setSelected(true);
+		
+		JButton btnFetchData = new JButton("Fetch card data...");
 		btnFetchData.addActionListener(
 			e -> {
 				String cardName = jtf[0].getText();
-				if ((cardName != null) && (isImageOn == true)) {
+				if ((cardName != null)) {
 					try {
-//						Card c = new Card();
+						if(rbDM.isSelected()) {
+							Scrapper.setBaseURL(Scrapper.DM_URL);
+						} else if (rbDMPS.isSelected()) {
+							Scrapper.setBaseURL(Scrapper.DMPS_URL);
+						}
+						System.out.println(isImageOn);
+						
 						if (isCustom) {
 							Card c = Scrapper.getData(cardName, true, true, txtURL.getText());
 							setCard(c);
-						} else {
-							Card c = Scrapper.getData(cardName, true, false, "");
+						} else {							
+							Card c = Scrapper.getData(cardName, isImageOn, false, "");
 							txtURL.setText(Scrapper.getLastURL());
 							setCard(c);
 						}
@@ -307,57 +370,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		layout2.setAlignment(FlowLayout.LEFT);
 		pnlExtras2.setLayout(layout2);
 		pnlExtras2.add(btnFetchData);
-		
-		JLabel lblImgBtn = new JLabel("Fetch Image :");
-		JRadioButton imgOn = new JRadioButton("On");
-		JRadioButton imgOff = new JRadioButton("Off");
-		JRadioButton imgCustom = new JRadioButton("Custom Image");
-		ButtonGroup grpImg = new ButtonGroup();
-		grpImg.add(imgOn);
-		grpImg.add(imgOff);
-		grpImg.add(imgCustom);
-		
-		txtURL = new JTextField(30);
-		JLabel lblURL = new JLabel("Image URL :");
-		lblURL.setEnabled(false);
-		txtURL.setEditable(false);
-		
-		imgOn.addActionListener(
-			e -> {
-				isImageOn = true;
-				isCustom = false;
-				lblURL.setEnabled(false);
-				txtURL.setEditable(false);
-			}
-		);
-		
-		imgOff.addActionListener(
-			e -> {
-				isImageOn = false;
-				isCustom = false;
-				lblURL.setEnabled(false);
-				txtURL.setEditable(false);
-			}
-		);
-		
-		imgCustom.addActionListener(
-			e -> {
-				isImageOn = true;
-				isCustom = true;
-				lblURL.setEnabled(true);
-				txtURL.setEditable(true);
-			}
-		);
-
-		imgOn.setSelected(true);
-		JPanel pnlImg1 = new JPanel();
-		FlowLayout layout3 = new FlowLayout();
-		layout3.setAlignment(FlowLayout.LEFT);
-		pnlImg1.setLayout(layout3);
-		pnlImg1.add(lblImgBtn);
-		pnlImg1.add(imgOn);
-		pnlImg1.add(imgOff);
-		pnlImg1.add(imgCustom);
+		pnlExtras2.add(rbDM);
+		pnlExtras2.add(rbDMPS);
 		
 		JPanel pnlImg2 = new JPanel();
 		FlowLayout layout4 = new FlowLayout();
