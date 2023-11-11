@@ -17,9 +17,8 @@ Download the latest release, then run the `.jar` file. You will need the latest 
 # Double-sided card support
 Use the Deck editor's new Link Card button to link a card with another card in the extra deck. The first card can be in either the main deck or the extra deck. For a double sided card in the main deck, one side should be in the main deck, and the second in the extra deck. Once a card is successfully linked, you will be able to flip it to the other side using the _View Linked_ menu item in the right click card menu.
 
-# Auto-download card data from DM Wiki (version 5.0)
-Open deck editor (**Actions > Deck Editor**), write the name of the card in the Name field, then click the **Fetch Data** button in the bottom. Wait while the data and the image is fetched. You can also download a custom image by turning on the Custom Image option and pasting the image URL in the box below.
-
+# Auto-download card data DM/DMP (version 5.0)
+Open deck editor (**Actions > Deck Editor**), write the English name of the card in the Name field, select the source (DM or DMPS), then click the **Fetch Data** button in the bottom. Wait while the data and the image is fetched. You can also download a custom image by turning on the Custom Image option and pasting the image URL in the adjoining box.
 
 # Screenshots
 ![Starting the Game](/screenshots/1.png "Starting the Game")
