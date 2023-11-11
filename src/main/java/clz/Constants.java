@@ -8,9 +8,9 @@ public class Constants {
     static String[] symbols = {"\u2191", "\u2193", "~", "(", " "};
 
     /* Colors corresponding to each civility */
-    static String[] civilities = {"Raenid", "Asarn", "Niaz", "Zivar", "Mayarth", "Kshiti"};
+    static String[] civilities = {"Raenid", "Asarn", "Niaz", "Zivar", "Mayarth", "Kshiti", "Fire", "Water", "Nature", "Light", "Darkness"};
     //static String[] civ_symbols = {"🟡", "🔴", "🔵", "⚫", "🟠", "🟢"};
-    static Color[] colors = {Color.YELLOW, Color.RED, Color.BLUE, Color.BLACK, Color.ORANGE, Color.GREEN};
+    static Color[] colors = {Color.YELLOW, Color.RED, Color.BLUE, Color.BLACK, Color.ORANGE, new Color(0, 102, 0), Color.red, Color.blue, new Color(0, 102, 0), Color.yellow, new Color(153, 51, 255)};
     
     static String[] energy_types = {"F", "R", "W", "G"};
     static Color[] energy_colors = {Color.YELLOW, Color.PINK, Color.CYAN, Color.DARK_GRAY};

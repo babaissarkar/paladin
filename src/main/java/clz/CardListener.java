@@ -22,6 +22,9 @@
  */
 package clz;
 
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -34,12 +37,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
 
-public class CardListener implements MouseListener, MouseWheelListener {
+public class CardListener 
+	implements MouseListener, MouseWheelListener {
 
 	private boolean moved;
 	private ImageIcon imBuf;
 	private Card bCard;
 	private CLabel lbuf;
+	private CLabel selLbl = null;
 	private JPopupMenu cardMenu;
 	public EnergyBar bar1, bar2;
 
@@ -51,6 +56,10 @@ public class CardListener implements MouseListener, MouseWheelListener {
 ////			}
 //		//noCard = new Card("No Card", "/images/NCRD.jpg");
 //	}
+	
+	public CLabel getSelLbl() {
+		return this.selLbl;
+	}
 	
 	public CardListener(JPopupMenu cardMenu, EnergyBar bar1, EnergyBar bar2) {
 		this.cardMenu = cardMenu;
@@ -102,9 +111,6 @@ public class CardListener implements MouseListener, MouseWheelListener {
 	}
 	
 	public void mouseReleased(MouseEvent me2) {
-	}
-	
-	public void mouseExited(MouseEvent me3) {
 	}
 	
 	public void mouseClicked(MouseEvent me4) {
@@ -201,9 +207,17 @@ public class CardListener implements MouseListener, MouseWheelListener {
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseEntered(MouseEvent me) {
+		CLabel label2 = (CLabel) me.getComponent();
+		this.selLbl = label2;
+		label2.use2(Color.YELLOW);
 	}
+	@Override
+	public void mouseExited(MouseEvent me3) {
+		CLabel label2 = (CLabel) me3.getComponent();
+		this.selLbl = null;
+		label2.unuse2();
+	}
+	
 }
 

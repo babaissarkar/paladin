@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -64,19 +65,22 @@ public class CLabel extends JLabel {
 		super(ImageManipulator.scale(
 				new ImageIcon(
 						ImageIO.read(CLabel.class.getResourceAsStream("/images/NCRD.jpg"))), 64, 87));
-		setPreferredSize(new Dimension(64, 87));
+		this.setPreferredSize(new Dimension(64, 87));
+		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	}
 	
 	public CLabel(Card card1) {
 		super(ImageManipulator.scale(card1.getImCard(), 64, 87));
 		cards.add(card1);
-		setDefaultState();
+		this.setDefaultState();
 		if (card1.name.equalsIgnoreCase("No Card")) {
-			setDefaultTooltip();
+			this.setDefaultTooltip();
 		} else {
 			this.setToolTipText(createCardTooltip(card1));
 		}
+		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	}
+	
 
 	public CLabel(String text) {
 		super(text);
@@ -111,6 +115,7 @@ public class CLabel extends JLabel {
 	private void init() {
 		setDefaultState();
 		setDefaultTooltip();
+		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	}
 
 	private void setDefaultState() {
@@ -172,6 +177,7 @@ public class CLabel extends JLabel {
 			return null; // NULL
 		}
 	}
+	
 	public void setCard(Card card0) {
 		if (card0 != null) {
 			cards.add(card0);
@@ -210,6 +216,14 @@ public class CLabel extends JLabel {
 		}
 	}
 	
+	public void use2(Color borderCol) {
+		setUsed(true);
+//		this.setBorder(new LineBorder(borderCol, 3));
+		this.setBorder(BorderFactory.createLineBorder(borderCol, 3));
+		repaint();
+	}
+	
+	
 	public void use2() {
 		setUsed(true);
 		Card c = this.getCard();
@@ -235,7 +249,8 @@ public class CLabel extends JLabel {
 	
 	public void unuse2() {
 		setUsed(false);
-		this.setBorder(null);
+//		this.setBorder(null);
+		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 		repaint();
 	}
 	

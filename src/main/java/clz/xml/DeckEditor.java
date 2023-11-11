@@ -48,6 +48,7 @@ import clz.CScan;
 import clz.CWindow;
 import clz.Card;
 import clz.Deck;
+import clz.DeckStatPanel;
 import clz.ImageManipulator;
 import clz.PRPlayer;
 import clz.SelectorParent;
@@ -408,7 +409,19 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		jmiDelCard = new JMenuItem("Remove Card");
 		jmiSave = new JMenuItem("Save Deck");
 		
-		JMenuItem jmiQuit = new JMenuItem("Exit");
+		var jmiStats = new JMenuItem("Deck Statistics");
+		jmiStats.addActionListener(
+			e -> {
+				var pnlStat = new DeckStatPanel(this.deck);
+				JFrame frmStat = new JFrame("Stats");
+				frmStat.setSize(400, 400);
+				frmStat.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				frmStat.setContentPane(pnlStat);
+				frmStat.setVisible(true);
+			}
+		);
+		
+		var jmiQuit = new JMenuItem("Exit");
 		jmiQuit.addActionListener(
 			evt -> { System.exit(0); }
 		);
@@ -576,6 +589,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		mnuDeck.add(jmiUpdateCard);
 		mnuDeck.add(jmiDelCard);
 		mnuDeck.add(jmiSave);
+		mnuDeck.add(jmiStats);
 		mnuDeck.add(jmiQuit);
 		
 		JMenuBar menubar = new JMenuBar();

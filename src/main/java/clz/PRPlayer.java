@@ -29,19 +29,18 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 //import java.awt.GridBagConstraints;
 //import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 import java.util.prefs.Preferences;
@@ -55,7 +54,7 @@ import javax.swing.border.Border;
 import clz.xml.DeckEditor;
 
 
-public class PRPlayer extends JFrame implements ActionListener {
+public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 	/**
 	 * 
 	 */
@@ -104,11 +103,17 @@ public class PRPlayer extends JFrame implements ActionListener {
 	private CWindow exWin1, exWin2;
 
 	private PRPlayer() {
+		
+		UIManager.put("Menu.font", new Font("DejaVuSans", Font.BOLD, 13));
+//		UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("DejaVuSans", Font.BOLD, 16));
+		SwingUtilities.updateComponentTreeUI(this);
+		
 		//Setting Icon and Location
 		this.setIconImage(
 				Toolkit.getDefaultToolkit().getImage(
 						Infofield.class.getResource("/images/Icon.png")));
-		this.setLocation(40, 20);		
+		this.setLocation(40, 20);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		
 		//Initializing Library Viewers and Librarys
@@ -183,15 +188,26 @@ public class PRPlayer extends JFrame implements ActionListener {
 		graveMenu = new JPopupMenu("Cemetry");
 		graveMenu.add(jpiView);
 		cardMenu = new JPopupMenu("Card");
-		cardMenu.add(jpiFlip);
-		cardMenu.add(jpiFlipVert);
-		cardMenu.add(jpiRot270);
+		
+		// Organize menus, 3/11/23
+		JMenu jmActions = new JMenu("Actions");
+		jmActions.add(jpiFlip);
+		jmActions.add(jpiSummon);
+		cardMenu.add(jmActions);
+		
+		JMenu jmRotate = new JMenu("Rotate");
+		jmRotate.add(jpiFlipVert);
+		jmRotate.add(jpiRot270);
+		cardMenu.add(jmRotate);
+		
 		cardMenu.add(jpiViewCard);
 		cardMenu.add(jpiLink);
-		cardMenu.add(jpiSummon);
-		cardMenu.add(jpiToLibrary);
-		cardMenu.add(jpiToLibBottom);
-		cardMenu.add(jpiToGrave);
+		JMenu jmMove = new JMenu("Move");
+		jmMove.add(jpiToLibrary);
+		jmMove.add(jpiToLibBottom);
+		jmMove.add(jpiToGrave);
+		cardMenu.add(jmMove);
+		
 		cardMenu.add(jpiRemove);
 
 		bar1 = new EnergyBar();
@@ -297,6 +313,10 @@ public class PRPlayer extends JFrame implements ActionListener {
 		jlbOD = new JLabel(imLibrary);
 		jlbMG = new JLabel(imGrave);
 		jlbOG = new JLabel(imGrave);
+		jlbMD.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+		jlbOD.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+		jlbMG.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+		jlbOG.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 		for (int i = 0; i < 10; i++) {
 			jlbMS[i+1] = new CLabel(imNoCard);
 			jlbOS[i+1] = new CLabel(imNoCard);
@@ -369,70 +389,36 @@ public class PRPlayer extends JFrame implements ActionListener {
 		gl.setAutoCreateContainerGaps(true);
 		GroupLayout.SequentialGroup mhGroup = gl.createSequentialGroup();
 		GroupLayout.SequentialGroup mvGroup = gl.createSequentialGroup();
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[12])
-				.addComponent(jlbMS[1])
-				.addComponent(jlbMM[12]));
+		for (int i = 1; i <= 10; i++) {
+			mhGroup.addGroup(gl.createParallelGroup()
+					.addComponent(jlbMB[i])
+					.addComponent(jlbMS[i])
+					.addComponent(jlbMM[i]));
+		}
 		mhGroup.addGroup(gl.createParallelGroup()
 				.addComponent(jlbMB[11])
-				.addComponent(jlbMS[2])
+				.addComponent(jlbMD)
 				.addComponent(jlbMM[11]));
 		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[10])
-				.addComponent(jlbMS[3])
-				.addComponent(jlbMM[10]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[9])
-				.addComponent(jlbMS[4])
-				.addComponent(jlbMM[9]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[8])
-				.addComponent(jlbMS[5])
-				.addComponent(jlbMM[8]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[7])
-				.addComponent(jlbMS[6])
-				.addComponent(jlbMM[7]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[6])
-				.addComponent(jlbMS[7])
-				.addComponent(jlbMM[6]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[5])
-				.addComponent(jlbMS[8])
-				.addComponent(jlbMM[5]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[4])
-				.addComponent(jlbMS[9])
-				.addComponent(jlbMM[4]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[3])
-				.addComponent(jlbMS[10])
-				.addComponent(jlbMM[3]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[2])
-				.addComponent(jlbMD)
-				.addComponent(jlbMM[2]));
-		mhGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[1])
+				.addComponent(jlbMB[12])
 				.addComponent(jlbMG)
-				.addComponent(jlbMM[1]));
+				.addComponent(jlbMM[12]));
 		//mhGroup.addComponent(bar1);
 		gl.setHorizontalGroup(mhGroup);
 
 		mvGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMB[12])
-				.addComponent(jlbMB[11])
-				.addComponent(jlbMB[10])
-				.addComponent(jlbMB[9])
-				.addComponent(jlbMB[8])
-				.addComponent(jlbMB[7])
-				.addComponent(jlbMB[6])
-				.addComponent(jlbMB[5])
-				.addComponent(jlbMB[4])
-				.addComponent(jlbMB[3])
-				.addComponent(jlbMB[2])
 				.addComponent(jlbMB[1])
+				.addComponent(jlbMB[2])
+				.addComponent(jlbMB[3])
+				.addComponent(jlbMB[4])
+				.addComponent(jlbMB[5])
+				.addComponent(jlbMB[6])
+				.addComponent(jlbMB[7])
+				.addComponent(jlbMB[8])
+				.addComponent(jlbMB[9])
+				.addComponent(jlbMB[10])
+				.addComponent(jlbMB[11])
+				.addComponent(jlbMB[12])
 				);
 		mvGroup.addGroup(gl.createParallelGroup()
 				.addComponent(jlbMS[1])
@@ -449,18 +435,18 @@ public class PRPlayer extends JFrame implements ActionListener {
 				.addComponent(jlbMG)
 				);
 		mvGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMM[12])
-				.addComponent(jlbMM[11])
-				.addComponent(jlbMM[10])
-				.addComponent(jlbMM[9])
-				.addComponent(jlbMM[8])
-				.addComponent(jlbMM[7])
-				.addComponent(jlbMM[6])
-				.addComponent(jlbMM[5])
-				.addComponent(jlbMM[4])
-				.addComponent(jlbMM[3])
-				.addComponent(jlbMM[2])
 				.addComponent(jlbMM[1])
+				.addComponent(jlbMM[2])
+				.addComponent(jlbMM[3])
+				.addComponent(jlbMM[4])
+				.addComponent(jlbMM[5])
+				.addComponent(jlbMM[6])
+				.addComponent(jlbMM[7])
+				.addComponent(jlbMM[8])
+				.addComponent(jlbMM[9])
+				.addComponent(jlbMM[10])
+				.addComponent(jlbMM[11])
+				.addComponent(jlbMM[12])
 				);
 		//mvGroup.addComponent(bar1);
 
@@ -645,7 +631,6 @@ public class PRPlayer extends JFrame implements ActionListener {
 				}
 			});
 		}
-	
 	
 	public static void restart() {
 		// Cleanup everything
@@ -1135,7 +1120,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 		} else if(ae.getSource() == jmiAbout) {
 			message = "PR Player"
 					+ "\n"
-					+ "Copyright 2014-2016 Subhraman Sarkar\n\n"
+					+ "Copyright 2014-2023 Subhraman Sarkar\n\n"
 					+ "This program is free software; you can redistribute it and/or modify"
 					+ "\n it under the terms of the GNU General Public License as published by"
 					+ "\n  the Free Software Foundation; either version 2 of the License, or"
@@ -1162,7 +1147,7 @@ public class PRPlayer extends JFrame implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 						try {
-							jtext.setPage(this.getClass().getResource("/LICENCE"));
+							jtext.setPage(this.getClass().getResource("/doc/LICENCE"));
 							jbLicence.setEnabled(false);
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -1215,6 +1200,26 @@ public class PRPlayer extends JFrame implements ActionListener {
 			setMetalLF();
 		}
 		SwingUtilities.updateComponentTreeUI(this);
+	}
+
+	
+	@Override
+	public void keyPressed(KeyEvent ke) {
+		if (ke.getKeyCode() == KeyEvent.VK_1) {
+//			cardMenu.show(cl.getSelLbl(), 100, 100);
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 //	public void proceed() {

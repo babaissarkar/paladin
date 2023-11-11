@@ -50,6 +50,8 @@ public class Card {
 	/* variables required for automatically playing situations. */
 	private boolean isTrigger = false;
 	private String triggerId = null;
+	/* Code embeded in the card to autoplay */
+	private String code = null;
 	/**************************/
 	
 	/*
