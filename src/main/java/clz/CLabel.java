@@ -159,7 +159,11 @@ public class CLabel extends JLabel {
 		if (cards.size() > 0) {
 			Card card2 = cards.pop();
 			if (cards.size() > 0) {
-				super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
+				if (!cards.lastElement().fliped) {
+					super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
+				} else {
+					super.setIcon(ImageManipulator.scale(cards.lastElement().bkCard, 64, 87));
+				}
 			} else {
 				//			this.setCard(ncrd);
 				try {
@@ -181,7 +185,16 @@ public class CLabel extends JLabel {
 	public void setCard(Card card0) {
 		if (card0 != null) {
 			cards.add(card0);
-			super.setIcon(ImageManipulator.scale(card0.getImCard(), 64, 87));
+			
+			if (!card0.fliped) {
+				super.setIcon(ImageManipulator.scale(card0.getImCard(), 64, 87));
+				//			if (card0.fliped) {
+				//				this.flip();
+				//			}
+			} else {
+				super.setIcon(ImageManipulator.scale(card0.bkCard, 64, 87));
+			}
+			
 			if (card0.name.equalsIgnoreCase("No Card")) {
 				this.setToolTipText(default_tooltip);
 			} else {
@@ -204,17 +217,24 @@ public class CLabel extends JLabel {
 		//imCard2 = imCard;
 		Card card = this.getCard();
 		if (card.bkCard != null) {
-			if (fliped) {
+			if (card.fliped) {
+				
+				//Unflip
 				this.setIcon(ImageManipulator.scale(card.getImCard(), 64, 87));
 				this.setToolTipText(createCardTooltip(card));
-				fliped = false;
+				card.fliped = false;
 			} else {
+				
+				//Flip
 				this.setIcon(ImageManipulator.scale(card.bkCard, 64, 87));
 				setDefaultTooltip();
-				fliped = true;
+				card.fliped = true;
 			}
 		}
+		
 	}
+	
+	
 	
 	public void use2(Color borderCol) {
 		setUsed(true);
