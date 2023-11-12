@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -39,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -230,6 +232,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		// Adding to content pane
 		for (int i = 0; i < jlb.length; i++) {
 			jlb[i] = new JLabel(attr_names[i] + " : ");
+			jlb[i].setFont(jlb[i].getFont().deriveFont(16.0f).deriveFont(Font.PLAIN));
 		}
 		
 		for (int i = 0; i < jtf.length; i++) {
@@ -402,26 +405,37 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		
 		mnuDeck = new JMenu("Deck");
 		jmiNewDeck = new JMenuItem("New Deck");
+		jmiNewDeck.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		jmiOpen = new JMenuItem("Open Deck");
+		jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		jmiAddCard = new JMenuItem("Add Card");
+		jmiAddCard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		jmiAddMult = new JMenuItem("Add Multiple Copies");
+		jmiAddMult.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 		jmiUpdateCard = new JMenuItem("Update Card");
+		jmiUpdateCard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
 		jmiDelCard = new JMenuItem("Remove Card");
+		jmiDelCard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 		jmiSave = new JMenuItem("Save Deck");
+		jmiSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		
 		var jmiStats = new JMenuItem("Deck Statistics");
+		jmiStats.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
 		jmiStats.addActionListener(
 			e -> {
 				var pnlStat = new DeckStatPanel(this.deck);
 				JFrame frmStat = new JFrame("Stats");
-				frmStat.setSize(400, 400);
+//				frmStat.setSize(400, 400);
+				frmStat.setLocation(500, 200);
 				frmStat.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				frmStat.setContentPane(pnlStat);
+				frmStat.pack();
 				frmStat.setVisible(true);
 			}
 		);
 		
 		var jmiQuit = new JMenuItem("Exit");
+		jmiQuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		jmiQuit.addActionListener(
 			evt -> { System.exit(0); }
 		);
