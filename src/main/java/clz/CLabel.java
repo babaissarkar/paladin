@@ -143,6 +143,7 @@ public class CLabel extends JLabel {
 		this.used = used;
 	}
 
+	// Copy card
 	public Card getCard() {
 		if (cards.size() > 0) {
 			Card card2 = cards.lastElement();
@@ -153,6 +154,7 @@ public class CLabel extends JLabel {
 		}
 	}
 	
+	// Cut/Move card
 	public Card grCard() {
 		setDefaultTooltip();
 

@@ -84,38 +84,38 @@ public class XMLCardWriter {
 
 		xw.writeCharacters("\t\t");
 		xw.writeStartElement("name");
-		xw.writeCharacters(c.name);
+		xw.writeCharacters(c.name.trim());
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
 
 		xw.writeCharacters("\t\t");
 		xw.writeStartElement("civility");
-		xw.writeCharacters(c.civility);
+		xw.writeCharacters(c.civility.trim());
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
 
 		xw.writeCharacters("\t\t");
 		xw.writeStartElement("type");
-		xw.writeCharacters(c.type);
+		xw.writeCharacters(c.type.trim());
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
 
 		xw.writeCharacters("\t\t");
 		xw.writeStartElement("subtype");
-		xw.writeCharacters(c.subtype);
+		xw.writeCharacters(c.subtype.trim());
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
 
 		xw.writeCharacters("\t\t");
 		xw.writeStartElement("id");
-		xw.writeCharacters(c.id);
+		xw.writeCharacters(c.id.trim());
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
 
 		for (String effect : c.effects) {
 			xw.writeCharacters("\t\t");
 			xw.writeStartElement("effect");
-			xw.writeCharacters(effect);
+			xw.writeCharacters(effect.trim());
 			xw.writeEndElement();
 			xw.writeCharacters("\n");
 		}
@@ -143,7 +143,15 @@ public class XMLCardWriter {
 		xw.writeCharacters("" + c.damage);
 		xw.writeEndElement();
 		xw.writeCharacters("\n");
-
+		
+		for (String catg : c.categories) {
+			xw.writeCharacters("\t\t");
+			xw.writeStartElement("category");
+			xw.writeCharacters(catg.trim());
+			xw.writeEndElement();
+			xw.writeCharacters("\n");
+		}
+		
 		if (isExtra) {
 			xw.writeCharacters("\t\t");
 			xw.writeEmptyElement("isExtra");
@@ -154,7 +162,7 @@ public class XMLCardWriter {
 			for (Card part : c.getParts()) {
 				xw.writeCharacters("\t\t");
 				xw.writeStartElement("link");
-				xw.writeCharacters(part.name);
+				xw.writeCharacters(part.name.trim());
 				xw.writeEndElement();
 				xw.writeCharacters("\n");
 			}

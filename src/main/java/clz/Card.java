@@ -52,7 +52,10 @@ public class Card {
 	private String triggerId = null;
 	/* Code embeded in the card to autoplay */
 	private String code = null;
+	public boolean fliped = false;
 	/**************************/
+	/* Card categories */
+	public Vector<String> categories = new Vector<String>();
 	
 	/*
 	 * The state variable denotes the current
@@ -122,6 +125,10 @@ public class Card {
 		this.effects = effects.split("\n");
 		this.damage = Integer.parseInt(damage);
 		this.imCard = new ImageIcon(ImageManipulator.createImage(this));
+	}
+	
+	public void addCategory(String catg) {
+		this.categories.add(catg);
 	}
 	
 	public ImageIcon getImCard() {

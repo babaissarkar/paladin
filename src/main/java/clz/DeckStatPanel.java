@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class DeckStatPanel extends JPanel {
-	private HashMap<String, Integer> civCount, typeCount, stCount;
+	private HashMap<String, Integer> civCount, typeCount, stCount, catgCount;
 	private HashMap<Integer, Integer> costCount;
 	private Deck d;
 	
@@ -22,6 +22,7 @@ public class DeckStatPanel extends JPanel {
 		typeCount = new HashMap<String, Integer>();
 		stCount = new HashMap<String, Integer>();
 		costCount = new HashMap<Integer, Integer>();
+		catgCount = new HashMap<String, Integer>();
 		countStats(d);
 		initPanel();
 	}
@@ -56,6 +57,14 @@ public class DeckStatPanel extends JPanel {
 				stCount.put(st, ((Integer) stCount.get(st))+1 );
 			} else {
 				stCount.put(st, 1);
+			}
+			
+			for (String catg : c.categories) {
+				if (catgCount.containsKey(catg)) {
+					catgCount.put(catg, ((Integer) catgCount.get(catg))+1 );
+				} else {
+					catgCount.put(catg, 1);
+				}
 			}
 		}
 	}
@@ -133,6 +142,17 @@ public class DeckStatPanel extends JPanel {
 		for (Entry<String, Integer> e : stCount.entrySet()) {
 			if (e.getKey() == "") {
 				htmlBuf2.append("<tr><td> No Subtype </td><td>" + e.getValue() + "</td></tr>");
+			} else {
+				htmlBuf2.append("<tr><td> " + e.getKey() + "</td><td>" + e.getValue() + "</td></tr>");
+			}
+		}
+		htmlBuf2.append("</table><br/>");
+		
+		//category table
+		htmlBuf2.append("<table border='2' bgcolor='white'>");
+		for (Entry<String, Integer> e : catgCount.entrySet()) {
+			if (e.getKey() == "") {
+				htmlBuf2.append("<tr><td> No Category </td><td>" + e.getValue() + "</td></tr>");
 			} else {
 				htmlBuf2.append("<tr><td> " + e.getKey() + "</td><td>" + e.getValue() + "</td></tr>");
 			}

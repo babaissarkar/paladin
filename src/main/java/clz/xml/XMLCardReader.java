@@ -110,6 +110,8 @@ public class XMLCardReader {
 						c.damage =  Integer.parseInt(reader.getText());
 					} else if (stag.equalsIgnoreCase("eno")) {
 						c.eno = Card.stringToEnergy(reader.getText());
+					} else if (stag.equalsIgnoreCase("category")) {
+						c.addCategory(reader.getText());
 					} else if (stag.equalsIgnoreCase("link")) {
 						String linkName = reader.getText();
 						links.put(c.name, linkName);

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -74,6 +75,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	private JComboBox<String> jcbCivility;
 	private JLabel card_image;
 	private JTextField txtURL;
+	private JTextField txtCatg;
 	
 	private JMenu mnuDeck;
 	private JMenuItem jmiNewDeck, jmiAddCard, jmiDelCard, jmiUpdateCard, jmiSave, jmiOpen;
@@ -393,6 +395,14 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		pnlExtras.add(btnViewLinked);
 		pnlExtras.add(jcbIsExtra);
 		
+		txtCatg = new JTextField(30);
+		JLabel lblCatg = new JLabel("Categories :");
+		JPanel pnlCatg = new JPanel();
+		pnlCatg.setLayout(new FlowLayout(FlowLayout.LEFT));
+		pnlCatg.add(lblCatg);
+		pnlCatg.add(txtCatg);
+		
+		cpane.add(pnlCatg);
 		cpane.add(pnlImg1);
 		cpane.add(pnlImg2);
 		cpane.add(pnlExtras2);
@@ -678,6 +688,12 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 				jtaEffects.append(effect);
 				jtaEffects.append("\n");
 			}
+//			StringBuilder sbCatg = new StringBuilder();
+//			for (String catg : card.categories) {
+//				sbCatg.add(",")
+//			}
+			String catg = String.join(",", card.categories);
+			txtCatg.setText(catg.toString());
 
 			if (card.getImCard() == null) {
 				card.createImage();
@@ -711,6 +727,10 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		c.id = jtf[9].getText();
 		c.effects = jtaEffects.getText().split("\n");
 		c.setImCard((ImageIcon) card_image.getIcon());
+		
+		for (String catg : txtCatg.getText().split(",")) {
+			c.addCategory(catg);
+		}
 		
 		return c;
 	}
