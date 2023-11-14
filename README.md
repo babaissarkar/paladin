@@ -5,7 +5,7 @@ A cross-platform CCG/TCG playtester written completely in Java.
 Clone the repository, then run
   `mvn package`
 # Running
-Download the latest release, then run the `.jar` file. You will need the latest Java Runtime (JRE).
+Download the latest release or the latest development build from actions tab, then run the `.jar` file. You will need the latest Java Runtime (JRE).
 
 # Quick Start Guide
 1. Install and launch the program. Create a new Deck (preferably 2) using the Deck Editor. **Actions > Deck Editor**
@@ -19,6 +19,12 @@ Use the Deck editor's new Link Card button to link a card with another card in t
 
 # Auto-download card data DM/DMP (version 5.0)
 Open deck editor (**Actions > Deck Editor**), write the English name of the card in the Name field, select the source (DM or DMPS), then click the **Fetch Data** button in the bottom. Wait while the data and the image is fetched. You can also download a custom image by turning on the Custom Image option and pasting the image URL in the adjoining box.
+
+# Deck Statistics window and Categories
+You can now add various categories to cards using the **Categories** text box in the **Deck Editor**.
+
+**Deck Editor > Deck > Deck Statistics**
+Shows various statistics of the deck, including color, cost and type/subtype analysis, as well as category-wise count.
 
 # Screenshots
 ![Starting the Game](/screenshots/1.png "Starting the Game")
