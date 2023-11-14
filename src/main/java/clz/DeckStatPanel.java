@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -72,16 +73,33 @@ public class DeckStatPanel extends JPanel {
 	private void initPanel() {
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.setBackground(Color.gray);
 		JLabel lblHeader = new JLabel();
-		JLabel lblEntry = new JLabel();
-		JLabel lblEntry2 = new JLabel();
+//		JLabel lblEntry = new JLabel();
+//		JLabel lblEntry2 = new JLabel();
+		JEditorPane lblEntry, lblEntry2;
+		lblEntry = new JEditorPane();
+		lblEntry2 = new JEditorPane();
+		lblEntry.setContentType("text/html");
+		lblEntry.setEditable(false);
+		lblEntry2.setContentType("text/html");
+		lblEntry2.setEditable(false);
 		
-		lblHeader.setText("<html><body><center><h1 style='font-weight:normal;'>Card Statistics</h1></center></body></html>");
+		lblHeader.setText(
+			"""
+			<html>
+				<body>
+					<center>
+						<h1 style='font-weight:normal;text-decoration:underline;'>
+							Card Statistics
+						</h1>
+					</center>
+				</body>
+			</html>""");
 		
 		StringBuilder htmlBuf = new StringBuilder();
 		htmlBuf.append("<html><body style='font-size:14px;'>");
 		htmlBuf.append("<center>");
-//		htmlBuf.append("<h1 style='font-weight:normal;'>Card Statistics</h1>");
 		
 		// civility table
 		htmlBuf.append("<table border='2' bgcolor='white'>");
@@ -91,6 +109,8 @@ public class DeckStatPanel extends JPanel {
 			for (int i = 0; i < Constants.civilities.length; i++) {
 				if (Constants.civilities[i].contains(e.getKey())) {
 					Color c = Constants.colors[i];
+//				if (Constants.colProp.containsKey(e.getKey())) {
+//					Color c = Color.decode(Constants.colProp.get(e.getKey()).toString());
 					String col = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
 					htmlBuf.append( String.format("<tr><td><font color=%s>%s</font></td><td> %s</td></tr>", col, e.getKey(), e.getValue()) );
 					keyFound = true;
@@ -158,7 +178,7 @@ public class DeckStatPanel extends JPanel {
 			}
 		}
 		htmlBuf2.append("</table><br/>");
-		
+
 		htmlBuf2.append("</center>");
 		htmlBuf2.append("</body></html>");
 		
@@ -166,10 +186,12 @@ public class DeckStatPanel extends JPanel {
 		
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		centerPanel.setBackground(Color.white);
 		centerPanel.add(lblEntry);
 		centerPanel.add(lblEntry2);
 		JPanel centerPanel2 = new JPanel();
 		centerPanel2.setLayout(new FlowLayout(FlowLayout.CENTER));
+		centerPanel2.setBackground(Color.white);
 		centerPanel2.add(lblHeader);
 		this.add(centerPanel2);
 		this.add(centerPanel);

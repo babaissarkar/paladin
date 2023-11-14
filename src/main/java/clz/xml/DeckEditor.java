@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -50,6 +51,7 @@ import javax.swing.border.Border;
 import clz.CScan;
 import clz.CWindow;
 import clz.Card;
+import clz.Constants;
 import clz.Deck;
 import clz.DeckStatPanel;
 import clz.ImageManipulator;
@@ -81,7 +83,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	private JMenuItem jmiNewDeck, jmiAddCard, jmiDelCard, jmiUpdateCard, jmiSave, jmiOpen;
 	private JMenuItem jmiAddMult;
 	
-	private final String[] attr_names = {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "Energy No.", "Damage Points", "ID"};
+	private final String[] attr_names = {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "ENO", "DP", "ID"};
 	private String[] civilities;
 	private JCheckBox jcbIsExtra;
 
@@ -233,8 +235,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 
 		// Adding to content pane
 		for (int i = 0; i < jlb.length; i++) {
-			jlb[i] = new JLabel(attr_names[i] + " : ");
-			jlb[i].setFont(jlb[i].getFont().deriveFont(16.0f).deriveFont(Font.PLAIN));
+			jlb[i] = new JLabel(Constants.mainProp.getProperty(attr_names[i]));
+			jlb[i].setFont(jlb[i].getFont().deriveFont(17.0f).deriveFont(Font.PLAIN));
 		}
 		
 		for (int i = 0; i < jtf.length; i++) {
@@ -251,6 +253,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 			layout.setAlignment(FlowLayout.LEFT);
 			panels[i].setLayout(layout);
 			panels[i].add(jlb[i]);
+			panels[i].add(Box.createRigidArea(new Dimension(10, 10)));
 			if ((i != 1) && (i != 5)) {
 				panels[i].add(jtf[i]);
 			} else if (i == 5) {

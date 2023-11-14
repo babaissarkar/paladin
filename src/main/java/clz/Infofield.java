@@ -27,6 +27,7 @@ public class Infofield implements ActionListener {
 	private JLabel card_image;
 	private JButton grab;
 	private JCheckBox jcbIsExtra;
+	private final String[] attr_names = {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "ENO", "DP", "ID"};
 	
 	private CardListener cl;
 	
@@ -102,7 +103,7 @@ public class Infofield implements ActionListener {
 		
 		
 		for (int i = 0; i < jlb.length; i++) {
-			jlb[i] = new JLabel(Constants.attr_names[i] + " : ");
+			jlb[i] = new JLabel(Constants.mainProp.getProperty(attr_names[i]) + " : ");
 		}
 
 		grab = new JButton("Grab Card");
