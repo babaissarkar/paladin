@@ -8,7 +8,7 @@
 
   <groupId>com.babai.prplayer</groupId>
   <artifactId>PRPlayer</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 
   <name>PRPlayer</name>
   <url>http://www.github.com/babaissarkar/ssplot</url>
@@ -114,19 +114,7 @@
   			<artifactId>webp-imageio</artifactId>
   			<version>0.3.2</version>
         </plugin>
-        
-        <plugin>
-  			<groupId>com.formdev</groupId>
-  			<artifactId>flatlaf</artifactId>
-  			<version>3.2</version>
-  		</plugin>
-  		<plugin>
-  			<groupId>com.formdev</groupId>
-  			<artifactId>flatlaf-intellij-themes</artifactId>
-  			<version>3.2</version>
-  		</plugin>
-  	
-        
+                       
         <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -137,6 +125,8 @@
                     <includes>
                         <include>org.jsoup:jsoup</include>
                         <include>io.github.darkxanter:webp-imageio</include>
+                        <include>com.formdev:flatlaf</include>
+                        <include>com.formdev:flatlaf-intellij-themes</include>
                     </includes>
                 </artifactSet>
             <transformers>
@@ -169,6 +159,16 @@
   		<groupId>io.github.darkxanter</groupId>
   		<artifactId>webp-imageio</artifactId>
   		<version>0.3.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.formdev</groupId>
+  		<artifactId>flatlaf</artifactId>
+  		<version>3.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.formdev</groupId>
+  		<artifactId>flatlaf-intellij-themes</artifactId>
+  		<version>3.2</version>
   	</dependency>
   </dependencies>
 </project>
