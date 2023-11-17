@@ -12,6 +12,8 @@ public class EnergyBar extends JPanel {
     private JProgressBar[] energybars;
     private int available_energy;
     private int used_energy;
+    
+    //TODO : Count becomes negative for non-Paladin cards.
 
     public EnergyBar() {
 		counts = new int[energy_types.length];
