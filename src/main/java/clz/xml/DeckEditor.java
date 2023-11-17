@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,8 +46,10 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
 import clz.CScan;
 import clz.CWindow;
 import clz.Card;
@@ -223,9 +225,10 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 				jcbCivility.addItem(c);
 			} 
 		}
+		jcbCivility.setPrototypeDisplayValue("Card's civility is shown here");
 		jcbCivility.setEditable(true);
 		
-		jtaEffects = new JTextArea(5, 35);
+		jtaEffects = new JTextArea(3, 25);
 		JScrollPane jscroll = new JScrollPane(jtaEffects,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -241,9 +244,9 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		
 		for (int i = 0; i < jtf.length; i++) {
 			if (i < 6) {
-				jtf[i] = new JTextField(30);
-			} else {
 				jtf[i] = new JTextField(20);
+			} else {
+				jtf[i] = new JTextField(15);
 			}
 		}
 		
@@ -297,7 +300,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		grpImg.add(imgOff);
 		grpImg.add(imgCustom);
 		
-		txtURL = new JTextField(30);
+		txtURL = new JTextField(20);
 		JLabel lblURL = new JLabel("Image URL :");
 		lblURL.setEnabled(false);
 		txtURL.setEditable(false);
@@ -398,7 +401,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		pnlExtras.add(btnViewLinked);
 		pnlExtras.add(jcbIsExtra);
 		
-		txtCatg = new JTextField(30);
+		txtCatg = new JTextField(20);
 		JLabel lblCatg = new JLabel("Categories :");
 		JPanel pnlCatg = new JPanel();
 		pnlCatg.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -437,12 +440,12 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		jmiStats.addActionListener(
 			e -> {
 				var pnlStat = new DeckStatPanel(this.deck);
-				JFrame frmStat = new JFrame("Stats");
-//				frmStat.setSize(400, 400);
-				frmStat.setLocation(500, 200);
+				var frmStat = new JDialog(this.frmInfo, "Stats", true);
+				frmStat.setLocation(300, 200);
 				frmStat.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				frmStat.setContentPane(pnlStat);
 				frmStat.pack();
+				frmStat.setResizable(false);
 				frmStat.setVisible(true);
 			}
 		);
@@ -882,7 +885,9 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	}
 	
 	public static void main(String... args) {
-		new DeckEditor();
+		UIManager.put("ProgressBar.horizontalSize", new Dimension(100, 20));
+		FlatArcOrangeIJTheme.setup();
+		DeckEditor d = new DeckEditor();
 	}
 
 	@Override

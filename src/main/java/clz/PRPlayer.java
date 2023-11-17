@@ -29,7 +29,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Font;
 //import java.awt.GridBagConstraints;
 //import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -50,6 +49,8 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 //import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
+
+import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
 
 import clz.xml.DeckEditor;
 
@@ -104,8 +105,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 
 	private PRPlayer() {
 		
-		UIManager.put("Menu.font", new Font("DejaVuSans", Font.BOLD, 13));
-//		UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("DejaVuSans", Font.BOLD, 16));
 		SwingUtilities.updateComponentTreeUI(this);
 		
 		//Setting Icon and Location
@@ -562,23 +561,19 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		bc.add(statusBar, BorderLayout.CENTER);
 		bc.add(scrMe, BorderLayout.SOUTH);
 		
-		// Load preference and set laf
-		Preferences prefs = Preferences.userNodeForPackage(PrefIFrame.class);
-		int themeNo = prefs.getInt("theme", 1);
-		switch(themeNo) {
-		case 2 :
-			setNimbusLF();
-			break;
-		case 3 :
-			setMetalLF();
-			break;
-		default :
-			setSystemLF();
-			break;
-		}
-		
-		// Switching default to Nimbus
-		setNimbusLF();
+//		Preferences prefs = Preferences.userNodeForPackage(PrefIFrame.class);
+//		int themeNo = prefs.getInt("theme", 1);
+//		switch(themeNo) {
+//		case 2 :
+//			setNimbusLF();
+//			break;
+//		case 3 :
+//			setMetalLF();
+//			break;
+//		default :
+//			setSystemLF();
+//			break;
+//		}
 		
 		//Finalizing
 		this.setVisible(true);
@@ -611,7 +606,11 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-//						PRPlayer.newInstance();
+						// Load preference and set laf
+						// Default
+						UIManager.put("ProgressBar.horizontalSize", new Dimension(100, 20));
+						FlatArcOrangeIJTheme.setup();
+						
 						restart();
 						
 						if (args.length > 0) {
