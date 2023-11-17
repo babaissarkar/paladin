@@ -27,7 +27,7 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Move file
-      run: mv -v "target/PRPlayer-5.0.0-shaded.jar" "./PRPlayer.jar"
+      run: mv -v "target/PRPlayer-5.1.0-shaded.jar" "./PRPlayer.jar"
 
     - uses: actions/upload-artifact@v3
       with:
