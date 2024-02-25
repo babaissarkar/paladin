@@ -23,16 +23,10 @@
 package clz;
 
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-//import java.io.File;
-//import java.io.IOException;
-//
-//import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
@@ -47,19 +41,6 @@ public class CardListener
 	private CLabel selLbl = null;
 	private JPopupMenu cardMenu;
 	public EnergyBar bar1, bar2;
-
-//	public CardListener() {
-////		try {
-////				new ImageIcon(ImageIO.read(new File("/images/NCRD.jpg")));
-////			} catch (IOException ioe) {
-////				//imNoCard = null;
-////			}
-//		//noCard = new Card("No Card", "/images/NCRD.jpg");
-//	}
-	
-	public CLabel getSelLbl() {
-		return this.selLbl;
-	}
 	
 	public CardListener(JPopupMenu cardMenu, EnergyBar bar1, EnergyBar bar2) {
 		this.cardMenu = cardMenu;
@@ -74,6 +55,7 @@ public class CardListener
 	public void setMoved(boolean moved) {
 		this.moved = moved;
 	}
+	
 	public ImageIcon getImBuf() {
 		return this.imBuf;
 	}
@@ -82,13 +64,16 @@ public class CardListener
 		this.imBuf = imBuf;
 	}
 	
+	public CLabel getSelectedLabel() {
+		return this.selLbl;
+	}
+	
 	public Card getCard() {
 		return bCard;
 	}
 
 	public void setCard(Card bCard) {
 		this.bCard = bCard;
-		//System.out.println("Grabbed card!");
 	}
 	
 	public final CLabel getLbuf() {
@@ -117,16 +102,17 @@ public class CardListener
 	}
 	
 	public void mousePressed(MouseEvent me) {
+		CLabel label2 = (CLabel) me.getComponent();
 		if (!me.isPopupTrigger()) {
 			if (this.isMoved()) {
-				CLabel label2 = (CLabel) me.getComponent();
-//				Card card = getCard();
-				//if (card != null) {
-					label2.setCard(getCard());
-					this.setMoved(false);
-				//}
+				label2.setCard(getCard());
+				this.setMoved(false);
 			} else {
-				move(me);
+				if (me.isControlDown() && label2.hasCard()) {
+					this.updateEnergyStatus(label2);
+				} else {
+					move(me);
+				}
 			} 
 		} else {
 			showPopup(me);
@@ -137,39 +123,30 @@ public class CardListener
 		cardMenu.show(me.getComponent(), me.getX(), me.getY());
 	}
 
-	public void mouseWheelMoved(MouseWheelEvent mwe) {
-		CLabel lbl;
-		lbl = (CLabel) mwe.getComponent();
+	public void updateEnergyStatus(CLabel lbl) {
+		if (lbl == null) {
+			return;
+		}
+		
+		
 		if (!lbl.isUsed()) {
 			if (lbl.isUpsideDown()) {
 				lbl.rot_270();
 			} else {
 				lbl.rot_90();
 			}
+
 			if (lbl.isEnergy()) {
 				if (lbl.isOp()) {
-					// Increase opponent's mana
-//					String civ = lbl.getCard().civility;
-//					int num = Constants.numCiv.get(civ);
-//					bar2.addEnergy(1, num);
-
 					// Add energy no. to the pool
 					Integer[] eno = lbl.getCard().eno;
 					for (int i = 0; i < eno.length; i++) {
-						//bar2.addEnergy(eno[i], bar2.getCivNo() + i);
 						bar2.addEnergy(eno[i], i);
 					}
 				} else {
-					// Increase 1st player's mana
-//					String civ = lbl.getCard().civility;
-//					int num = Constants.numCiv.get(civ);
-//					//System.out.println(civ +  " " + num);
-//					bar1.addEnergy(1, num);
-
 					// Add energy no. to the pool
 					Integer[] eno = lbl.getCard().eno;
 					for (int i = 0; i < eno.length; i++) {
-						//bar1.addEnergy(eno[i], bar1.getCivNo() + i);
 						bar1.addEnergy(eno[i], i);
 					}
 				}
@@ -178,45 +155,41 @@ public class CardListener
 			lbl.rot_0();
 			if (lbl.isEnergy()) {
 				if (lbl.isOp()) {
-					// Decrease opponent's mana
-//					String civ = lbl.getCard().civility;
-//					int num = Constants.numCiv.get(civ);
-//					bar2.removeEnergy(1, num);
-
 					// remove energy no. from the pool
 					Integer[] eno = lbl.getCard().eno;
 					for (int i = 0; i < eno.length; i++) {
-						//bar2.removeEnergy(eno[i], bar2.getCivNo() + i);
 						bar2.removeEnergy(eno[i], i);
 					}
 				} else {
-					// Decrease 1st player's mana
-//					String civ = lbl.getCard().civility;
-//					int num = Constants.numCiv.get(civ);
-//					bar1.removeEnergy(1, num);
-
 					// remove energy no. from the pool
 					Integer[] eno = lbl.getCard().eno;
 					for (int i = 0; i < eno.length; i++) {
-						//bar1.removeEnergy(eno[i], bar1.getCivNo() + i);
 						bar1.removeEnergy(eno[i], i);
 					}
 				}
 			}
-		} 
+		}
+		
+	}
+	
+	public void mouseWheelMoved(MouseWheelEvent mwe) {
+		CLabel lbl;
+		lbl = (CLabel) mwe.getComponent();
+		updateEnergyStatus(lbl);
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent me) {
 		CLabel label2 = (CLabel) me.getComponent();
 		this.selLbl = label2;
-		label2.use2(Color.YELLOW);
+		label2.highlight(Color.YELLOW);
 	}
+	
 	@Override
 	public void mouseExited(MouseEvent me3) {
 		CLabel label2 = (CLabel) me3.getComponent();
 		this.selLbl = null;
-		label2.unuse2();
+		label2.removeHighlight();
 	}
 	
 }

@@ -101,13 +101,9 @@ public class Collec extends JFrame {
 	}
 	
 	public void addBlank() {
-		try {
-			CLabel lbl = new CLabel();
-			lbl.addMouseListener(a);
-			panel.add(lbl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		CLabel lbl = new CLabel();
+		lbl.addMouseListener(a);
+		panel.add(lbl);
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 	

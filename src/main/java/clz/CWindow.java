@@ -122,13 +122,9 @@ public class CWindow {
 	}
 	
 	public void addBlank() {
-		try {
-			CLabel lbl = new CLabel();
-			lbl.addMouseListener(cl);
-			cnp.add(lbl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		CLabel lbl = new CLabel();
+		lbl.addMouseListener(cl);
+		cnp.add(lbl);
 		SwingUtilities.updateComponentTreeUI(win);
 	}
 	

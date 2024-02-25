@@ -1,7 +1,7 @@
 /*
- *      ImageManipulator.java
+ *      ImageUtils.java
  *      
- *      Copyright 2016 Subhraman Sarkar <subhraman@subhraman-Inspiron>
+ *      Copyright 2016-2024 Subhraman Sarkar <subhraman@subhraman-Inspiron>
  *      
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 
 package clz;
 
-//import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -45,11 +44,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public final class ImageManipulator {
+public final class ImageUtils {
 	private static BufferedImage lastImage;
-	//private static PercentCodec cod = new PercentCodec();
 	
-	private ImageManipulator() {
+	private ImageUtils() {
 	};
 
 	public static void main(String[] args) {
@@ -58,19 +56,15 @@ public final class ImageManipulator {
 		c.effects[0] = "When the armored character is destroyed, decrease its power by 5000 for one turn instead.";
 		c.effects[1] = "Hope never ends.";
 		try {
-			c.imCard = new ImageIcon(ImageIO.read(ImageManipulator.class.getResourceAsStream("/images/Ring2.png")));
+			c.imCard = new ImageIcon(ImageIO.read(ImageUtils.class.getResourceAsStream("/images/Ring2.png")));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ImageManipulator.createImage(c);
-		//System.out.println(c.toString());
-		ImageManipulator.showImage(ImageManipulator.rotate90(new ImageIcon(lastImage)).getImage());
-//		System.out.println(ImageManipulator.encode(lastImage));
+		ImageUtils.createImage(c);
+		ImageUtils.showImage(ImageUtils.rotate90(new ImageIcon(lastImage)).getImage());
 	}
 	
 	public static BufferedImage createImage(Card c) {
-		//int width = 300, height = 396;
 		int width = 350, height = 462;
 		BufferedImage cim = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = cim.createGraphics();
@@ -80,7 +74,6 @@ public final class ImageManipulator {
 		g.addRenderingHints(rh2);
 		g.setStroke(new BasicStroke(2f));
 		Font fnt = new Font("Free Serif", Font.PLAIN, 14);
-		//Font fnt = new Font("DejaVu Serif", Font.PLAIN, 11);
 		g.setFont(fnt);
 		FontMetrics fm = g.getFontMetrics(fnt);
 		
@@ -98,20 +91,6 @@ public final class ImageManipulator {
 //		}
 		g.setColor(Color.BLACK);
 		g.drawRect(1, 1, width - 2, height - 2);
-
-//		if (c.civility.equalsIgnoreCase("Raenid")) {
-//			g.setColor(Color.YELLOW);
-//		} else if (c.civility.equalsIgnoreCase("Asarn")) {
-//			g.setColor(Color.RED);
-//		} else if (c.civility.equalsIgnoreCase("Mayarth")) {
-//			g.setColor(Color.ORANGE);
-//		} else if (c.civility.equalsIgnoreCase("Zivar")) {
-//			g.setColor(Color.BLACK);
-//		} else if (c.civility.equalsIgnoreCase("Niaz")) {
-//			g.setColor(Color.CYAN);
-//		} else if (c.civility.equalsIgnoreCase("Kshiti")) {
-//			g.setColor(Color.GREEN);
-//		}
 
 		g.setColor(Constants.mapCiv.get(c.civility));
 
@@ -269,22 +248,48 @@ public final class ImageManipulator {
 				e.printStackTrace();
 			}
 		}
-		//System.exit(0);
 	}
 
 	private static void drawCircle(Graphics2D g, int width) {
 		g.drawOval(width/2 - 25, 50, 50, 50);
 	}
 	
-	public static ImageIcon scale(Icon im, int width, int height) {
-		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bi.createGraphics();
-		g.drawImage(((ImageIcon) im).getImage(), 0, 0, width, height, 0, 0, im.getIconWidth(), im.getIconHeight(), null);
+	public static ImageIcon scale(Icon im, int side) {
+		// Preserve aspect ratio while scaling
+		float aspectRatio = ((float) im.getIconWidth())/((float) im.getIconHeight());
+		
+		RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		RenderingHints rh2 = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		Graphics2D g;
+		BufferedImage bi;
+		if (aspectRatio > 1) {
+			// Landscape orientation
+			// use side as height and calculate width from that
+			int ratioHeight = Math.round(side/aspectRatio);
+			bi = new BufferedImage(side, ratioHeight, BufferedImage.TYPE_INT_ARGB);
+			g = bi.createGraphics();
+			g.addRenderingHints(rh);
+			g.addRenderingHints(rh2);
+
+			g.drawImage(((ImageIcon) im).getImage(), 0, 0, side, ratioHeight, 0, 0, im.getIconWidth(), im.getIconHeight(), null);
+		} else {
+			// Portrait orientation
+			// use side as width and calculate height from that
+			int ratioWidth = Math.round(side*aspectRatio);
+			bi = new BufferedImage(ratioWidth, side, BufferedImage.TYPE_INT_ARGB);
+			g = bi.createGraphics();
+			g.addRenderingHints(rh);
+			g.addRenderingHints(rh2);
+
+			g.drawImage(((ImageIcon) im).getImage(), 0, 0, ratioWidth, side, 0, 0, im.getIconWidth(), im.getIconHeight(), null);
+		}
 		g.dispose();
 		ImageIcon im2 = new ImageIcon(bi);
 		return im2;
 	}
 	
+	@Deprecated
 	public static BufferedImage scale(BufferedImage im, int width, int height) {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = bi.createGraphics();
@@ -323,7 +328,7 @@ public final class ImageManipulator {
 	}
 
 	public static ImageIcon rotate270(Icon im) {
-		return ImageManipulator.rotate90(ImageManipulator.flipVert(im));
+		return ImageUtils.rotate90(ImageUtils.flipVert(im));
 	}
 	
 	public static void showImage(Image im) {

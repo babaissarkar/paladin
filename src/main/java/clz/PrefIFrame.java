@@ -25,9 +25,7 @@
 package clz;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -36,7 +34,6 @@ import java.util.prefs.Preferences;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -44,15 +41,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
 
-@SuppressWarnings("serial")
 public class PrefIFrame extends JFrame implements ActionListener {
 	private boolean shields;
 	private boolean draw;
@@ -68,11 +60,13 @@ public class PrefIFrame extends JFrame implements ActionListener {
 	private final JTextField textField_1;
 	private final JFileChooser files;
 	private final JSpinner spinBPoints;
-	private JRadioButton tglbtnSystem, tglbtnNimbus, tglbtnMetal;
+//	private JRadioButton tglbtnSystem, tglbtnNimbus, tglbtnMetal;
 	private int themeNo;
 	
 	public PRPlayer btf;
-
+	
+	// TODO redesign layout
+	
 	/**
 	 * Create the frame.
 	 */
@@ -90,7 +84,6 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		
 		// Deck 1 selection
 		JLabel lblDeck = new JLabel("Deck 1 :");
-		lblDeck.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 
 		String sep = FileSystems.getDefault().getSeparator();
 
@@ -111,7 +104,6 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		
 		// Deck2 selection
 		JLabel lblDeck_1 = new JLabel("Deck 2 :");
-		lblDeck_1.setFont(new Font("DejaVu Serif", Font.PLAIN, 13));
 		
 		txtDk2 = new JTextField();
 		String deck2Path = PRPlayer.userhome + ".PRPlayer" + sep + "decks" + sep + "deck2.txt";
@@ -207,58 +199,58 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		pnlOkCancel.add(btnCancel);
 		
 		// Look and Feel selection
-		Box horizontalBox = Box.createHorizontalBox();
-		horizontalBox.setBorder(new TitledBorder(
-				new MatteBorder(2, 2, 2, 2, new Color(0, 255, 255)), "Look and Feel", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-
-
-		tglbtnMetal = new JRadioButton("Metal");
-		tglbtnMetal.addActionListener(arg0 -> {
-			themeNo = 3; // Metal laf : number 3
-			btf.setMetalLF();
-			SwingUtilities.updateComponentTreeUI(this);
-		});
-		horizontalBox.add(tglbtnMetal);
-
-		Component horizontalStrut = Box.createHorizontalStrut(120);
-		horizontalBox.add(horizontalStrut);
-
-		tglbtnSystem = new JRadioButton("System");
-		tglbtnSystem.addActionListener(arg0 -> {
-			themeNo = 1; // System laf : number 3
-			btf.setSystemLF();
-			SwingUtilities.updateComponentTreeUI(this);
-		});
-
-		horizontalBox.add(tglbtnSystem);
-
-		Component horizontalStrut_1 = Box.createHorizontalStrut(120);
-		horizontalBox.add(horizontalStrut_1);
-
-		tglbtnNimbus = new JRadioButton("Nimbus");
-		tglbtnNimbus.addActionListener(arg0 -> {
-			themeNo = 2; // Nimbus laf : number 3
-			btf.setNimbusLF();
-			SwingUtilities.updateComponentTreeUI(this);
-		});
-		horizontalBox.add(tglbtnNimbus);
-
-		ButtonGroup lafButtons = new ButtonGroup();
-		lafButtons.add(tglbtnMetal);
-		lafButtons.add(tglbtnSystem);
-		lafButtons.add(tglbtnNimbus);
-		
-		switch(themeNo) {
-		case 2 :
-			tglbtnNimbus.setSelected(true);
-			break;
-		case 3 :
-			tglbtnMetal.setSelected(true);
-			break;
-		default :
-			tglbtnSystem.setSelected(true);
-			break;
-		}
+//		Box horizontalBox = Box.createHorizontalBox();
+//		horizontalBox.setBorder(new TitledBorder(
+//				new MatteBorder(2, 2, 2, 2, new Color(0, 255, 255)), "Look and Feel", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
+//
+//
+//		tglbtnMetal = new JRadioButton("Metal");
+//		tglbtnMetal.addActionListener(arg0 -> {
+//			themeNo = 3; // Metal laf : number 3
+//			btf.setMetalLF();
+//			SwingUtilities.updateComponentTreeUI(this);
+//		});
+//		horizontalBox.add(tglbtnMetal);
+//
+//		Component horizontalStrut = Box.createHorizontalStrut(120);
+//		horizontalBox.add(horizontalStrut);
+//
+//		tglbtnSystem = new JRadioButton("System");
+//		tglbtnSystem.addActionListener(arg0 -> {
+//			themeNo = 1; // System laf : number 3
+//			btf.setSystemLF();
+//			SwingUtilities.updateComponentTreeUI(this);
+//		});
+//
+//		horizontalBox.add(tglbtnSystem);
+//
+//		Component horizontalStrut_1 = Box.createHorizontalStrut(120);
+//		horizontalBox.add(horizontalStrut_1);
+//
+//		tglbtnNimbus = new JRadioButton("Nimbus");
+//		tglbtnNimbus.addActionListener(arg0 -> {
+//			themeNo = 2; // Nimbus laf : number 3
+//			btf.setNimbusLF();
+//			SwingUtilities.updateComponentTreeUI(this);
+//		});
+//		horizontalBox.add(tglbtnNimbus);
+//
+//		ButtonGroup lafButtons = new ButtonGroup();
+//		lafButtons.add(tglbtnMetal);
+//		lafButtons.add(tglbtnSystem);
+//		lafButtons.add(tglbtnNimbus);
+//		
+//		switch(themeNo) {
+//		case 2 :
+//			tglbtnNimbus.setSelected(true);
+//			break;
+//		case 3 :
+//			tglbtnMetal.setSelected(true);
+//			break;
+//		default :
+//			tglbtnSystem.setSelected(true);
+//			break;
+//		}
 		
 		// Set overall window layout manager
 		getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
@@ -271,7 +263,7 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		
 		getContentPane().add(pnlDeckSelection);
 		getContentPane().add(pnlParams);
-		getContentPane().add(horizontalBox);
+//		getContentPane().add(horizontalBox);
 		getContentPane().add(pnlOkCancel);
 		
 		pack();

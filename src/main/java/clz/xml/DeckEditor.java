@@ -56,7 +56,7 @@ import clz.Card;
 import clz.Constants;
 import clz.Deck;
 import clz.DeckStatPanel;
-import clz.ImageManipulator;
+import clz.ImageUtils;
 import clz.PRPlayer;
 import clz.SelectorParent;
 import wscrap.Scrapper;
@@ -105,13 +105,13 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	
 	private JFrame createGUI() {
 		JFrame frmMain = new JFrame("Deck Editor");
-		frmMain.setSize(900, 780);
 		frmMain.setLocation(40, 20);
 		frmMain.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		frmMain.setSize(new Dimension(1200, 700));
 		
 		// Layouting
 		JPanel mpane = new JPanel();
-		mpane.setLayout(new FlowLayout());
+		mpane.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		JPanel cpane = new JPanel();
 		cpane.setLayout(new BoxLayout(cpane, BoxLayout.PAGE_AXIS));
@@ -119,19 +119,19 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		Border b2 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		Border mainBorder = BorderFactory.createCompoundBorder(
 								BorderFactory.createCompoundBorder(b2, b1), b2);
-		cpane.setPreferredSize(new Dimension(500,600));
+//		cpane.setPreferredSize(new Dimension(450,600));
 		cpane.setBorder(mainBorder);
 		
 		JPanel cpane2 = new JPanel();
 		cpane2.setLayout(new BorderLayout());
-		cpane2.setBorder(mainBorder);
+//		cpane2.setBorder(b2);
 		card_image = new JLabel("Click here to add card image", SwingConstants.CENTER);
 		card_image.addMouseListener(this);
 		//card_image.setPreferredSize(new Dimension(300,400));
 		JScrollPane jslImg = new JScrollPane(card_image,
 				  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jslImg.setPreferredSize(new Dimension(340,400));
+		jslImg.setPreferredSize(new Dimension(350,450));
 		
 		JLabel lblImgCaption = new JLabel("Card Image");
 		lblImgCaption.setFont(lblImgCaption.getFont().deriveFont(Font.BOLD, 20));
@@ -176,6 +176,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 						if (index < deck.size()) {
 							c = new ArrayList<Card>(deck).get(index);
 							setCard(c, false);
+							cpane.setBackground(Color.decode(
+									Constants.colProp.get(c.civility).toString()));
 							
 							if (c.getParts().size() > 0) {
 								btnViewLinked.setEnabled(true);
@@ -187,6 +189,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 							List<Card> extras = deck.getExtraDeck();
 							if (extras != null) {
 								c = new ArrayList<Card>(extras).get(extraIndex);
+								cpane.setBackground(Color.decode(
+										Constants.colProp.get(c.civility).toString()));
 								//System.out.println(c.getParts().size());
 								setCard(c, true);
 								if (c.getParts().size() > 0) {
@@ -210,11 +214,42 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		pnlCaption2.setLayout(layout5);
 		pnlCaption2.add(lblListCaption);
 		
+//		JToggleButton btnList = new JToggleButton();
+//		try {
+//			btnList.setIcon(new ImageIcon(
+//				ImageIO.read(
+//					this.getClass().getResourceAsStream("/images/menu_icon.png"))));
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//			btnList.setText("List");
+//		}
+//		JToolBar tb = new JToolBar();
+//		tb.add(btnList);
+//		btnList.addActionListener(
+//			e -> {
+//				if (btnList.isSelected()) {
+////					JOptionPane.showMessageDialog(frmMain, "", "Sel", JOptionPane.INFORMATION_MESSAGE);
+//					cpane3.removeAll();
+//					cpane3.setPreferredSize(new Dimension(380,600));
+//					cpane3.add(tb, BorderLayout.NORTH);
+//					cpane3.add(pnlCaption2, BorderLayout.SOUTH);
+//					cpane3.add(jsl, BorderLayout.CENTER);
+//					SwingUtilities.updateComponentTreeUI(frmMain);
+//				} else {
+////					JOptionPane.showMessageDialog(frmMain, "", "Unsel", JOptionPane.INFORMATION_MESSAGE);
+//					cpane3.removeAll();
+//					cpane3.add(tb, BorderLayout.NORTH);
+//					cpane3.setPreferredSize(new Dimension(30,600));
+//					SwingUtilities.updateComponentTreeUI(frmMain);
+//				}
+//				frmMain.pack();
+//			}
+//		);
+		
 		cpane3.setLayout(new BorderLayout());
+		cpane3.setPreferredSize(new Dimension(320,600));
 		cpane3.add(pnlCaption2, BorderLayout.SOUTH);
 		cpane3.add(jsl, BorderLayout.CENTER);
-		cpane3.setPreferredSize(new Dimension(380,400));
-		cpane3.setBorder(mainBorder);
 		
 		// Attributes
 		JPanel[] panels = new JPanel[10];
@@ -228,7 +263,9 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		jcbCivility.setPrototypeDisplayValue("Card's civility is shown here");
 		jcbCivility.setEditable(true);
 		
-		jtaEffects = new JTextArea(3, 25);
+		jtaEffects = new JTextArea(4, 30);
+		jtaEffects.setLineWrap(true);
+		jtaEffects.setWrapStyleWord(true);
 		JScrollPane jscroll = new JScrollPane(jtaEffects,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -453,7 +490,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		var jmiQuit = new JMenuItem("Exit");
 		jmiQuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		jmiQuit.addActionListener(
-			evt -> { System.exit(0); }
+			evt -> { this.setVisible(false); }
 		);
 		
 		jmiNewDeck.addActionListener(this);
@@ -463,17 +500,13 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		jmiDelCard.addActionListener(this);
 		jmiUpdateCard.addActionListener(this);
 		jmiSave.addActionListener(this);
-		
-		//jmiSave.setEnabled(false);
 
 		// Tab 2
 		JPanel pnlMove = new JPanel();
 		pnlMove.setLayout(new BoxLayout(pnlMove, BoxLayout.Y_AXIS));
 
 		JList<String> deckList1 = new JList<String>();
-		//deckList1.setPreferredSize(new Dimension(300, 600));
 		JList<String> deckList2 = new JList<String>();
-		//deckList2.setPreferredSize(new Dimension(300, 600));
 		JButton btnMoveLeft = new JButton("<");
 		JButton btnMoveRight = new JButton(">");
 		JButton btnCopyLeft = new JButton("<<");
@@ -515,14 +548,12 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		pnlDeck2.add(pnlLoadDeck2);
 
 		JPanel pnlLists = new JPanel();
-		//pnlLists.setLayout(new BoxLayout(pnlLists, BoxLayout.X_AXIS));
 		pnlLists.add(pnlDeck1);
 		pnlLists.add(pnlMoveBtns);
 		pnlLists.add(pnlDeck2);
 		pnlLists.setBorder(b1);
 
 		pnlMove.add(pnlLists);
-		//pnlMove.add(pnlLoadBtns);
 
 		// Action Listeners
 		btnLoadDeck1.addActionListener(
@@ -636,8 +667,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		tabbedPane.addTab("Move Cards", pnlMove);
 		frmMain.setContentPane(tabbedPane);
 		
-		frmMain.pack();
-		frmMain.setResizable(false);
+//		frmMain.pack();
+//		frmMain.setResizable(false);
 		
 		return frmMain;
 	}
@@ -694,10 +725,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 				jtaEffects.append(effect);
 				jtaEffects.append("\n");
 			}
-//			StringBuilder sbCatg = new StringBuilder();
-//			for (String catg : card.categories) {
-//				sbCatg.add(",")
-//			}
+
 			String catg = String.join(",", card.categories);
 			txtCatg.setText(catg.toString());
 
@@ -712,7 +740,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 			}
 
 			card_image.setText("");
-			card_image.setIcon(ImageManipulator.scale(card.getImCard(), 300, 400));
+			card_image.setIcon(ImageUtils.scale(card.getImCard(), 300));
 		}
 	}
 	
@@ -721,7 +749,6 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		
 		Card c = new Card();
 		c.name = jtf[0].getText();
-        //c.civility = (String) jcbCivility.getSelectedItem();
 		c.civility = (String) jcbCivility.getEditor().getItem();
 
 		c.type = jtf[2].getText();
@@ -754,10 +781,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 	public void setDeck(String path) {
 		if (path.endsWith(".txt")) {
 			this.deck = new Deck(scan.scanAllAtributes(path));
-			//deckPath = path;
 		} else if (path.endsWith(".zip")) {
 			this.deck = scan.scanZipFile(path);
-			//deckPath = path;
 		}
 		update();
 	}
@@ -876,7 +901,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 				} else if (f.getName().endsWith("txt")) {
 					newDeck = scan.scanAllAtributes(f);
 				} else {
-					JOptionPane.showMessageDialog(new JFrame("Error."), "Deck Error.",
+					JOptionPane.showMessageDialog(new JFrame("Error."), "Invalid deckfile!",
 							"Sorry!", JOptionPane.ERROR_MESSAGE);
 				}
 			}

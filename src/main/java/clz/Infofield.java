@@ -185,12 +185,7 @@ public class Infofield implements ActionListener {
 				jtaEffects.append(effect);
 				jtaEffects.append("\n");
 			}
-			card_image.setIcon(ImageManipulator.scale(card.getImCard(), 300, 400));
-//			if (PRPlayer.bf != null) {
-//				card_image.addMouseListener(new ViewerListener(card_image.getCard(),
-//						PRPlayer.bf.h1, PRPlayer.bf.h2));
-//			}
-			//card_image.showFullImage();
+			card_image.setIcon(ImageUtils.scale(card.getImCard(), 300));
 		}
 	}
 

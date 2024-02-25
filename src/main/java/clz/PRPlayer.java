@@ -29,8 +29,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-//import java.awt.GridBagConstraints;
-//import java.awt.GridBagLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,12 +42,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
-import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.UIManager.LookAndFeelInfo;
-//import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
@@ -150,7 +149,7 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		jpiViewExtra.addActionListener(this);
 		jpiFlip = new JMenuItem("Flip");
 		jpiFlip.addActionListener(this);
-		jpiViewCard = new JMenuItem("View Full Image");
+		jpiViewCard = new JMenuItem("View Full Data");
 		jpiViewCard.addActionListener(this);
 		jpiFlipVert = new JMenuItem("Upside Down");
 		jpiFlipVert.addActionListener(this);
@@ -284,6 +283,15 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 			evt -> { new DeckEditor(); }
 		);
 		
+		JMenuItem jmiRot = new JMenuItem("Rotate selected");
+		jmiRot.addActionListener(
+			e -> {
+				CLabel selLbl = cl.getSelectedLabel();
+				cl.updateEnergyStatus(selLbl);
+			}
+		);
+		jmiRot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
+		
 		
 		jmHelp.add(jmiHelp);
 		jmHelp.add(jmiAbout);
@@ -291,7 +299,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		jmGame.add(jmiShowEditor);
 		jmGame.add(jmiEndTurn);
 		jmGame.add(jmiShowTPL);
-		//jmGame.add(jmiPref);
 		jmGame.add(jmiExit);
 		jmAct.add(jmiShowMH);
 		jmAct.add(jmiShowOH);
@@ -300,8 +307,13 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		for (int i = 0; i < jmiShowR.length; i++) {
 			jmAct.add(jmiShowR[i]);
 		}
+		
+		JMenu jmCard = new JMenu("Card");
+		jmCard.add(jmiRot);
+		
 		jmb.add(jmGame);
 		jmb.add(jmAct);
+		jmb.add(jmCard);
 		jmb.add(jmHelp);
 		this.setJMenuBar(jmb);
 
@@ -362,19 +374,17 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		
 		//creating Energy Zone JLabels
 		for(int i = 0; i <= 12; i++) {
-			jlbMM[i+1] = new CLabel(imNoCard);
-			jlbMM[i+1].setEnergy(true);
+			jlbMM[i+1] = new CLabel(true);
 			jlbMM[i+1].addMouseListener(cl);
 			jlbMM[i+1].addMouseWheelListener(cl);
-			jlbOM[i+1] = new CLabel(imNoCard);
-			jlbOM[i+1].setEnergy(true);
+			jlbOM[i+1] = new CLabel(true);
 			jlbOM[i+1].setOp(true);
 			jlbOM[i+1].addMouseListener(cl);
 			jlbOM[i+1].addMouseWheelListener(cl);
-			jlbMB[i+1] = new CLabel(imNoCard);
+			jlbMB[i+1] = new CLabel();
 			jlbMB[i+1].addMouseListener(cl);
 			jlbMB[i+1].addMouseWheelListener(cl);
-			jlbOB[i+1] = new CLabel(imNoCard);
+			jlbOB[i+1] = new CLabel();
 			jlbOB[i+1].setOp(true);
 			jlbOB[i+1].addMouseListener(cl);
 			jlbOB[i+1].addMouseWheelListener(cl);
@@ -391,7 +401,7 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		for (int i = 1; i <= 10; i++) {
 			mhGroup.addGroup(gl.createParallelGroup()
 					.addComponent(jlbMB[i])
-					.addComponent(jlbMS[i])
+					.addComponent(jlbMS[11-i])
 					.addComponent(jlbMM[i]));
 		}
 		mhGroup.addGroup(gl.createParallelGroup()
@@ -402,7 +412,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 				.addComponent(jlbMB[12])
 				.addComponent(jlbMG)
 				.addComponent(jlbMM[12]));
-		//mhGroup.addComponent(bar1);
 		gl.setHorizontalGroup(mhGroup);
 
 		mvGroup.addGroup(gl.createParallelGroup()
@@ -419,20 +428,16 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 				.addComponent(jlbMB[11])
 				.addComponent(jlbMB[12])
 				);
-		mvGroup.addGroup(gl.createParallelGroup()
-				.addComponent(jlbMS[1])
-				.addComponent(jlbMS[2])
-				.addComponent(jlbMS[3])
-				.addComponent(jlbMS[4])
-				.addComponent(jlbMS[5])
-				.addComponent(jlbMS[6])
-				.addComponent(jlbMS[7])
-				.addComponent(jlbMS[8])
-				.addComponent(jlbMS[9])
-				.addComponent(jlbMS[10])
-				.addComponent(jlbMD)
-				.addComponent(jlbMG)
-				);
+		
+		ParallelGroup shGroup = gl.createParallelGroup();
+		for (int j = 0; j < 10; j++) {
+			// added in reverse order, so 1 is at the right hand side
+			shGroup.addComponent(jlbMS[10-j]);
+		}
+		shGroup.addComponent(jlbMD);
+		shGroup.addComponent(jlbMG);
+		mvGroup.addGroup(shGroup);
+		
 		mvGroup.addGroup(gl.createParallelGroup()
 				.addComponent(jlbMM[1])
 				.addComponent(jlbMM[2])
@@ -518,11 +523,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 				);
 		gl2.setVerticalGroup(ovGroup);
 		
-		//Laying out
-/*		jplMB.setLayout(new GridBagLayout());
-		jplOB.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();*/
-		
 		//
 		JPanel jplMB2, jplOB2;
 		jplMB2 = new JPanel();
@@ -560,20 +560,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		bc.add(scrOp, BorderLayout.NORTH);
 		bc.add(statusBar, BorderLayout.CENTER);
 		bc.add(scrMe, BorderLayout.SOUTH);
-		
-//		Preferences prefs = Preferences.userNodeForPackage(PrefIFrame.class);
-//		int themeNo = prefs.getInt("theme", 1);
-//		switch(themeNo) {
-//		case 2 :
-//			setNimbusLF();
-//			break;
-//		case 3 :
-//			setMetalLF();
-//			break;
-//		default :
-//			setSystemLF();
-//			break;
-//		}
 		
 		//Finalizing
 		this.setVisible(true);
@@ -901,17 +887,32 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 				h1.setVisible(true);
 			}
 			CLabel lblCard = new CLabel(((CLabel) lbl).getCard());
-			lblCard.addMouseListener(new ViewerListener(lblCard.getCard(), h1, h2));
+			lblCard.setIcon(ImageUtils.scale(lblCard.getCard().getImCard(), 350));
+			lblCard.setMinimumSize(
+					new Dimension(350, lblCard.getIcon().getIconHeight()+5));
+			lblCard.setToolTipText("");
+			
 			viewer = new JFrame("Card Viewer");
-			viewer.setSize(400, 600);
-			viewer.getContentPane().add(lblCard);
-//			viewer.addWindowListener(new WindowAdapter() {
-//				public void windowClosing(WindowEvent we) {
-//					
-//				}
-//			});
+			
+			JPanel pnlView = new JPanel();
+			pnlView.setLayout(new GridLayout(1, 2, 5, 5));
+			
+			JTextPane txtView = new JTextPane();
+			txtView.setContentType("text/html");
+			txtView.setText(lblCard.getCard().createHtmlInfo());
+			JScrollPane viewPane = new JScrollPane(
+					txtView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			viewPane.setMaximumSize(new Dimension(300, 500));
+			
+			pnlView.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			pnlView.add(viewPane);
+			pnlView.add(lblCard);
+			
+			viewer.setContentPane(pnlView);
+			viewer.setLocation(200, 100);
+			viewer.setSize(800, 500);
+			viewer.setResizable(false);
 			viewer.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			lblCard.showFullImage();
 			viewer.setVisible(true);
 		
 		} else if(ae.getSource() == jpiFlipVert) {
@@ -922,8 +923,9 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 			lbl.rot_270();
 		} else if(ae.getSource() == jpiLink) {
 			CLabel lbl = (CLabel) cardMenu.getInvoker();
-			Card c = lbl.getCard();
-			if (c.getParts().size() > 0) {
+			Card c = lbl.grCard();
+			if ((c != null) && (c.getParts().size() > 0)) {
+				// TODO multi (2+) sided support
 				lbl.setCard(c.getParts().get(0));
 			}
 		} else if(ae.getSource() == jpiToLibrary) {
@@ -935,10 +937,8 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 			if (card != null) {
 				if (opturn) {
 					deck2.addFirst(card);
-					//inf.setCard(deck2.getFirst());
 				} else {
 					deck1.addFirst(card);
-					//inf.setCard(deck1.getFirst());
 				} 
 			}
 		} else if(ae.getSource() == jpiToLibBottom) {
@@ -1182,7 +1182,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 	public void setMetalLF() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException
 				| IllegalAccessException | UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
@@ -1204,8 +1203,8 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent ke) {
-		if (ke.getKeyCode() == KeyEvent.VK_1) {
-//			cardMenu.show(cl.getSelLbl(), 100, 100);
+		if (ke.getKeyCode() == KeyEvent.VK_R) {
+//			System.out.println("Has focus!");
 		}
 	}
 
@@ -1220,13 +1219,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
-
-//	public void proceed() {
-//		if (PRPlayer.bf == null) {
-//			PRPlayer.bf = new PRPlayer();
-//		}
-//		PRPlayer.pif.proceed();
-//	}
 
 }
 

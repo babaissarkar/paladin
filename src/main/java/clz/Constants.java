@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 public class Constants {
+	public static int CARD_WIDTH = 90;
+	
 //    public static String[] attr_names;
     //= {"Name", "Element", "Type", "Energy", "Subtype", "Effects", "Power", "Energy No.", "Damage Points", "ID"};
     

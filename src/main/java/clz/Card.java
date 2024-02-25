@@ -23,6 +23,7 @@
 
 package clz;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
@@ -80,8 +81,8 @@ public class Card {
 	
 	public Card(String name0, String path0) {
 		try {
-			this.bkCard = ImageManipulator.scale(new ImageIcon(
-					ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/Back.jpg")))), 64, 87);
+			BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/Back.jpg")));
+			this.bkCard = ImageUtils.scale(new ImageIcon(img), Constants.CARD_WIDTH);
 		} catch (IOException e) {
 			this.bkCard = null;
 		}
@@ -110,21 +111,25 @@ public class Card {
 		} catch (IOException e) {
 			this.bkCard = null;
 		}
-		this.name = name1;
-		this.subtype = subtype1;
-		this.type = type1;
-		this.civility = civility1;
+		this.name = name1.trim();
+		this.subtype = subtype1.trim();
+		this.type = type1.trim();
+		this.civility = civility1.trim();
 		this.energy = Card.stringToEnergy(eng1);
 		if (eng1.endsWith(")")) {
 			this.generic = true;
 			this.energy[3] = Integer.parseInt(eng1.substring(eng1.length() - 2, eng1.length() - 1));
 		}
 		this.power = Integer.parseInt(power1);
-		this.eno = Card.stringToEnergy(eno1);
-		this.id = id1;
+		if (eno1.endsWith(")")) {
+			this.eno = Card.stringToEnergy(eno1);
+		} else {
+			this.eno = Card.stringToEnergy(eno1+"(0)");
+		}
+		this.id = id1.trim();
 		this.effects = effects.split("\n");
 		this.damage = Integer.parseInt(damage);
-		this.imCard = new ImageIcon(ImageManipulator.createImage(this));
+		this.imCard = new ImageIcon(ImageUtils.createImage(this));
 	}
 	
 	public void addCategory(String catg) {
@@ -158,7 +163,7 @@ public class Card {
 	/*************************************/
 
 	public void createImage() {
-		this.imCard = new ImageIcon(ImageManipulator.createImage(this));
+		this.imCard = new ImageIcon(ImageUtils.createImage(this));
 	}
 	
 	public String createHtmlInfo() {
@@ -175,13 +180,13 @@ public class Card {
 		       .append("<p><b>Energy Number : </b>" + Card.energyToString(this.eno) + "</p>")
 		       .append("<p><b>Damage : </b>" + this.damage + "</p>");
 
-		effects.append("<p><b>Effects : </b><br/>");
+		effects.append("<div width = '200px'><p><b>Effects : </b><br/>");
 		for (String effect : this.effects) {
 			effects.append(effect)
 			       .append("<br/>");
 		}
 
-		effects.append("</p>")
+		effects.append("</p></div>")
 		       .append("</body>")
 		       .append("</html>");
 		
@@ -209,13 +214,13 @@ public class Card {
 		try {
 			Integer cost = Integer.parseInt(eng1);
 			arEngs[3] = cost;
-			System.out.println("Simple cost");
+//			System.out.println("Simple cost");
 		} catch(Exception e) {
 			for (int i = 0; i < 3; i++) {
 				arEngs[i] = Integer.parseInt(
 						eng1.substring(
-								eng1.indexOf(Constants.symbols[i]) + 1,
-								eng1.indexOf(Constants.symbols[i+1])));
+							eng1.indexOf(Constants.symbols[i]) + 1,
+							eng1.indexOf(Constants.symbols[i+1])));
 			}
 //			arEngs[1] = Integer.parseInt(eng1.substring(3, 4));
 //			arEngs[2] = Integer.parseInt(eng1.substring(5, 6));

@@ -40,43 +40,60 @@ public class CLabel extends JLabel {
 	
 	private static final long serialVersionUID = 1L;
 	private Stack<Card> cards = new Stack<Card>();
-	//public static Card ncrd = new Card("No Card", "/images/NCRD.jpg");
 	private boolean fliped;
-	private boolean used;
+	private boolean used = false;
 	private boolean upside_down;
 	private boolean isEnergy;
+	private String ncrdnePath = "/images/NCRD.jpg";
+	private String ncrdePath = "/images/NCRD_E.jpg";
+	private String ncrdPath = ncrdnePath;
 
+	/** Getter : Owned by opponent? */
 	public boolean isOp() {
 		return isOp;
 	}
 
+	/** Setter : Owned by opponent? */
 	public void setOp(boolean op) {
 		isOp = op;
 	}
 
-	private boolean isOp; /* Whether this is opponent's area or not */
+	/** Whether this is opponent's area or not */
+	private boolean isOp;
+	
 	private String default_tooltip =
 			"<html><body>Click to move and click again on another card to paste.<br/>" +
 			"Move the mouse wheel to use/unuse.</body></html>";
 
-	public CLabel() throws IOException {
-		//this(ncrd);
-		//System.out.println("Generated");
-		super(ImageManipulator.scale(
-				new ImageIcon(
-						ImageIO.read(CLabel.class.getResourceAsStream("/images/NCRD.jpg"))), 64, 87));
-		this.setPreferredSize(new Dimension(64, 87));
+	public CLabel() {
+		this(false);
+	}
+	
+	public CLabel(boolean isEnergy) {
+		super();
+		this.setEnergy(isEnergy);
+		try {
+			this.setIcon(
+					ImageUtils.scale(
+							new ImageIcon(
+									ImageIO.read(
+											CLabel.class.getResourceAsStream( ncrdPath ) )), Constants.CARD_WIDTH));
+		} catch (IOException e) {
+			System.err.println(String.format("Missing resource : %s", ncrdPath));
+		}
+		this.setPreferredSize(new Dimension(Constants.CARD_WIDTH, 87));
 		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	}
 	
 	public CLabel(Card card1) {
-		super(ImageManipulator.scale(card1.getImCard(), 64, 87));
+		super(ImageUtils.scale(card1.getImCard(), Constants.CARD_WIDTH));
 		cards.add(card1);
-		this.setDefaultState();
+		init();
+		
 		if (card1.name.equalsIgnoreCase("No Card")) {
 			this.setDefaultTooltip();
 		} else {
-			this.setToolTipText(createCardTooltip(card1));
+//			this.setToolTipText(createCardTooltip(card1));
 		}
 		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	}
@@ -84,31 +101,31 @@ public class CLabel extends JLabel {
 
 	public CLabel(String text) {
 		super(text);
-		//cards.add(ncrd);
+
 		init();
 	}
 
 	public CLabel(Icon image) {
-		super(ImageManipulator.scale(image, 64, 87));
-		//cards.add(ncrd);
+		super(ImageUtils.scale(image, Constants.CARD_WIDTH));
+
 		init();
 	}
 
 	public CLabel(String text, int horizontalAlignment) {
 		super(text, horizontalAlignment);
-		//cards.add(ncrd);
+
 		init();
 	}
 
 	public CLabel(Icon image, int horizontalAlignment) {
-		super(ImageManipulator.scale(image, 64, 87), horizontalAlignment);
-//		cards.add(ncrd);
+		super(ImageUtils.scale(image, Constants.CARD_WIDTH), horizontalAlignment);
+
 		init();
 	}
 
 	public CLabel(String text, Icon image, int horizontalAlignment) {
-		super(text, ImageManipulator.scale(image, 64, 87), horizontalAlignment);
-//		cards.add(ncrd);
+		super(text, ImageUtils.scale(image, Constants.CARD_WIDTH), horizontalAlignment);
+
 		init();
 	}
 
@@ -123,17 +140,17 @@ public class CLabel extends JLabel {
 		used = false;
 		isEnergy = false;
 		setUpsideDown(false);
-		setPreferredSize(new Dimension(64, 87));
+		setPreferredSize(new Dimension(Constants.CARD_WIDTH, 87));
 	}
 
 	private void setDefaultTooltip() {
 		setToolTipText(default_tooltip);
 	}
 
-	private String createCardTooltip(Card card1) {
-		String htmlInfo = card1.createHtmlInfo();
-		return htmlInfo;
-	}
+//	private String createCardTooltip(Card card1) {
+//		String htmlInfo = card1.createHtmlInfo();
+//		return htmlInfo;
+//	}
 	
 	public final boolean isUsed() {
 		return this.used;
@@ -147,37 +164,42 @@ public class CLabel extends JLabel {
 	public Card getCard() {
 		if (cards.size() > 0) {
 			Card card2 = cards.lastElement();
-			//super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
 			return card2;
 		} else {
 			return null;
 		}
 	}
 	
+	public boolean hasCard() {
+		return cards.size() > 0;
+	}
 	// Cut/Move card
 	public Card grCard() {
-		setDefaultTooltip();
 
 		if (cards.size() > 0) {
 			Card card2 = cards.pop();
 			if (cards.size() > 0) {
+				// Stack has more than one card, set the top card of stack as stack's image.
 				if (!cards.lastElement().fliped) {
-					super.setIcon(ImageManipulator.scale(cards.lastElement().getImCard(), 64, 87));
+					super.setIcon(ImageUtils.scale(cards.lastElement().getImCard(), Constants.CARD_WIDTH));
 				} else {
-					super.setIcon(ImageManipulator.scale(cards.lastElement().bkCard, 64, 87));
+					super.setIcon(ImageUtils.scale(cards.lastElement().bkCard, Constants.CARD_WIDTH));
 				}
 			} else {
+				// No cards in stack
 				//			this.setCard(ncrd);
 				try {
 					super.setIcon(
-						ImageManipulator.scale(
-							new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/images/NCRD.jpg"))), 64, 87
+						ImageUtils.scale(
+							new ImageIcon(ImageIO.read(getClass().getResourceAsStream(ncrdPath))), Constants.CARD_WIDTH
 							));
 				} catch(Exception e) {
 					// What to do if the image is missing?
 					System.err.println("Missing Resource!");
 				}
+				setUsed(false);
 			}
+			
 			return card2;
 		} else {
 			return null; // NULL
@@ -187,21 +209,22 @@ public class CLabel extends JLabel {
 	public void setCard(Card card0) {
 		if (card0 != null) {
 			cards.add(card0);
+			setUsed(false);
 			
 			if (!card0.fliped) {
-				super.setIcon(ImageManipulator.scale(card0.getImCard(), 64, 87));
+				super.setIcon(ImageUtils.scale(card0.getImCard(), Constants.CARD_WIDTH));
 				//			if (card0.fliped) {
 				//				this.flip();
 				//			}
 			} else {
-				super.setIcon(ImageManipulator.scale(card0.bkCard, 64, 87));
+				super.setIcon(ImageUtils.scale(card0.bkCard, Constants.CARD_WIDTH));
 			}
 			
 			if (card0.name.equalsIgnoreCase("No Card")) {
 				this.setToolTipText(default_tooltip);
 			} else {
-				this.setToolTipText(createCardTooltip(card0));
-						// Problem here ↓
+//				this.setToolTipText(createCardTooltip(card0));
+						// FIXME Problem here ↓
 						//card0.name + "," + Card.energyToString(card0.energy) + "," + Card.energyToString(card0.eno));
 			} 
 		}
@@ -212,23 +235,22 @@ public class CLabel extends JLabel {
 	}
 	
 	public void showNormalImage() {
-		this.setIcon(ImageManipulator.scale(this.getCard().getImCard(), 64, 87));
+		this.setIcon(ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH));
 	}
 	
 	public void flip() {
-		//imCard2 = imCard;
 		Card card = this.getCard();
 		if (card.bkCard != null) {
 			if (card.fliped) {
 				
 				//Unflip
-				this.setIcon(ImageManipulator.scale(card.getImCard(), 64, 87));
-				this.setToolTipText(createCardTooltip(card));
+				this.setIcon(ImageUtils.scale(card.getImCard(), Constants.CARD_WIDTH));
+//				this.setToolTipText(createCardTooltip(card));
 				card.fliped = false;
 			} else {
 				
 				//Flip
-				this.setIcon(ImageManipulator.scale(card.bkCard, 64, 87));
+				this.setIcon(ImageUtils.scale(card.bkCard, Constants.CARD_WIDTH));
 				setDefaultTooltip();
 				card.fliped = true;
 			}
@@ -236,21 +258,22 @@ public class CLabel extends JLabel {
 		
 	}
 	
-	
-	
-	public void use2(Color borderCol) {
-		setUsed(true);
-//		this.setBorder(new LineBorder(borderCol, 3));
+	/** Highlight this label by creating a border around it in the given color */
+	public void highlight(Color borderCol) {
 		this.setBorder(BorderFactory.createLineBorder(borderCol, 3));
 		repaint();
 	}
 	
+	public void removeHighlight() {
+		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+		repaint();
+	}
 	
 	public void use2() {
 		setUsed(true);
 		Card c = this.getCard();
 
-		// Needs to be rewritten using Constants class ↓
+		// TODO Needs to be rewritten using Constants class ↓
 		if (c.civility.equalsIgnoreCase("Raenid")) {
 			this.setBorder(new LineBorder(Color.YELLOW, 2));
 		} else if (c.civility.equalsIgnoreCase("Asarn")) {
@@ -271,70 +294,51 @@ public class CLabel extends JLabel {
 	
 	public void unuse2() {
 		setUsed(false);
-//		this.setBorder(null);
 		this.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 		repaint();
 	}
 	
-	public void rot_90() {
-		setUsed(true);
-		
-		ImageIcon img = ImageManipulator.scale(this.getCard().getImCard(), 64, 87);
-		ImageIcon rot_img = ImageManipulator.rotate90(img);
+	public void rot_90() {		
+		ImageIcon img = ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH);
+		ImageIcon rot_img = ImageUtils.rotate90(img);
 		this.setIcon(rot_img);
+		setUsed(true);
 	}
 	
 	public void rot_180() {
-		ImageIcon img = ImageManipulator.scale(this.getCard().getImCard(), 64, 87);
+		ImageIcon img = ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH);
 		
 		if (isUpsideDown()) {
 			setUpsideDown(false);
 		} else {
 			setUpsideDown(true);
-			img = ImageManipulator.flipVert(img);
+			img = ImageUtils.flipVert(img);
 		}
 	
 		this.setIcon(img);
 	}
 
 	public void rot_270() {
-		setUsed(true);
-		
-		ImageIcon img = ImageManipulator.scale(this.getCard().getImCard(), 64, 87);
-		img = ImageManipulator.rotate270(img);
+		ImageIcon img = ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH);
+		img = ImageUtils.rotate270(img);
 		this.setIcon(img);
+		setUsed(true);
 	}
 	
 	public void rot_0() {
 		setUsed(false);
-		ImageIcon img = ImageManipulator.scale(this.getCard().getImCard(), 64, 87);
+		ImageIcon img = ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH);
 		
 		// Flipping the image if it was flipped before tapping.
 		if (isUpsideDown()) {
-			img = ImageManipulator.flipVert(img);
+			img = ImageUtils.flipVert(img);
 		}
 		
 		this.setIcon(img);
 	}
 	
-//	public void flipBack() {
-//		setUpsideDown(false);
-//		setOrig();
-//	}
-//	
-//	public void unuse() {
-//		setUsed(false);
-//		if (!isUpsideDown()) {
-//			setOrig();
-//		} else {
-//			ImageIcon img = ImageManipulator.scale(this.getIcon(), 64, 87);
-//			ImageIcon rot_img = ImageManipulator.flipVert(img);
-//			this.setIcon(rot_img);
-//		}
-//	}
-//	
 	public void setOrig() {
-		this.setIcon(ImageManipulator.scale(this.getCard().getImCard(), 64, 87));
+		this.setIcon(ImageUtils.scale(this.getCard().getImCard(), Constants.CARD_WIDTH));
 	}
 
 	public boolean isUpsideDown() {
@@ -351,5 +355,6 @@ public class CLabel extends JLabel {
 
 	public void setEnergy(boolean isEnergy) {
 		this.isEnergy = isEnergy;
+		ncrdPath = isEnergy ? ncrdePath : ncrdnePath;
 	}
 }

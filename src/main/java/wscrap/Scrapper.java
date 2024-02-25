@@ -25,7 +25,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import clz.Card;
-import clz.ImageManipulator;
+import clz.ImageUtils;
 
 /** Fetch card images from DMwiki when the card name is given */
 
@@ -86,7 +86,7 @@ public class Scrapper {
 		
 		JLabel lblImage = new JLabel();
 		try {
-			ico = ImageManipulator.scale(getImage(name), 400, 600);
+			ico = ImageUtils.scale(getImage(name), 400);
 			lblImage.setIcon(ico);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frmMain, "Error fetching image!");
