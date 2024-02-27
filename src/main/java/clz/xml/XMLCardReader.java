@@ -7,8 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
@@ -76,7 +75,8 @@ public class XMLCardReader {
 	/**
 	 * @param next
 	 * @param reader 
-	 * @throws XMLStreamException 
+	 * @throws XMLStreamException
+	 * Card images are attached in CScan
 	 */
 	private void parse(int next, XMLStreamReader reader) throws XMLStreamException {
 		switch(next) {
@@ -142,6 +142,7 @@ public class XMLCardReader {
 						if (linkname != null) {
 							for (Card exCard : cards.getExtraDeck()) {
 								if (exCard.name.equals(linkname)) {
+									exCard.addPart(c);
 									c.addPart(exCard);
 									cards.update(c, i);
 								}
@@ -155,6 +156,7 @@ public class XMLCardReader {
 						if (linkname != null) {
 							for (Card exCard : cards.getExtraDeck()) {
 								if (exCard.name.equals(linkname)) {
+									exCard.addPart(c);
 									c.addPart(exCard);
 									cards.update(c, i);
 								}
@@ -162,6 +164,24 @@ public class XMLCardReader {
 						}
 						i++;
 					}
+					
+					ArrayList<Card> updatedExDeck = new ArrayList<Card>();
+					
+					for (Card exCard : cards.getExtraDeck()) {
+						boolean hasCard = false;
+						System.out.println(exCard.name);
+						for (var entry : links.entrySet()) {
+							System.out.println(String.format("%s -> %s", entry.getKey(), entry.getValue()));
+							hasCard = entry.getKey().equals(exCard.name);
+						}
+						
+						if (!hasCard) {
+							System.out.println("No link : " + exCard.name);
+						} else {
+							updatedExDeck.add(exCard);
+						}
+					}
+					cards.setExtraDeck(updatedExDeck);
 				}
 				break;
 

@@ -1158,8 +1158,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 			aboutFrame.setVisible(true);
 		} else if(ae.getSource() == jmiRestart) {
 			restart();
-//		} else if(ae.getSource() == jmiRestart) {
-//			proceed();
 		}
 	}
 	

@@ -107,7 +107,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		JFrame frmMain = new JFrame("Deck Editor");
 		frmMain.setLocation(40, 20);
 		frmMain.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frmMain.setSize(new Dimension(1200, 700));
+		frmMain.setSize(new Dimension(1200, 730));
 		
 		// Layouting
 		JPanel mpane = new JPanel();
@@ -119,12 +119,10 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		Border b2 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		Border mainBorder = BorderFactory.createCompoundBorder(
 								BorderFactory.createCompoundBorder(b2, b1), b2);
-//		cpane.setPreferredSize(new Dimension(450,600));
 		cpane.setBorder(mainBorder);
 		
 		JPanel cpane2 = new JPanel();
 		cpane2.setLayout(new BorderLayout());
-//		cpane2.setBorder(b2);
 		card_image = new JLabel("Click here to add card image", SwingConstants.CENTER);
 		card_image.addMouseListener(this);
 		//card_image.setPreferredSize(new Dimension(300,400));
@@ -176,8 +174,8 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 						if (index < deck.size()) {
 							c = new ArrayList<Card>(deck).get(index);
 							setCard(c, false);
-							cpane.setBackground(Color.decode(
-									Constants.colProp.get(c.civility).toString()));
+							String bordColString = Constants.colProp.get(c.civility).toString();
+							cpane.setBackground(bordColString != null ? Color.decode(bordColString) : Color.GRAY);
 							
 							if (c.getParts().size() > 0) {
 								btnViewLinked.setEnabled(true);

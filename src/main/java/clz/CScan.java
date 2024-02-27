@@ -52,7 +52,7 @@ public class CScan extends JFrame {
 	
 	
 	private static final long serialVersionUID = -1826147733065781359L;
-	private int j;
+//	private int j;
 	private Base64.Decoder dec;
 	private HashMap<String, Integer> counts = new HashMap<String, Integer>();
 	
@@ -232,8 +232,8 @@ public Deck scanZipFileWithXML(File sFile) {
 			XMLCardReader reader = new XMLCardReader(istream);
 			resDeck = reader.getDeck();
 
-			System.out.println("No of main cards : " + resDeck.size());
-			System.out.println("No of extra cards : " + resDeck.getExtraDeck().size());
+//			System.out.println("No of main cards : " + resDeck.size());
+//			System.out.println("No of extra cards : " + resDeck.getExtraDeck().size());
 
 			// Adding images
 			for (Card c : resDeck) {
@@ -241,6 +241,13 @@ public Deck scanZipFileWithXML(File sFile) {
 				Image crdImage = ImageIO.read(zf.getInputStream(card_img));
 				ImageIcon crdIcon = new ImageIcon(crdImage);
 				c.setImCard(crdIcon);
+				
+				// Repeat this for sides/parts of a card as well
+				for (Card part : c.getParts()) {
+					ZipEntry cardImgPartEntry = zf.getEntry("extras/" + part.name);
+					ImageIcon crdIconPart = new ImageIcon(ImageIO.read(zf.getInputStream(cardImgPartEntry)));
+					part.setImCard(crdIconPart);
+				}
 			}
 
 			if (resDeck.hasExtras()) {
@@ -249,6 +256,13 @@ public Deck scanZipFileWithXML(File sFile) {
 					Image crdImage = ImageIO.read(zf.getInputStream(card_img));
 					ImageIcon crdIcon = new ImageIcon(crdImage);
 					c.setImCard(crdIcon);
+					
+					// Repeat this for sides/parts of a card as well
+					for (Card part : c.getParts()) {
+						ZipEntry cardImgPartEntry = zf.getEntry("extras/" + part.name);
+						ImageIcon crdIconPart = new ImageIcon(ImageIO.read(zf.getInputStream(cardImgPartEntry)));
+						part.setImCard(crdIconPart);
+					}
 				}
 			}
 

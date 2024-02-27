@@ -14,10 +14,9 @@ public class Deck extends ArrayDeque<Card> {
         super(list);
     }
 
-    public void addAsExtra(Card... extraCards) {
-        for (Card extraCard : extraCards) {
-            extras.add(extraCard);
-        }
+    @Override
+    public boolean isEmpty() {
+        return (super.isEmpty() || (this.hasExtras() && this.getExtraDeck().isEmpty()));
     }
     
     public void update(Card c, int id) {
@@ -31,6 +30,12 @@ public class Deck extends ArrayDeque<Card> {
     		int idEx = id - this.size();
     		getExtraDeck().set(idEx, c);
     	}
+    }
+    
+    public void addAsExtra(Card... extraCards) {
+        for (Card extraCard : extraCards) {
+            extras.add(extraCard);
+        }
     }
 
     public Card getExtra(int i) {
@@ -58,10 +63,5 @@ public class Deck extends ArrayDeque<Card> {
         //} else {
            // return false;
         //}
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (super.isEmpty() || (this.hasExtras() && this.getExtraDeck().isEmpty()));
     }
 }
