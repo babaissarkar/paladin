@@ -176,7 +176,6 @@ public class PrefIFrame extends JFrame implements ActionListener {
 		}
 		
 		textField_1.setColumns(2);
-		//textField_1.setEnabled(false);
 		hboxFCards.add(textField_1);
 		
 		// Parameters selection panel
@@ -313,7 +312,6 @@ public class PrefIFrame extends JFrame implements ActionListener {
 
 	public void proceed() {
 		this.setVisible(false);
-		this.btnCancel.setEnabled(true);
 		int i = 0, j = 0, k;
 		if (!textField_1.getText().equals("")) {
 			i = Integer.parseInt(textField_1.getText());

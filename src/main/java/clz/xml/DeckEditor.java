@@ -107,7 +107,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		JFrame frmMain = new JFrame("Deck Editor");
 		frmMain.setLocation(40, 20);
 		frmMain.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frmMain.setSize(new Dimension(1200, 730));
+		frmMain.setSize(new Dimension(1200, 740));
 		
 		// Layouting
 		JPanel mpane = new JPanel();
@@ -161,6 +161,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 						JOptionPane.showMessageDialog(frmInfo, "Marked as Normal.");
 						this.isExtra = false;
 					}
+					jcbIsExtra.setSelected(this.isExtra);
 				}
 		);
 		
@@ -170,7 +171,7 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 					int index = jlsDeck.getSelectedIndex();
 					if (index != -1) {
 						Card c;
-						this.isExtra = jcbIsExtra.isSelected();
+//						this.isExtra = jcbIsExtra.isSelected(); // FIXME look unnecessary
 						if (index < deck.size()) {
 							c = new ArrayList<Card>(deck).get(index);
 							setCard(c, false);
@@ -318,13 +319,12 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		btnViewLinked = new JButton("View linked card");
 		btnViewLinked.addActionListener(
 			e -> {
-				// Only two sides supported for now. To be updated later.
+				// TODO Only two sides supported for now. To be updated later.
 				if (getCard2().getParts().size() > 0) {
 					setCard(getCard2().getParts().get(0));
 				}
 			}
 		);
-//		btnViewLinked.setEnabled(false);
 
 		JLabel lblImgBtn = new JLabel("Fetch Image :");
 		JRadioButton imgOn = new JRadioButton("On");
@@ -875,7 +875,6 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 
 			update();
 		} else if (ae.getSource() == jmiSave) {
-			//new XMLCardWriter(this.deck);
 			scan.writeToZip(deck);
 		} else if (ae.getSource() == jmiOpen) {
 			this.deck = openDeck();
@@ -936,13 +935,13 @@ public class DeckEditor extends MouseAdapter implements ActionListener, Selector
 		Card curCard = getCard();
 		curCard.addPart(selCard);
 		selCard.addPart(curCard);
-		//curCard.name = curCard.name + " [Linked]";
-		//System.out.println(curCard.getParts().size());
 		
 		// Updating interface
 		int index = jlsDeck.getSelectedIndex();
 		deck.update(curCard, index);
+		deck.getExtraDeck().remove(selCard);
 		setCard(curCard);
+		
 		update();
 		
 		System.out.println("Linked : " + curCard.name + " and " + selCard.name);

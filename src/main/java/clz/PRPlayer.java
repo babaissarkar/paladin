@@ -626,7 +626,6 @@ public class PRPlayer extends JFrame implements ActionListener, KeyListener {
 		PRPlayer.bf = PRPlayer.newInstance();
 		//Initializing Preferences JInternalFrame
 		pif = new PrefIFrame(PRPlayer.bf);
-		pif.btnCancel.setEnabled(false);
 		pif.setVisible(true);
 	}
 	

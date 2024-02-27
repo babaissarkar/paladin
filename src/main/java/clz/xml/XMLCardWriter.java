@@ -61,13 +61,21 @@ public class XMLCardWriter {
 		xw.writeStartElement("Deck");
 		for (Card c : cards) {
 			//System.out.println("Writing main cards!");
-			writeCard(xw, c, false);
+			writeCard(xw, c, false, true);
+			
+			for (Card part : c.getParts()) {
+				writeCard(xw, part, true, false);
+			}
 		}
 
 		if (cards.hasExtras()) {
 			//System.out.println("Writing extra cards!");
 			for (Card extra : cards.getExtraDeck()) {
-				writeCard(xw, extra, true);
+				writeCard(xw, extra, true, true);
+				
+				for (Card part : extra.getParts()) {
+					writeCard(xw, part, true, false);
+				}
 			}
 		}
 
@@ -76,7 +84,7 @@ public class XMLCardWriter {
 		JOptionPane.showMessageDialog(new JFrame(), "File successfully saved.");
 	}
 
-	private void writeCard(XMLStreamWriter xw, Card c, boolean isExtra) throws XMLStreamException {
+	private void writeCard(XMLStreamWriter xw, Card c, boolean isExtra, boolean writeLink) throws XMLStreamException {
 		xw.writeCharacters("\n");
 		xw.writeCharacters("\t");
 		xw.writeStartElement("Card");
@@ -158,7 +166,7 @@ public class XMLCardWriter {
 			xw.writeCharacters("\n");
 		}
 		
-		if (c.getParts().size() > 0) {
+		if (writeLink) {
 			for (Card part : c.getParts()) {
 				xw.writeCharacters("\t\t");
 				xw.writeStartElement("link");

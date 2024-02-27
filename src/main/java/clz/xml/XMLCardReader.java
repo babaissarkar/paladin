@@ -169,14 +169,14 @@ public class XMLCardReader {
 					
 					for (Card exCard : cards.getExtraDeck()) {
 						boolean hasCard = false;
-						System.out.println(exCard.name);
+//						System.out.println(exCard.name);
 						for (var entry : links.entrySet()) {
-							System.out.println(String.format("%s -> %s", entry.getKey(), entry.getValue()));
-							hasCard = entry.getKey().equals(exCard.name);
+//							System.out.println(String.format("%s -> %s", entry.getKey(), entry.getValue()));
+							hasCard = hasCard || entry.getKey().equals(exCard.name);
 						}
 						
 						if (!hasCard) {
-							System.out.println("No link : " + exCard.name);
+//							System.out.println("No link : " + exCard.name);
 						} else {
 							updatedExDeck.add(exCard);
 						}

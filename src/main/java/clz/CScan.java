@@ -314,14 +314,21 @@ public void writeToZip(Deck deck) {
 
 				int count;
 				for (Card c : deck) {
-					if ((count = addAndCount(c)) == 0) { // testing
+					if ((count = addAndCount(c)) == 0) {
 						System.out.println("Writing image of " + c.name);
-						//System.out.println("Count : " + count);
 						BufferedImage buff = (BufferedImage) c.getImCard().getImage();
 						ZipEntry ze = new ZipEntry(c.name);
 						zstream.putNextEntry(ze);
 						ImageIO.write(buff, "png", zstream);
 						zstream.closeEntry();
+						
+						for (Card part : c.getParts()) {
+							BufferedImage buff2 = (BufferedImage) part.getImCard().getImage();
+							ZipEntry ze2 = new ZipEntry("extras/" + part.name);
+							zstream.putNextEntry(ze2);
+							ImageIO.write(buff2, "png", zstream);
+							zstream.closeEntry();
+						}
 					} else {
 						System.out.println("Not writing " + c.name + "'s image again. Count : " + count);
 					}
@@ -334,6 +341,14 @@ public void writeToZip(Deck deck) {
 						zstream.putNextEntry(ze);
 						ImageIO.write(buff, "png", zstream);
 						zstream.closeEntry();
+						
+						for (Card part : c2.getParts()) {
+							BufferedImage buff2 = (BufferedImage) part.getImCard().getImage();
+							ZipEntry ze2 = new ZipEntry("extras/" + part.name);
+							zstream.putNextEntry(ze2);
+							ImageIO.write(buff2, "png", zstream);
+							zstream.closeEntry();
+						}
 					}
 				}
 				
