@@ -1,11 +1,10 @@
 # PRPlayer
 A cross-platform CCG/TCG playtester written completely in Java.
 
-# Building
-Clone the repository, then run
-  `mvn package`
 # Running
-Download the latest release or the latest development build from actions tab, then run the `.jar` file. You will need the latest Java Runtime (JRE).
+1. Download and install a Java Runtime (JRE), for example, from [here](https://adoptium.net/temurin/releases).
+2. Download the JAR file from the latest release or the latest development build from actions tab.
+3. Run the JAR file using the JRE installed (either via double click on the jar file or `java -jar jarfile.jar` in a command prompt in the folder where the jarfile is located).
 
 # Quick Start Guide
 1. Install and launch the program. Create a new Deck (preferably 2) using the Deck Editor. **Actions > Deck Editor**
@@ -30,6 +29,10 @@ Shows various statistics of the deck, including color, cost and type/subtype ana
 ![Starting the Game](/screenshots/1.png "Starting the Game")
 ![In Play](/screenshots/2.png "In Play")
 ![Deck Editor](/screenshots/3.png "Deck Editor")
+
+# Building
+Clone the repository, then run
+  `mvn package`
 
 # Views
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fbabaissarkar.github.io&count_bg=%23765000&title_bg=%23380D0D&icon=yamahamotorcorporation.svg&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
